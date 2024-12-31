@@ -23,10 +23,10 @@ export default [
     subject: 'funcionario',
   },
   {
-    title: 'Formacao',
+    title: 'EPI',
     icon: { icon: 'tabler-template' },
-    to: 'formacao',
+    to: 'epi',
     action: 'list',
-    subject: 'formacao',
+    subject: 'epi',
   },
 ]
