@@ -15,4 +15,11 @@ export default [
   { heading: 'Principal' },
   ...users,
   ...utils,
+  {
+    title: 'Funcionario',
+    icon: { icon: 'tabler-template' },
+    to: 'funcionario',
+    action: 'list',
+    subject: 'funcionario',
+  },
 ]

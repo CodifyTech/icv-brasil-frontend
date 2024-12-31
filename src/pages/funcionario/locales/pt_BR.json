@@ -1,0 +1,169 @@
+{
+    "funcionario": {
+        "register": "Cadastrar Funcionario",
+        "edit": "Editar Funcionario",
+        "list": "Funcionarios",
+        "form": {
+            "nome": {
+                "label": "Nome",
+                "placeholder": ""
+            },
+            "rg": {
+                "label": "Rg",
+                "placeholder": ""
+            },
+            "cpf": {
+                "label": "Cpf",
+                "placeholder": ""
+            },
+            "telefone_1": {
+                "label": "Telefone 1",
+                "placeholder": ""
+            },
+            "telefone_2": {
+                "label": "Telefone 2",
+                "placeholder": ""
+            },
+            "email_1": {
+                "label": "Email 1",
+                "placeholder": ""
+            },
+            "email_2": {
+                "label": "Email 2",
+                "placeholder": ""
+            },
+            "logradouro": {
+                "label": "Logradouro",
+                "placeholder": ""
+            },
+            "bairro": {
+                "label": "Bairro",
+                "placeholder": ""
+            },
+            "cidade": {
+                "label": "Cidade",
+                "placeholder": ""
+            },
+            "uf": {
+                "label": "Uf",
+                "placeholder": ""
+            },
+            "aeroporto_proximo": {
+                "label": "Aeroporto Proximo",
+                "placeholder": ""
+            },
+            "razao_social": {
+                "label": "Razao Social",
+                "placeholder": ""
+            },
+            "nome_fantasia": {
+                "label": "Nome Fantasia",
+                "placeholder": ""
+            },
+            "cnpj": {
+                "label": "Cnpj",
+                "placeholder": ""
+            },
+            "valor_hh": {
+                "label": "Valor Hh",
+                "placeholder": ""
+            },
+            "valor_diaria": {
+                "label": "Valor Diaria",
+                "placeholder": ""
+            },
+            "valor_demanda": {
+                "label": "Valor Demanda",
+                "placeholder": ""
+            },
+            "valor_deslocamento": {
+                "label": "Valor Deslocamento",
+                "placeholder": ""
+            },
+            "valor_refeicao": {
+                "label": "Valor Refeicao",
+                "placeholder": ""
+            },
+            "valor_pedagio": {
+                "label": "Valor Pedagio",
+                "placeholder": ""
+            },
+            "valor_hospedagem": {
+                "label": "Valor Hospedagem",
+                "placeholder": ""
+            },
+            "valor_outros": {
+                "label": "Valor Outros",
+                "placeholder": ""
+            },
+            "banco": {
+                "label": "Banco",
+                "placeholder": ""
+            },
+            "agencia": {
+                "label": "Agencia",
+                "placeholder": ""
+            },
+            "conta": {
+                "label": "Conta",
+                "placeholder": ""
+            }
+        },
+        "headers": {
+            "nome": "Nome",
+            "rg": "Rg",
+            "cpf": "Cpf",
+            "telefone_1": "Telefone 1",
+            "telefone_2": "Telefone 2",
+            "email_1": "Email 1",
+            "email_2": "Email 2",
+            "logradouro": "Logradouro",
+            "bairro": "Bairro",
+            "cidade": "Cidade",
+            "uf": "Uf",
+            "aeroporto_proximo": "Aeroporto Proximo",
+            "razao_social": "Razao Social",
+            "nome_fantasia": "Nome Fantasia",
+            "cnpj": "Cnpj",
+            "valor_hh": "Valor Hh",
+            "valor_diaria": "Valor Diaria",
+            "valor_demanda": "Valor Demanda",
+            "valor_deslocamento": "Valor Deslocamento",
+            "valor_refeicao": "Valor Refeicao",
+            "valor_pedagio": "Valor Pedagio",
+            "valor_hospedagem": "Valor Hospedagem",
+            "valor_outros": "Valor Outros",
+            "banco": "Banco",
+            "agencia": "Agencia",
+            "conta": "Conta"
+        },
+        "terms": {
+            "nome": "Nome",
+            "rg": "Rg",
+            "cpf": "Cpf",
+            "telefone_1": "Telefone 1",
+            "telefone_2": "Telefone 2",
+            "email_1": "Email 1",
+            "email_2": "Email 2",
+            "logradouro": "Logradouro",
+            "bairro": "Bairro",
+            "cidade": "Cidade",
+            "uf": "Uf",
+            "aeroporto_proximo": "Aeroporto Proximo",
+            "razao_social": "Razao Social",
+            "nome_fantasia": "Nome Fantasia",
+            "cnpj": "Cnpj",
+            "valor_hh": "Valor Hh",
+            "valor_diaria": "Valor Diaria",
+            "valor_demanda": "Valor Demanda",
+            "valor_deslocamento": "Valor Deslocamento",
+            "valor_refeicao": "Valor Refeicao",
+            "valor_pedagio": "Valor Pedagio",
+            "valor_hospedagem": "Valor Hospedagem",
+            "valor_outros": "Valor Outros",
+            "banco": "Banco",
+            "agencia": "Agencia",
+            "conta": "Conta"
+        }
+    }
+}
