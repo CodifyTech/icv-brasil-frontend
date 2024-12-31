@@ -64,8 +64,8 @@ onBeforeRouteLeave(() => {
           <VTab value="dados_pessoais">
             Dados Pessoais
           </VTab>
-          <VTab value="formacoes">
-            Formações
+          <VTab value="qualificacoes_pofissionais">
+            Qualificações Profissionais
           </VTab>
           <VTab value="atestados_ocupacionais_epi">
             Atestado Ocupacionais/EPI
@@ -228,7 +228,7 @@ onBeforeRouteLeave(() => {
             </VRow>
           </VTabsWindowItem>
 
-          <VTabsWindowItem value="formacoes" />
+          <VTabsWindowItem value="qualificacoes_pofissionais" />
 
           <VTabsWindowItem value="atestados_ocupacionais_epi">
             <VRow>
