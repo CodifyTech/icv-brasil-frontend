@@ -7,7 +7,7 @@ import { VerticalNavGroup, VerticalNavLink, VerticalNavSectionTitle } from '@lay
 import { useLayoutConfigStore } from '@layouts/stores/config'
 import { injectionKeyIsVerticalNavHovered } from '@layouts/symbols'
 import type { NavGroup, NavLink, NavSectionTitle, VerticalNavItems } from '@layouts/types'
-import logo from '@images/logo-dark.svg?raw'
+import logo from '@images/logo-light.svg?raw'
 
 interface Props {
   tag?: string | Component
@@ -77,45 +77,46 @@ const hideTitleAndIcon = configStore.isVerticalNavMini(isHovered)
       <slot name="nav-header">
         <RouterLink
           to="/"
-          class="app-logo app-title-wrapper"
+          class="app-logo app-title-wrapper w-100"
+          :style="{ '--logo-height': `${configStore.isVerticalNavCollapsed ? 20 : 50}px` }"
         >
-          <VNodeRenderer :nodes="h('div', { innerHTML: logo })" />
+          <div
+            class="d-flex justify-center"
+            style="flex: 1;"
+          >
+            <VNodeRenderer
+              :nodes="h('div', { innerHTML: logo })"
+              class="app-logo-svg d-flex justify-center"
+            />
+          </div>
 
-          <Transition name="vertical-nav-app-title">
-            <h1
-              v-show="!hideTitleAndIcon"
-              class="app-logo-title"
-            >
-              {{ layoutConfig.app.title }}
-            </h1>
-          </Transition>
+          <!-- 👉 Vertical nav actions -->
+          <!-- Show toggle collapsible in >md and close button in <md -->
+          <div class="header-action">
+            <Component
+              :is="layoutConfig.app.iconRenderer || 'div'"
+              v-show="configStore.isVerticalNavCollapsed"
+              class="d-none nav-unpin"
+              :class="configStore.isVerticalNavCollapsed && 'd-lg-block'"
+              v-bind="layoutConfig.icons.verticalNavUnPinned"
+              @click="configStore.isVerticalNavCollapsed = !configStore.isVerticalNavCollapsed"
+            />
+            <Component
+              :is="layoutConfig.app.iconRenderer || 'div'"
+              v-show="!configStore.isVerticalNavCollapsed"
+              class="d-none nav-pin"
+              :class="!configStore.isVerticalNavCollapsed && 'd-lg-block'"
+              v-bind="layoutConfig.icons.verticalNavPinned"
+              @click="configStore.isVerticalNavCollapsed = !configStore.isVerticalNavCollapsed"
+            />
+            <Component
+              :is="layoutConfig.app.iconRenderer || 'div'"
+              class="d-lg-none"
+              v-bind="layoutConfig.icons.close"
+              @click="toggleIsOverlayNavActive(false)"
+            />
+          </div>
         </RouterLink>
-        <!-- 👉 Vertical nav actions -->
-        <!-- Show toggle collapsible in >md and close button in <md -->
-        <div class="header-action">
-          <Component
-            :is="layoutConfig.app.iconRenderer || 'div'"
-            v-show="configStore.isVerticalNavCollapsed"
-            class="d-none nav-unpin"
-            :class="configStore.isVerticalNavCollapsed && 'd-lg-block'"
-            v-bind="layoutConfig.icons.verticalNavUnPinned"
-            @click="configStore.isVerticalNavCollapsed = !configStore.isVerticalNavCollapsed"
-          />
-          <Component
-            :is="layoutConfig.app.iconRenderer || 'div'"
-            v-show="!configStore.isVerticalNavCollapsed"
-            class="d-none nav-pin"
-            :class="!configStore.isVerticalNavCollapsed && 'd-lg-block'"
-            v-bind="layoutConfig.icons.verticalNavPinned"
-            @click="configStore.isVerticalNavCollapsed = !configStore.isVerticalNavCollapsed"
-          />
-          <Component
-            :is="layoutConfig.app.iconRenderer || 'div'"
-            class="d-lg-none"
-            v-bind="layoutConfig.icons.close"
-            @click="toggleIsOverlayNavActive(false)"
-          />
-        </div>
       </slot>
     </div>
     <slot name="before-nav-items">
@@ -163,6 +164,10 @@ const hideTitleAndIcon = configStore.isVerticalNavMini(isHovered)
 <style lang="scss">
 @use "@configured-variables" as variables;
 @use "@layouts/styles/mixins";
+
+.app-logo-svg svg {
+  height: var(--logo-height) !important
+}
 
 // 👉 Vertical Nav
 .layout-vertical-nav {

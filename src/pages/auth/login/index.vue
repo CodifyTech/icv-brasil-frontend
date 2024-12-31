@@ -4,16 +4,12 @@ import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
 import { useAuthStore } from '@/pages/auth/login/store/useAuthStore'
 import AuthProvider from '@/views/pages/authentication/AuthProvider.vue'
 import { useGenerateImageVariant } from '@core/composable/useGenerateImageVariant'
-import authV2LoginIllustrationBorderedDark from '@images/pages/auth-v2-login-illustration-bordered-dark.png'
-import authV2LoginIllustrationBorderedLight from '@images/pages/auth-v2-login-illustration-bordered-light.png'
-import authV2LoginIllustrationDark from '@images/pages/auth-v2-login-illustration-dark.png'
-import authV2LoginIllustrationLight from '@images/pages/auth-v2-login-illustration-light.png'
+import vitrine from '@images/pages/vitrine.webp'
 import authV2MaskDark from '@images/pages/misc-mask-dark.png'
 import authV2MaskLight from '@images/pages/misc-mask-light.png'
 import logoDark from '@images/logo-dark.svg?raw'
 import logoLight from '@images/logo-light.svg?raw'
 import { themeConfig } from '@themeConfig'
-import ApiService from '@/services/ApiService'
 
 definePage({
   meta: {
@@ -37,43 +33,28 @@ const {
 
 const isPasswordVisible = ref(false)
 
-const authThemeImg = useGenerateImageVariant(
-  authV2LoginIllustrationLight,
-  authV2LoginIllustrationDark,
-  authV2LoginIllustrationBorderedLight,
-  authV2LoginIllustrationBorderedDark,
-  true)
-
 const authThemeMask = useGenerateImageVariant(authV2MaskLight, authV2MaskDark)
 const logo = useGenerateImageVariant(logoDark, logoLight)
-
-const a = new ApiService('/teste')
-
-a.fetch('status')
 </script>
 
 <template>
   <VRow
     no-gutters
-    class="auth-wrapper bg-surface"
+    class="auth-wrapper"
   >
     <VCol
       md="8"
       class="d-none d-md-flex"
     >
-      <div class="position-relative bg-background rounded-lg w-100 ma-8 me-0">
+      <div class="position-relative rounded-lg w-100 ma-8 me-0">
         <div class="d-flex align-center justify-center w-100 h-100">
           <VImg
-            max-width="505"
-            :src="authThemeImg"
-            class="auth-illustration mt-16 mb-2"
+            :src="vitrine"
+            class="auth-illustration"
+            cover
+            rounded
           />
         </div>
-
-        <VImg
-          class="auth-footer-mask"
-          :src="authThemeMask"
-        />
       </div>
     </VCol>
     <VCol
@@ -100,7 +81,7 @@ a.fetch('status')
         </VCardText>
 
         <AlertDialog
-          v-model:is-dialog-visible="messages.error.isError"
+          v-model:isDialogVisible="messages.error.isError"
           :title="messages.error.messages"
         />
         <VCardText>

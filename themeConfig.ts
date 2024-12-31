@@ -22,7 +22,7 @@ const logo = computed(() => {
 
 export const { themeConfig, layoutConfig } = defineThemeConfig({
   app: {
-    title: 'vuexy',
+    title: 'ICV Brasil',
     logo: h('div', { innerHTML: logo, style: 'line-height:0; color: rgb(var(--v-global-theme-primary))' }),
     contentWidth: ContentWidth.Boxed,
     contentLayoutNav: AppContentLayoutNav.Vertical,

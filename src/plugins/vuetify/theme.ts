@@ -1,10 +1,10 @@
 import type { ThemeDefinition } from 'vuetify'
 
-export const staticPrimaryColor = '#7367F0'
+export const staticPrimaryColor = '#BE2525'
 
 export const staticPrimaryDarkColor = '#7367F0'
 
-export const staticPrimaryDarkenColor = '#675DD8'
+export const staticPrimaryDarkenColor = '#d33421'
 
 export const themes: Record<string, ThemeDefinition> = {
   light: {
@@ -12,7 +12,7 @@ export const themes: Record<string, ThemeDefinition> = {
     colors: {
       'primary': staticPrimaryColor,
       'on-primary': '#fff',
-      'primary-darken-1': '#675DD8',
+      'primary-darken-1': '#d33421',
       'secondary': '#808390',
       'on-secondary': '#fff',
       'secondary-darken-1': '#737682',
@@ -51,8 +51,8 @@ export const themes: Record<string, ThemeDefinition> = {
 
     variables: {
       'code-color': '#d400ff',
-      'overlay-scrim-background': '#2F2B3D',
-      'tooltip-background': '#2F2B3D',
+      'overlay-scrim-background': '#4F5051',
+      'tooltip-background': '#a60606',
       'overlay-scrim-opacity': 0.5,
       'hover-opacity': 0.06,
       'focus-opacity': 0.1,
@@ -61,7 +61,7 @@ export const themes: Record<string, ThemeDefinition> = {
       'pressed-opacity': 0.14,
       'dragged-opacity': 0.1,
       'disabled-opacity': 0.4,
-      'border-color': '#2F2B3D',
+      'border-color': '#9e0808',
       'border-opacity': 0.12,
       'table-header-color': '#EAEAEC',
       'high-emphasis-opacity': 0.9,
@@ -73,7 +73,7 @@ export const themes: Record<string, ThemeDefinition> = {
       'track-bg': '#F1F0F2',
 
       // Shadows
-      'shadow-key-umbra-color': '#2F2B3D',
+      'shadow-key-umbra-color': '#6e0101',
       'shadow-xs-opacity': 0.10,
       'shadow-sm-opacity': 0.12,
       'shadow-md-opacity': 0.14,

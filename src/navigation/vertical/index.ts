@@ -15,18 +15,4 @@ export default [
   { heading: 'Principal' },
   ...users,
   ...utils,
-  {
-    title: 'Funcionario',
-    icon: { icon: 'tabler-template' },
-    to: 'funcionario',
-    action: 'list',
-    subject: 'funcionario',
-  },
-  {
-    title: 'Dependente',
-    icon: { icon: 'tabler-template' },
-    to: 'dependente',
-    action: 'list',
-    subject: 'dependente',
-  },
 ]
