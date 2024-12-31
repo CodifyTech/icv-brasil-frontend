@@ -1,0 +1,25 @@
+{
+    "formacao": {
+        "register": "Cadastrar Formacao",
+        "edit": "Editar Formacao",
+        "list": "Formacoes",
+        "form": {
+            "nome": {
+                "label": "Nome",
+                "placeholder": ""
+            },
+            "conselho_classe": {
+                "label": "Conselho Classe",
+                "placeholder": ""
+            }
+        },
+        "headers": {
+            "nome": "Nome",
+            "conselho_classe": "Conselho Classe"
+        },
+        "terms": {
+            "nome": "Nome",
+            "conselho_classe": "Conselho Classe"
+        }
+    }
+}

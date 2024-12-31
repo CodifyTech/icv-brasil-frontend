@@ -22,4 +22,11 @@ export default [
     action: 'list',
     subject: 'funcionario',
   },
+  {
+    title: 'Formacao',
+    icon: { icon: 'tabler-template' },
+    to: 'formacao',
+    action: 'list',
+    subject: 'formacao',
+  },
 ]
