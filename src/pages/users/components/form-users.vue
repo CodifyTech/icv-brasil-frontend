@@ -5,19 +5,19 @@ import { useUsersStore } from '@/pages/users/store/useUsersStore'
 import { confirmedValidator, emailValidator, requiredValidator } from '@/validators/cdf-rules'
 import type { IUser } from '@/pages/users/types'
 
-const { isEditing } = withDefaults(defineProps<{
+const {
+  isEditing = false,
+  isHeader = true,
+  isActions = true,
+  isReadOnly = false,
+  isProfile = false,
+} = defineProps<{
   isEditing: boolean
   isHeader: boolean
   isActions: boolean
   isReadOnly: boolean
   isProfile: boolean
-}>(), {
-  isEditing: false,
-  isHeader: true,
-  isActions: true,
-  isReadOnly: false,
-  isProfile: false,
-})
+}>()
 
 const store = useUsersStore()
 const user = useCookie<IUser>('userData')

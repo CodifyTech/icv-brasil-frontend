@@ -42,7 +42,7 @@ watch(isSelectAll, val => {
   else { data.value.actions = [] }
 }, { immediate: true })
 
-const isDisabledActions = computed(() => data.value?.crud?.length === 0 ?? true)
+const isDisabledActions = computed(() => data.value?.crud?.length === 0)
 
 const onSubmit = () => {
   if (isEditing.value)
