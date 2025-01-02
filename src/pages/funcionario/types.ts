@@ -33,3 +33,24 @@ export interface IFormacao {
   nome: string
   conselho_classe: string
 }
+
+export interface IQualificacao {
+  id?: string
+  nome: string
+  validate: string
+  utilma_avaliacao: string
+  validate_avaliacao: string
+}
+
+export interface IAtestadoOcupacional {
+  id?: string
+  nome: string
+  validade: string
+  exame: string
+}
+
+export interface IEPI {
+  id?: string
+  nome: string
+  ca: string
+}

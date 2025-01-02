@@ -27,8 +27,8 @@ const emit = defineEmits<{
 }>()
 
 const expansionPanels = ref()
-const items = ref(props.items ?? [])
-const loading = ref(false)
+const items = ref<any[]>(props.items ?? [])
+const loading = ref<boolean>(false)
 
 const add = () => {
   items.value.push({
@@ -37,7 +37,7 @@ const add = () => {
 
   setTimeout(() => {
     expansionPanels.value = items.value.length
-  }, 700)
+  }, 300)
 }
 
 const obterExpansionTitle = (index: number) => {
@@ -49,6 +49,7 @@ const obterExpansionTitle = (index: number) => {
   <VCard
     :title="title"
     variant="outlined"
+    class="cdf-manager-card"
   >
     <template #append>
       <VBtn
@@ -155,12 +156,17 @@ const obterExpansionTitle = (index: number) => {
 </template>
 
 <style lang="scss">
+.cdf-manager-card{
+  .v-card-item{
+    padding: 12px;
+  }
+}
 .cdf-manager{
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  height: 200px;
+  min-height: 120px;
 }
 </style>

@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
-import {IFormacao} from "@/pages/funcionario/types";
+import type {IAtestadoSaude, IEPI, IFormacao, IQualificacao} from '@/pages/funcionario/types'
+import {IAtestadoOcupacional} from "@/pages/funcionario/types";
 
 const defaultValue = {
   nome: '',
@@ -30,9 +31,9 @@ const defaultValue = {
   conta: '',
 
   formacoes: [] as IFormacao[],
-  atestado_saude: [],
-  epi: [],
-  qualificacoes: [],
+  atestado_saude: [] as IAtestadoOcupacional[],
+  epi: [] as IEPI[],
+  qualificacoes: [] as IQualificacao[],
 }
 
 export const useFuncionarioStore = defineStore('crud/funcionario', {

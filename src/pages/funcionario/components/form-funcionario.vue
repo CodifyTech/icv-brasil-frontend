@@ -4,6 +4,7 @@ import { useFuncionarioStore } from '../store/useFuncionarioStore'
 import LayoutForms from '@/components/CDF/LayoutForms.vue'
 import * as cdfRules from '@/validators/cdf-rules'
 import CDFManager from '@/components/CDF/CDFManager.vue'
+import type {IAtestadoOcupacional, IEPI, IFormacao, IQualificacao} from '@/pages/funcionario/types'
 
 const { isEditing } = withDefaults(defineProps<{
   isEditing: boolean
@@ -189,7 +190,7 @@ onBeforeRouteLeave(() => {
                           conselho_classe: '',
                         }"
                       >
-                        <template #content="{ item }">
+                        <template #content="{ item }: {item: IFormacao}">
                           <VRow>
                             <VCol
                               cols="12"
@@ -217,15 +218,27 @@ onBeforeRouteLeave(() => {
                         </template>
                       </CDFManager>
 
-                      <VCard title="Qualificação">
-                        <VCardText>
+                      <CDFManager
+                        v-model:items="data.qualificacoes"
+                        title="Qualificação"
+                        item-title="nome"
+                        item-label="Qualificação"
+                        message-add="Adicionar Qualificação"
+                        :template="{
+                          nome: '',
+                          validate: '',
+                          utilma_avaliacao: '',
+                          validate_avaliacao: '',
+                        }"
+                      >
+                        <template #content="{ item }: { item: IQualificacao }">
                           <VRow>
                             <VCol
                               cols="12"
-                              md="4"
+                              md="6"
                             >
                               <CDFTextField
-                                v-model="data.nome"
+                                v-model="item.nome"
                                 label="Nome da Qualificação"
                                 placeholder="Digite o nome da qualificação"
                                 :rules="[cdfRules.requiredValidator]"
@@ -233,10 +246,10 @@ onBeforeRouteLeave(() => {
                             </VCol>
                             <VCol
                               cols="12"
-                              md="4"
+                              md="6"
                             >
                               <CDFTextField
-                                v-model="data.validate"
+                                v-model="item.validate"
                                 label="Validate"
                                 placeholder="Digite o validate"
                                 type="date"
@@ -245,10 +258,10 @@ onBeforeRouteLeave(() => {
                             </VCol>
                             <VCol
                               cols="12"
-                              md="4"
+                              md="6"
                             >
                               <CDFTextField
-                                v-model="data.utilma_avaliacao"
+                                v-model="item.utilma_avaliacao"
                                 label="Utilma Avaliação"
                                 placeholder="Digite o utilma avaliação"
                                 type="date"
@@ -257,10 +270,10 @@ onBeforeRouteLeave(() => {
                             </VCol>
                             <VCol
                               cols="12"
-                              md="4"
+                              md="6"
                             >
                               <CDFTextField
-                                v-model="data.validate_avaliacao"
+                                v-model="item.validate_avaliacao"
                                 label="Validate Avaliação"
                                 placeholder="Digite o validate avaliação"
                                 type="date"
@@ -268,8 +281,8 @@ onBeforeRouteLeave(() => {
                               />
                             </VCol>
                           </VRow>
-                        </VCardText>
-                      </VCard>
+                        </template>
+                      </CDFManager>
                     </div>
                   </VTabsWindowItem>
 
@@ -278,15 +291,26 @@ onBeforeRouteLeave(() => {
                     class="pa-2"
                   >
                     <div class="d-flex flex-column gap-2">
-                      <VCard title="Atestado ocupacional">
-                        <VCardText>
+                      <CDFManager
+                        v-model:items="data.atestado_saude"
+                        title="Atestado Ocupacional"
+                        item-title="nome"
+                        item-label="Atestado Ocupacional"
+                        message-add="Adicionar Atestado"
+                        :template="{
+                          nome: '',
+                          validade: '',
+                          exame: '',
+                        }"
+                      >
+                        <template #content="{ item }: {item: IAtestadoOcupacional}">
                           <VRow>
                             <VCol
                               cols="12"
                               md="4"
                             >
                               <CDFTextField
-                                v-model="data.nome"
+                                v-model="item.nome"
                                 label="Nome"
                                 placeholder="Digite o nome"
                                 :rules="[cdfRules.requiredValidator]"
@@ -297,7 +321,7 @@ onBeforeRouteLeave(() => {
                               md="4"
                             >
                               <CDFTextField
-                                v-model="data.validade"
+                                v-model="item.validade"
                                 label="Validade"
                                 placeholder="Digite o validade"
                                 :rules="[]"
@@ -308,25 +332,35 @@ onBeforeRouteLeave(() => {
                               md="4"
                             >
                               <CDFTextField
-                                v-model="data.exame"
+                                v-model="item.exame"
                                 label="Exame"
                                 placeholder="Digite o exame"
                                 :rules="[]"
                               />
                             </VCol>
                           </VRow>
-                        </VCardText>
-                      </VCard>
+                        </template>
+                      </CDFManager>
 
-                      <VCard title="EPI">
-                        <VCardText>
+                      <CDFManager
+                        v-model:items="data.epi"
+                        title="EPI"
+                        item-title="nome"
+                        item-label="EPI"
+                        message-add="Adicionar EPI"
+                        :template="{
+                          nome: '',
+                          ca: '',
+                        }"
+                      >
+                        <template #content="{ item }: {item: IEPI}">
                           <VRow>
                             <VCol
                               cols="12"
-                              md="4"
+                              md="6"
                             >
                               <CDFTextField
-                                v-model="data.nome"
+                                v-model="item.nome"
                                 label="Nome"
                                 placeholder="Digite o nome do EPI"
                                 :rules="[cdfRules.requiredValidator]"
@@ -334,18 +368,18 @@ onBeforeRouteLeave(() => {
                             </VCol>
                             <VCol
                               cols="12"
-                              md="4"
+                              md="6"
                             >
                               <CDFTextField
-                                v-model="data.ca"
+                                v-model="item.ca"
                                 label="CA"
                                 placeholder="Digite o certificado de autorização"
                                 :rules="[cdfRules.requiredValidator]"
                               />
                             </VCol>
                           </VRow>
-                        </VCardText>
-                      </VCard>
+                        </template>
+                      </CDFManager>
                     </div>
                   </VTabsWindowItem>
 
