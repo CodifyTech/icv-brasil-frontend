@@ -54,7 +54,10 @@ const onCancel = () => {
           class="mb-4"
           style="width: 88px; height: 88px; pointer-events: none;"
         >
-          <span class="text-5xl">!</span>
+          <VIcon
+            icon="tabler-trash"
+            :size="40"
+          />
         </VBtn>
 
         <h6 class="text-lg font-weight-medium">

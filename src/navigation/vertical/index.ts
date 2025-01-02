@@ -22,11 +22,4 @@ export default [
     action: 'list',
     subject: 'funcionario',
   },
-  {
-    title: 'EPI',
-    icon: { icon: 'tabler-template' },
-    to: 'epi',
-    action: 'list',
-    subject: 'epi',
-  },
 ]

@@ -24,6 +24,7 @@ interface Props {
   progressSize?: string | number
   progressColor?: string
   progressIndeterminate?: boolean
+  onClick?: any
 }
 
 withDefaults(defineProps<Props>(), {
@@ -60,6 +61,7 @@ const _elementIdToken = `app-button-${Math.random().toString(36).slice(2, 7)}`
     :icon="isIcon"
     :density="density"
     :type="type"
+    @click="onClick"
   >
     <div class="d-flex align-center gap-2">
       <!-- Tooltip -->

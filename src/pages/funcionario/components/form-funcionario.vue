@@ -2,8 +2,8 @@
 import { storeToRefs } from 'pinia'
 import { useFuncionarioStore } from '../store/useFuncionarioStore'
 import LayoutForms from '@/components/CDF/LayoutForms.vue'
-import * as rules from '@/validators/cdf-rules'
-import {blurHandler} from "@/utils/generals";
+import * as cdfRules from '@/validators/cdf-rules'
+import CDFManager from '@/components/CDF/CDFManager.vue'
 
 const { isEditing } = withDefaults(defineProps<{
   isEditing: boolean
@@ -68,7 +68,7 @@ onBeforeRouteLeave(() => {
                   v-model="data.nome"
                   label="Nome Completo"
                   placeholder="Digite o nome completo"
-                  :rules="[rules.requiredValidator]"
+                  :rules="[cdfRules.requiredValidator]"
                 />
               </VCol>
               <VCol
@@ -91,7 +91,7 @@ onBeforeRouteLeave(() => {
                   v-mask="'###.###.###-##'"
                   label="CPF"
                   placeholder="Digite o número do CPF"
-                  :rules="[rules.requiredValidator]"
+                  :rules="[cdfRules.requiredValidator]"
                 />
               </VCol>
               <VCol
@@ -173,86 +173,186 @@ onBeforeRouteLeave(() => {
                 </VTabs>
 
                 <VTabsWindow v-model="tab">
-                  <VTabsWindowItem value="qualificacoes_pofissionais" />
-
-                  <VTabsWindowItem value="atestados_ocupacionais_epi">
-                    <VRow>
-                      <VCol
-                        cols="12"
-                        md="6"
+                  <VTabsWindowItem
+                    value="qualificacoes_pofissionais"
+                    class="pa-2"
+                  >
+                    <div class="d-flex flex-column gap-2">
+                      <CDFManager
+                        v-model:items="data.formacoes"
+                        title="Formação"
+                        item-title="nome"
+                        item-label="Formação"
+                        message-add="Adicionar Formação"
+                        :template="{
+                          nome: '',
+                          conselho_classe: '',
+                        }"
                       >
-                        <CDFTextField
-                          v-model="data.nome"
-                          :label="$t('formacao.form.nome.label')"
-                          :placeholder="$t('formacao.form.nome.placeholder')"
-                          :rules="[rules.requiredValidator]"
-                        />
-                      </VCol>
-                      <VCol
-                        cols="12"
-                        md="6"
-                      >
-                        <CDFTextField
-                          v-model="data.conselho_classe"
-                          :label="$t('formacao.form.conselho_classe.label')"
-                          :placeholder="$t('formacao.form.conselho_classe.placeholder')"
-                          :rules="[rules.requiredValidator]"
-                        />
-                      </VCol>
-
-                      <VCol
-                          cols="12"
-                          md="4"
-                      >
-                        <CDFTextField
-                            v-model="data.nome"
-                            label="Nome"
-                            :placeholder="{{placeholder}"
-                            :rules="[rules.requiredValidator]"
-                        />
-                      </VCol>
-                      <VCol
-                          cols="12"
-                          md="4"
-                      >
-                        <CDFTextField
-                            v-model="data.ca"
-                            :label="Ca"
-                            :placeholder="{{placeholder}"
-                            :rules="[rules.requiredValidator]"
-                        />
-                      </VCol>
-                      <VCol
-                          cols="12"
-                          md="4"
-                      >
-                        <AppAutocomplete
-                            v-model="data.funcionario_id"
-                            v-debounce:900="fetchFuncionario"
-                            :items="funcionarios"
-                            label="Funcionario"
-                            :return-object="false"
-                            :loading="loading.funcionario"
-                            :rules="[rules.requiredValidator]"
-                            item-value="id"
-                            item-title="id"
-                        >
-                          <template #clear>
-                            <button
-                                @click="() => {
-                fetchFuncionario()
-                blurHandler()
-              }"
+                        <template #content="{ item }">
+                          <VRow>
+                            <VCol
+                              cols="12"
+                              md="6"
                             >
-                              <VIcon icon="tabler-x" />
-                            </button>
-                          </template>
-                        </AppAutocomplete>
-                      </VCol>
-                    </VRow>
+                              <CDFTextField
+                                v-model="item.nome"
+                                label="Formação"
+                                placeholder="Digite a nome da formção"
+                                :rules="[cdfRules.requiredValidator]"
+                              />
+                            </VCol>
+                            <VCol
+                              cols="12"
+                              md="6"
+                            >
+                              <CDFTextField
+                                v-model="item.conselho_classe"
+                                label="Conselho de Classe"
+                                placeholder="Digite o conselho de classe"
+                                :rules="[cdfRules.requiredValidator]"
+                              />
+                            </VCol>
+                          </VRow>
+                        </template>
+                      </CDFManager>
+
+                      <VCard title="Qualificação">
+                        <VCardText>
+                          <VRow>
+                            <VCol
+                              cols="12"
+                              md="4"
+                            >
+                              <CDFTextField
+                                v-model="data.nome"
+                                label="Nome da Qualificação"
+                                placeholder="Digite o nome da qualificação"
+                                :rules="[cdfRules.requiredValidator]"
+                              />
+                            </VCol>
+                            <VCol
+                              cols="12"
+                              md="4"
+                            >
+                              <CDFTextField
+                                v-model="data.validate"
+                                label="Validate"
+                                placeholder="Digite o validate"
+                                type="date"
+                                :rules="[]"
+                              />
+                            </VCol>
+                            <VCol
+                              cols="12"
+                              md="4"
+                            >
+                              <CDFTextField
+                                v-model="data.utilma_avaliacao"
+                                label="Utilma Avaliação"
+                                placeholder="Digite o utilma avaliação"
+                                type="date"
+                                :rules="[]"
+                              />
+                            </VCol>
+                            <VCol
+                              cols="12"
+                              md="4"
+                            >
+                              <CDFTextField
+                                v-model="data.validate_avaliacao"
+                                label="Validate Avaliação"
+                                placeholder="Digite o validate avaliação"
+                                type="date"
+                                :rules="[]"
+                              />
+                            </VCol>
+                          </VRow>
+                        </VCardText>
+                      </VCard>
+                    </div>
                   </VTabsWindowItem>
 
-                  <VTabsWindowItem value="dados_empresariais">
+                  <VTabsWindowItem
+                    value="atestados_ocupacionais_epi"
+                    class="pa-2"
+                  >
+                    <div class="d-flex flex-column gap-2">
+                      <VCard title="Atestado ocupacional">
+                        <VCardText>
+                          <VRow>
+                            <VCol
+                              cols="12"
+                              md="4"
+                            >
+                              <CDFTextField
+                                v-model="data.nome"
+                                label="Nome"
+                                placeholder="Digite o nome"
+                                :rules="[cdfRules.requiredValidator]"
+                              />
+                            </VCol>
+                            <VCol
+                              cols="12"
+                              md="4"
+                            >
+                              <CDFTextField
+                                v-model="data.validade"
+                                label="Validade"
+                                placeholder="Digite o validade"
+                                :rules="[]"
+                              />
+                            </VCol>
+                            <VCol
+                              cols="12"
+                              md="4"
+                            >
+                              <CDFTextField
+                                v-model="data.exame"
+                                label="Exame"
+                                placeholder="Digite o exame"
+                                :rules="[]"
+                              />
+                            </VCol>
+                          </VRow>
+                        </VCardText>
+                      </VCard>
+
+                      <VCard title="EPI">
+                        <VCardText>
+                          <VRow>
+                            <VCol
+                              cols="12"
+                              md="4"
+                            >
+                              <CDFTextField
+                                v-model="data.nome"
+                                label="Nome"
+                                placeholder="Digite o nome do EPI"
+                                :rules="[cdfRules.requiredValidator]"
+                              />
+                            </VCol>
+                            <VCol
+                              cols="12"
+                              md="4"
+                            >
+                              <CDFTextField
+                                v-model="data.ca"
+                                label="CA"
+                                placeholder="Digite o certificado de autorização"
+                                :rules="[cdfRules.requiredValidator]"
+                              />
+                            </VCol>
+                          </VRow>
+                        </VCardText>
+                      </VCard>
+                    </div>
+                  </VTabsWindowItem>
+
+                  <VTabsWindowItem
+                    value="dados_empresariais"
+                    class="pa-2"
+                  >
                     <VRow>
                       <VCol
                         cols="12"
@@ -260,8 +360,8 @@ onBeforeRouteLeave(() => {
                       >
                         <CDFTextField
                           v-model="data.razao_social"
-                          :label="$t('funcionario.form.razao_social.label')"
-                          :placeholder="$t('funcionario.form.razao_social.placeholder')"
+                          label="Razão Social"
+                          placeholder="Digite a razão social"
                           :rules="[]"
                         />
                       </VCol>
@@ -271,8 +371,8 @@ onBeforeRouteLeave(() => {
                       >
                         <CDFTextField
                           v-model="data.nome_fantasia"
-                          :label="$t('funcionario.form.nome_fantasia.label')"
-                          :placeholder="$t('funcionario.form.nome_fantasia.placeholder')"
+                          label="Nome Fantasia"
+                          placeholder="Digite o nome fantasia"
                           :rules="[]"
                         />
                       </VCol>
@@ -283,15 +383,18 @@ onBeforeRouteLeave(() => {
                         <CDFTextField
                           v-model="data.cnpj"
                           v-mask="'##.###.###/####-##'"
-                          :label="$t('funcionario.form.cnpj.label')"
-                          :placeholder="$t('funcionario.form.cnpj.placeholder')"
+                          label="CNPJ"
+                          placeholder="Digite o número do CNPJ"
                           :rules="[]"
                         />
                       </VCol>
                     </VRow>
                   </VTabsWindowItem>
 
-                  <VTabsWindowItem value="dados_bancarios">
+                  <VTabsWindowItem
+                    value="dados_bancarios"
+                    class="pa-2"
+                  >
                     <VRow>
                       <VCol
                         cols="12"
@@ -299,8 +402,8 @@ onBeforeRouteLeave(() => {
                       >
                         <CDFTextField
                           v-model="data.banco"
-                          :label="$t('funcionario.form.banco.label')"
-                          :placeholder="$t('funcionario.form.banco.placeholder')"
+                          label="Banco"
+                          placeholder="Digite o número do banco"
                           :rules="[]"
                         />
                       </VCol>
@@ -310,8 +413,8 @@ onBeforeRouteLeave(() => {
                       >
                         <CDFTextField
                           v-model="data.agencia"
-                          :label="$t('funcionario.form.agencia.label')"
-                          :placeholder="$t('funcionario.form.agencia.placeholder')"
+                          label="Agência"
+                          placeholder="Digite o número da agência"
                           :rules="[]"
                         />
                       </VCol>
@@ -321,15 +424,18 @@ onBeforeRouteLeave(() => {
                       >
                         <CDFTextField
                           v-model="data.conta"
-                          :label="$t('funcionario.form.conta.label')"
-                          :placeholder="$t('funcionario.form.conta.placeholder')"
+                          label="Conta"
+                          placeholder="Digite o número da conta"
                           :rules="[]"
                         />
                       </VCol>
                     </VRow>
                   </VTabsWindowItem>
 
-                  <VTabsWindowItem value="honrarios">
+                  <VTabsWindowItem
+                    value="honrarios"
+                    class="pa-2"
+                  >
                     <VRow>
                       <VCol
                         cols="12"
@@ -337,8 +443,8 @@ onBeforeRouteLeave(() => {
                       >
                         <InputDinheiro
                           v-model="data.valor_hh"
-                          :label="$t('funcionario.form.valor_hh.label')"
-                          :placeholder="$t('funcionario.form.valor_hh.placeholder')"
+                          label="Valor Hora Homem"
+                          placeholder="Digite o valor da hora homem"
                           prepend-inner-icon="tabler-currency-real"
                           :rules="[]"
                         />
@@ -349,8 +455,8 @@ onBeforeRouteLeave(() => {
                       >
                         <InputDinheiro
                           v-model="data.valor_diaria"
-                          :label="$t('funcionario.form.valor_diaria.label')"
-                          :placeholder="$t('funcionario.form.valor_diaria.placeholder')"
+                          label="Digite o Valor Diária"
+                          placeholder="Digite o valor da diária"
                           prepend-inner-icon="tabler-currency-real"
                           :rules="[]"
                         />
@@ -361,8 +467,8 @@ onBeforeRouteLeave(() => {
                       >
                         <InputDinheiro
                           v-model="data.valor_demanda"
-                          :label="$t('funcionario.form.valor_demanda.label')"
-                          :placeholder="$t('funcionario.form.valor_demanda.placeholder')"
+                          label="Valor Demanda"
+                          placeholder="Digite o valor da demanda"
                           prepend-inner-icon="tabler-currency-real"
                           :rules="[]"
                         />
@@ -373,8 +479,8 @@ onBeforeRouteLeave(() => {
                       >
                         <InputDinheiro
                           v-model="data.valor_deslocamento"
-                          :label="$t('funcionario.form.valor_deslocamento.label')"
-                          :placeholder="$t('funcionario.form.valor_deslocamento.placeholder')"
+                          label="Valor Deslocamento"
+                          placeholder="Digite o valor do deslocamento"
                           prepend-inner-icon="tabler-currency-real"
                           :rules="[]"
                         />
@@ -385,8 +491,8 @@ onBeforeRouteLeave(() => {
                       >
                         <InputDinheiro
                           v-model="data.valor_refeicao"
-                          :label="$t('funcionario.form.valor_refeicao.label')"
-                          :placeholder="$t('funcionario.form.valor_refeicao.placeholder')"
+                          label="Valor Refeição"
+                          placeholder="Digite o valor da refeição"
                           prepend-inner-icon="tabler-currency-real"
                           :rules="[]"
                         />
@@ -397,8 +503,8 @@ onBeforeRouteLeave(() => {
                       >
                         <InputDinheiro
                           v-model="data.valor_pedagio"
-                          :label="$t('funcionario.form.valor_pedagio.label')"
-                          :placeholder="$t('funcionario.form.valor_pedagio.placeholder')"
+                          label="Valor Pedágio"
+                          placeholder="Digite o valor do pedágio"
                           prepend-inner-icon="tabler-currency-real"
                           :rules="[]"
                         />
@@ -409,8 +515,8 @@ onBeforeRouteLeave(() => {
                       >
                         <InputDinheiro
                           v-model="data.valor_hospedagem"
-                          :label="$t('funcionario.form.valor_hospedagem.label')"
-                          :placeholder="$t('funcionario.form.valor_hospedagem.placeholder')"
+                          label="Valor Hospedagem"
+                          placeholder="Digite o valor da hospedagem"
                           prepend-inner-icon="tabler-currency-real"
                           :rules="[]"
                         />
@@ -421,8 +527,8 @@ onBeforeRouteLeave(() => {
                       >
                         <InputDinheiro
                           v-model="data.valor_outros"
-                          :label="$t('funcionario.form.valor_outros.label')"
-                          :placeholder="$t('funcionario.form.valor_outros.placeholder')"
+                          label="Valor Outros"
+                          placeholder="Digite o valor de outros"
                           prepend-inner-icon="tabler-currency-real"
                           :rules="[]"
                         />

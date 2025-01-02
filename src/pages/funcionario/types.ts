@@ -26,5 +26,10 @@ export interface IFuncionario {
   agencia: string
   conta: string
   user_id: string
+}
 
+export interface IFormacao {
+  id?: string
+  nome: string
+  conselho_classe: string
 }

@@ -41,6 +41,7 @@ declare module 'vue' {
     CDFDropZone: typeof import('./src/components/CDF/CDFDropZone.vue')['default']
     CDFGenericButton: typeof import('./src/components/CDF/CDFGenericButton.vue')['default']
     CDFGenericTooltipButton: typeof import('./src/components/CDF/CDFGenericTooltipButton.vue')['default']
+    CDFManager: typeof import('./src/components/CDF/CDFManager.vue')['default']
     CDFMoreBtn: typeof import('./src/components/CDF/CDFMoreBtn.vue')['default']
     CDFNumberInput: typeof import('./src/components/CDF/CDFNumberInput.vue')['default']
     CDFSwitch: typeof import('./src/components/CDF/CDFSwitch.vue')['default']
