@@ -4,7 +4,7 @@ import { useFuncionarioStore } from '../store/useFuncionarioStore'
 import LayoutForms from '@/components/CDF/LayoutForms.vue'
 import * as cdfRules from '@/validators/cdf-rules'
 import CDFManager from '@/components/CDF/CDFManager.vue'
-import type {IAtestadoOcupacional, IEPI, IFormacao, IQualificacao} from '@/pages/funcionario/types'
+import type { IAtestadoOcupacional, IEPI, IFormacao, IQualificacao } from '@/pages/funcionario/types'
 
 const { isEditing } = withDefaults(defineProps<{
   isEditing: boolean
@@ -61,8 +61,8 @@ onBeforeRouteLeave(() => {
   >
     <template #content>
       <VCol cols="12">
-        <VCard flat>
-          <VCardText class="px-0">
+        <VCard variant="outlined">
+          <VCardText>
             <VRow>
               <VCol cols="12">
                 <CDFTextField
@@ -387,187 +387,199 @@ onBeforeRouteLeave(() => {
                     value="dados_empresariais"
                     class="pa-2"
                   >
-                    <VRow>
-                      <VCol
-                        cols="12"
-                        md="4"
-                      >
-                        <CDFTextField
-                          v-model="data.razao_social"
-                          label="Razão Social"
-                          placeholder="Digite a razão social"
-                          :rules="[]"
-                        />
-                      </VCol>
-                      <VCol
-                        cols="12"
-                        md="4"
-                      >
-                        <CDFTextField
-                          v-model="data.nome_fantasia"
-                          label="Nome Fantasia"
-                          placeholder="Digite o nome fantasia"
-                          :rules="[]"
-                        />
-                      </VCol>
-                      <VCol
-                        cols="12"
-                        md="4"
-                      >
-                        <CDFTextField
-                          v-model="data.cnpj"
-                          v-mask="'##.###.###/####-##'"
-                          label="CNPJ"
-                          placeholder="Digite o número do CNPJ"
-                          :rules="[]"
-                        />
-                      </VCol>
-                    </VRow>
+                    <VCard variant="outlined">
+                      <VCardText>
+                        <VRow>
+                          <VCol
+                            cols="12"
+                            md="4"
+                          >
+                            <CDFTextField
+                              v-model="data.razao_social"
+                              label="Razão Social"
+                              placeholder="Digite a razão social"
+                              :rules="[]"
+                            />
+                          </VCol>
+                          <VCol
+                            cols="12"
+                            md="4"
+                          >
+                            <CDFTextField
+                              v-model="data.nome_fantasia"
+                              label="Nome Fantasia"
+                              placeholder="Digite o nome fantasia"
+                              :rules="[]"
+                            />
+                          </VCol>
+                          <VCol
+                            cols="12"
+                            md="4"
+                          >
+                            <CDFTextField
+                              v-model="data.cnpj"
+                              v-mask="'##.###.###/####-##'"
+                              label="CNPJ"
+                              placeholder="Digite o número do CNPJ"
+                              :rules="[]"
+                            />
+                          </VCol>
+                        </VRow>
+                      </VCardText>
+                    </VCard>
                   </VTabsWindowItem>
 
                   <VTabsWindowItem
                     value="dados_bancarios"
                     class="pa-2"
                   >
-                    <VRow>
-                      <VCol
-                        cols="12"
-                        md="4"
-                      >
-                        <CDFTextField
-                          v-model="data.banco"
-                          label="Banco"
-                          placeholder="Digite o número do banco"
-                          :rules="[]"
-                        />
-                      </VCol>
-                      <VCol
-                        cols="12"
-                        md="4"
-                      >
-                        <CDFTextField
-                          v-model="data.agencia"
-                          label="Agência"
-                          placeholder="Digite o número da agência"
-                          :rules="[]"
-                        />
-                      </VCol>
-                      <VCol
-                        cols="12"
-                        md="4"
-                      >
-                        <CDFTextField
-                          v-model="data.conta"
-                          label="Conta"
-                          placeholder="Digite o número da conta"
-                          :rules="[]"
-                        />
-                      </VCol>
-                    </VRow>
+                    <VCard variant="outlined">
+                      <VCardText>
+                        <VRow>
+                          <VCol
+                            cols="12"
+                            md="4"
+                          >
+                            <CDFTextField
+                              v-model="data.banco"
+                              label="Banco"
+                              placeholder="Digite o número do banco"
+                              :rules="[]"
+                            />
+                          </VCol>
+                          <VCol
+                            cols="12"
+                            md="4"
+                          >
+                            <CDFTextField
+                              v-model="data.agencia"
+                              label="Agência"
+                              placeholder="Digite o número da agência"
+                              :rules="[]"
+                            />
+                          </VCol>
+                          <VCol
+                            cols="12"
+                            md="4"
+                          >
+                            <CDFTextField
+                              v-model="data.conta"
+                              label="Conta"
+                              placeholder="Digite o número da conta"
+                              :rules="[]"
+                            />
+                          </VCol>
+                        </VRow>
+                      </VCardText>
+                    </VCard>
                   </VTabsWindowItem>
 
                   <VTabsWindowItem
                     value="honrarios"
                     class="pa-2"
                   >
-                    <VRow>
-                      <VCol
-                        cols="12"
-                        md="4"
-                      >
-                        <InputDinheiro
-                          v-model="data.valor_hh"
-                          label="Valor Hora Homem"
-                          placeholder="Digite o valor da hora homem"
-                          prepend-inner-icon="tabler-currency-real"
-                          :rules="[]"
-                        />
-                      </VCol>
-                      <VCol
-                        cols="12"
-                        md="4"
-                      >
-                        <InputDinheiro
-                          v-model="data.valor_diaria"
-                          label="Digite o Valor Diária"
-                          placeholder="Digite o valor da diária"
-                          prepend-inner-icon="tabler-currency-real"
-                          :rules="[]"
-                        />
-                      </VCol>
-                      <VCol
-                        cols="12"
-                        md="4"
-                      >
-                        <InputDinheiro
-                          v-model="data.valor_demanda"
-                          label="Valor Demanda"
-                          placeholder="Digite o valor da demanda"
-                          prepend-inner-icon="tabler-currency-real"
-                          :rules="[]"
-                        />
-                      </VCol>
-                      <VCol
-                        cols="12"
-                        md="4"
-                      >
-                        <InputDinheiro
-                          v-model="data.valor_deslocamento"
-                          label="Valor Deslocamento"
-                          placeholder="Digite o valor do deslocamento"
-                          prepend-inner-icon="tabler-currency-real"
-                          :rules="[]"
-                        />
-                      </VCol>
-                      <VCol
-                        cols="12"
-                        md="4"
-                      >
-                        <InputDinheiro
-                          v-model="data.valor_refeicao"
-                          label="Valor Refeição"
-                          placeholder="Digite o valor da refeição"
-                          prepend-inner-icon="tabler-currency-real"
-                          :rules="[]"
-                        />
-                      </VCol>
-                      <VCol
-                        cols="12"
-                        md="4"
-                      >
-                        <InputDinheiro
-                          v-model="data.valor_pedagio"
-                          label="Valor Pedágio"
-                          placeholder="Digite o valor do pedágio"
-                          prepend-inner-icon="tabler-currency-real"
-                          :rules="[]"
-                        />
-                      </VCol>
-                      <VCol
-                        cols="12"
-                        md="4"
-                      >
-                        <InputDinheiro
-                          v-model="data.valor_hospedagem"
-                          label="Valor Hospedagem"
-                          placeholder="Digite o valor da hospedagem"
-                          prepend-inner-icon="tabler-currency-real"
-                          :rules="[]"
-                        />
-                      </VCol>
-                      <VCol
-                        cols="12"
-                        md="4"
-                      >
-                        <InputDinheiro
-                          v-model="data.valor_outros"
-                          label="Valor Outros"
-                          placeholder="Digite o valor de outros"
-                          prepend-inner-icon="tabler-currency-real"
-                          :rules="[]"
-                        />
-                      </VCol>
-                    </VRow>
+                    <VCard variant="outlined">
+                      <VCardText>
+                        <VRow>
+                          <VCol
+                            cols="12"
+                            md="4"
+                          >
+                            <InputDinheiro
+                              v-model="data.valor_hh"
+                              label="Valor Hora Homem"
+                              placeholder="Digite o valor da hora homem"
+                              prepend-inner-icon="tabler-currency-real"
+                              :rules="[]"
+                            />
+                          </VCol>
+                          <VCol
+                            cols="12"
+                            md="4"
+                          >
+                            <InputDinheiro
+                              v-model="data.valor_diaria"
+                              label="Digite o Valor Diária"
+                              placeholder="Digite o valor da diária"
+                              prepend-inner-icon="tabler-currency-real"
+                              :rules="[]"
+                            />
+                          </VCol>
+                          <VCol
+                            cols="12"
+                            md="4"
+                          >
+                            <InputDinheiro
+                              v-model="data.valor_demanda"
+                              label="Valor Demanda"
+                              placeholder="Digite o valor da demanda"
+                              prepend-inner-icon="tabler-currency-real"
+                              :rules="[]"
+                            />
+                          </VCol>
+                          <VCol
+                            cols="12"
+                            md="4"
+                          >
+                            <InputDinheiro
+                              v-model="data.valor_deslocamento"
+                              label="Valor Deslocamento"
+                              placeholder="Digite o valor do deslocamento"
+                              prepend-inner-icon="tabler-currency-real"
+                              :rules="[]"
+                            />
+                          </VCol>
+                          <VCol
+                            cols="12"
+                            md="4"
+                          >
+                            <InputDinheiro
+                              v-model="data.valor_refeicao"
+                              label="Valor Refeição"
+                              placeholder="Digite o valor da refeição"
+                              prepend-inner-icon="tabler-currency-real"
+                              :rules="[]"
+                            />
+                          </VCol>
+                          <VCol
+                            cols="12"
+                            md="4"
+                          >
+                            <InputDinheiro
+                              v-model="data.valor_pedagio"
+                              label="Valor Pedágio"
+                              placeholder="Digite o valor do pedágio"
+                              prepend-inner-icon="tabler-currency-real"
+                              :rules="[]"
+                            />
+                          </VCol>
+                          <VCol
+                            cols="12"
+                            md="4"
+                          >
+                            <InputDinheiro
+                              v-model="data.valor_hospedagem"
+                              label="Valor Hospedagem"
+                              placeholder="Digite o valor da hospedagem"
+                              prepend-inner-icon="tabler-currency-real"
+                              :rules="[]"
+                            />
+                          </VCol>
+                          <VCol
+                            cols="12"
+                            md="4"
+                          >
+                            <InputDinheiro
+                              v-model="data.valor_outros"
+                              label="Valor Outros"
+                              placeholder="Digite o valor de outros"
+                              prepend-inner-icon="tabler-currency-real"
+                              :rules="[]"
+                            />
+                          </VCol>
+                        </VRow>
+                      </VCardText>
+                    </VCard>
                   </VTabsWindowItem>
                 </VTabsWindow>
               </VCol>

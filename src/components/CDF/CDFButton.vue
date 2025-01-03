@@ -2,7 +2,8 @@
 export type VariantButton = 'flat' | 'text' | 'elevated' | 'tonal' | 'outlined' | 'plain'
 export type ColorButton = 'primary' | 'success' | 'error' | 'warning' | 'info' | 'secondary'
 export type StringOrNumber = string | number
-interface Props {
+
+withDefaults(defineProps<{
   loading?: boolean
   variant: VariantButton
   color: ColorButton
@@ -25,9 +26,7 @@ interface Props {
   progressColor?: string
   progressIndeterminate?: boolean
   onClick?: any
-}
-
-withDefaults(defineProps<Props>(), {
+}>(), {
   color: 'primary',
   variant: 'elevated',
   rounded: true,
@@ -39,6 +38,7 @@ withDefaults(defineProps<Props>(), {
   progressIndeterminate: true,
   loading: false,
   isText: true,
+  type: 'button',
 })
 
 const elementButton = ref(null)

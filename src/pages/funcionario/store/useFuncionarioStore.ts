@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
-import type {IAtestadoSaude, IEPI, IFormacao, IQualificacao} from '@/pages/funcionario/types'
-import {IAtestadoOcupacional} from "@/pages/funcionario/types";
+import type { IAtestadoOcupacional, IEPI, IFormacao, IQualificacao } from '@/pages/funcionario/types'
 
 const defaultValue = {
   nome: '',
