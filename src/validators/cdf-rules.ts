@@ -93,16 +93,6 @@ export const alphaDashValidator = (value: unknown) => {
   return /^[\w-]*$/.test(valueAsString) || 'Todos os caracteres são inválidos'
 }
 
-// valida se a data é maior que hoje
-export const dataMaiorQueHoje = (data: string) => {
-  const dataSelecionada = new Date(data)
-  const hoje = new Date()
-
-  hoje.setHours(0, 0, 0, 0)
-
-  return dataSelecionada > hoje || 'A data inserida precisa ser maior que hoje.'
-}
-
 export const regexCNPJ = /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/
 
 export const cnpjValidator = (value: string | number | number[] = '') => {
@@ -198,10 +188,10 @@ export const cpfValidator = (cpf: string) => {
 
 export const cepValidator = (cep: string) => {
   // Remover caracteres não numéricos
-  const cepLimpo = cep.replace(/\D/g, '')
+  const cepLimpo = cep?.replace(/\D/g, '')
 
   // Verificar se o CEP possui 8 dígitos
-  if (cepLimpo.length !== 8)
+  if (cepLimpo?.length !== 8)
     return false || 'Você precisa informar um CEP válido.'
 
   // Verificar se o CEP é uma sequência de dígitos repetidos

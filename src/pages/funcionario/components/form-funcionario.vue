@@ -5,6 +5,7 @@ import LayoutForms from '@/components/CDF/LayoutForms.vue'
 import * as cdfRules from '@/validators/cdf-rules'
 import CDFManager from '@/components/CDF/CDFManager.vue'
 import type { IAtestadoOcupacional, IEPI, IFormacao, IQualificacao } from '@/pages/funcionario/types'
+import CDFFileUpload from '@/components/CDF/CDFFileUpload.vue'
 
 const { isEditing } = withDefaults(defineProps<{
   isEditing: boolean
@@ -15,6 +16,7 @@ const { isEditing } = withDefaults(defineProps<{
 })
 
 const store = useFuncionarioStore()
+const router = useRouter()
 
 onMounted(() => {
   // 👉 methods
@@ -48,10 +50,10 @@ onBeforeRouteLeave(() => {
     :is-header="isHeader"
     :actions="{
       save: {
-        method: () => save(),
+        method: () => save(true),
       },
       update: {
-        method: () => update(),
+        method: () => update(true),
       },
       reset: {
         method: () => resetForm(),
@@ -62,98 +64,100 @@ onBeforeRouteLeave(() => {
     <template #content>
       <VCol cols="12">
         <VCard variant="outlined">
-          <VCardText>
+          <VCardText class="pa-2">
             <VRow>
               <VCol cols="12">
-                <CDFTextField
-                  v-model="data.nome"
-                  label="Nome Completo"
-                  placeholder="Digite o nome completo"
-                  :rules="[cdfRules.requiredValidator]"
-                />
+                <VCard
+                  title="Dados Pessoais"
+                  flat
+                >
+                  <VCardText class="pt-0 pb-2">
+                    <VRow>
+                      <VCol cols="12">
+                        <CDFTextField
+                          v-model="data.nome"
+                          label="Nome Completo"
+                          placeholder="Digite o nome completo"
+                          :rules="[cdfRules.requiredValidator]"
+                        />
+                      </VCol>
+                      <VCol
+                        cols="12"
+                        md="6"
+                      >
+                        <CDFTextField
+                          v-model="data.rg"
+                          label="RG"
+                          placeholder="Digite o número do RG"
+                          :rules="[]"
+                        />
+                      </VCol>
+                      <VCol
+                        cols="12"
+                        md="6"
+                      >
+                        <CDFTextField
+                          v-model="data.cpf"
+                          v-mask="'###.###.###-##'"
+                          label="CPF"
+                          placeholder="Digite o número do CPF"
+                          :rules="[cdfRules.requiredValidator, cdfRules.cpfValidator]"
+                        />
+                      </VCol>
+                      <VCol
+                        cols="12"
+                        md="6"
+                      >
+                        <CDFTextField
+                          v-model="data.telefone_1"
+                          v-mask="'(##) ####-####'"
+                          type="tel"
+                          label="Telefone 1"
+                          placeholder="Digite o número do telefone 1"
+                          :rules="[]"
+                        />
+                      </VCol>
+                      <VCol
+                        cols="12"
+                        md="6"
+                      >
+                        <CDFTextField
+                          v-model="data.telefone_2"
+                          v-mask="'(##) ####-####'"
+                          type="tel"
+                          label="Telefone 2"
+                          placeholder="Digite o número do telefone 2"
+                          :rules="[]"
+                        />
+                      </VCol>
+                    </VRow>
+                  </VCardText>
+                </VCard>
               </VCol>
-              <VCol
-                cols="12"
-                md="6"
-              >
-                <CDFTextField
-                  v-model="data.rg"
-                  label="RG"
-                  placeholder="Digite o número do RG"
-                  :rules="[]"
-                />
-              </VCol>
-              <VCol
-                cols="12"
-                md="6"
-              >
-                <CDFTextField
-                  v-model="data.cpf"
-                  v-mask="'###.###.###-##'"
-                  label="CPF"
-                  placeholder="Digite o número do CPF"
-                  :rules="[cdfRules.requiredValidator]"
-                />
-              </VCol>
-              <VCol
-                cols="12"
-                md="6"
-              >
-                <CDFTextField
-                  v-model="data.telefone_1"
-                  v-mask="'(##) ####-####'"
-                  type="tel"
-                  label="Telefone 1"
-                  placeholder="Digite o número do telefone 1"
-                  :rules="[]"
-                />
-              </VCol>
-              <VCol
-                cols="12"
-                md="6"
-              >
-                <CDFTextField
-                  v-model="data.telefone_2"
-                  v-mask="'(##) ####-####'"
-                  type="tel"
-                  label="Telefone 2"
-                  placeholder="Digite o número do telefone 2"
-                  :rules="[]"
-                />
-              </VCol>
-              <VCol
-                cols="12"
-                md="6"
-              >
-                <CDFTextField
-                  v-model="data.email_1"
-                  label="E-mail 1"
-                  placeholder="Digite o endereço de e-mail 1"
-                  :rules="[]"
-                />
-              </VCol>
-              <VCol
-                cols="12"
-                md="6"
-              >
-                <CDFTextField
-                  v-model="data.email_2"
-                  label="E-mail 2"
-                  placeholder="Digite o endereço de e-mail 2"
-                  :rules="[]"
-                />
-              </VCol>
+              <VDivider />
               <VCol cols="12">
-                <Endereco v-model:data="data" />
+                <VCard
+                  title="Endereço"
+                  flat
+                >
+                  <VCardText class="pt-0 pb-2">
+                    <VRow>
+                      <VCol cols="12">
+                        <Endereco v-model:data="data" />
+                      </VCol>
+                      <VCol cols="12">
+                        <AppTextField
+                          v-model="data.aeroporto_proximo"
+                          label="Aeroporto Próximo"
+                          placeholder="Digite o nome do aeroporto mais próximo"
+                          :rules="[]"
+                        />
+                      </VCol>
+                    </VRow>
+                  </VCardText>
+                </VCard>
               </VCol>
-              <VCol cols="12">
-                <AppTextarea
-                  v-model="data.aeroporto_proximo"
-                  label="Aeroporto Próximo"
-                  placeholder="Digite o nome do aeroporto mais próximo"
-                  :rules="[]"
-                />
-              </VCol>
+              <VDivider />
               <VCol cols="12">
                 <VTabs v-model="tab">
                   <VTab value="qualificacoes_pofissionais">
@@ -170,6 +174,9 @@ onBeforeRouteLeave(() => {
                   </VTab>
                   <VTab value="honrarios">
                     Honorários
+                  </VTab>
+                  <VTab value="dados_usuario">
+                    Usuário
                   </VTab>
                 </VTabs>
 
@@ -292,7 +299,7 @@ onBeforeRouteLeave(() => {
                   >
                     <div class="d-flex flex-column gap-2">
                       <CDFManager
-                        v-model:items="data.atestado_saude"
+                        v-model:items="data.atestado_ocupacionals"
                         title="Atestado Ocupacional"
                         item-title="nome"
                         item-label="Atestado Ocupacional"
@@ -324,6 +331,7 @@ onBeforeRouteLeave(() => {
                                 v-model="item.validade"
                                 label="Validade"
                                 placeholder="Digite o validade"
+                                type="date"
                                 :rules="[]"
                               />
                             </VCol>
@@ -331,7 +339,7 @@ onBeforeRouteLeave(() => {
                               cols="12"
                               md="4"
                             >
-                              <CDFTextField
+                              <CDFFileUpload
                                 v-model="item.exame"
                                 label="Exame"
                                 placeholder="Digite o exame"
@@ -343,7 +351,7 @@ onBeforeRouteLeave(() => {
                       </CDFManager>
 
                       <CDFManager
-                        v-model:items="data.epi"
+                        v-model:items="data.epis"
                         title="EPI"
                         item-title="nome"
                         item-label="EPI"
@@ -581,9 +589,43 @@ onBeforeRouteLeave(() => {
                       </VCardText>
                     </VCard>
                   </VTabsWindowItem>
+
+                  <VTabsWindowItem
+                    value="dados_usuario"
+                    class="pa-2"
+                  >
+                    <VCard variant="outlined">
+                      <VCardText>
+                        <VRow>
+                          <VCol
+                            cols="12"
+                            md="6"
+                          >
+                            <CDFTextField
+                              v-model="data.user.email"
+                              label="E-mail"
+                              placeholder="Digite o endereço de e-mail"
+                              :rules="[cdfRules.emailValidator]"
+                            />
+                          </VCol>
+                          <VCol
+                            cols="12"
+                            md="6"
+                          >
+                            <CDFTextField
+                              v-model="data.user.password"
+                              label="Senha"
+                              placeholder="Digite o senha"
+                              type="password"
+                            />
+                          </VCol>
+                        </VRow>
+                      </VCardText>
+                    </VCard>
+                  </VTabsWindowItem>
                 </VTabsWindow>
               </VCol>
-            </VRow>
+            </vrow>
           </VCardText>
         </VCard>
       </VCol>

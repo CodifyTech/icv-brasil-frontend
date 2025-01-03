@@ -16,8 +16,8 @@ export default [
   ...users,
   ...utils,
   {
-    title: 'Funcionario',
-    icon: { icon: 'tabler-template' },
+    title: 'Funcionários',
+    icon: { icon: 'fa-light fa-user-tie' },
     to: 'funcionario',
     action: 'list',
     subject: 'funcionario',

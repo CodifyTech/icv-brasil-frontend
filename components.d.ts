@@ -39,6 +39,7 @@ declare module 'vue' {
     CDFChipExpansive: typeof import('./src/components/CDF/CDFChipExpansive.vue')['default']
     CDFConfirmDialog: typeof import('./src/components/CDF/CDFConfirmDialog.vue')['default']
     CDFDropZone: typeof import('./src/components/CDF/CDFDropZone.vue')['default']
+    CDFFileUpload: typeof import('./src/components/CDF/CDFFileUpload.vue')['default']
     CDFGenericButton: typeof import('./src/components/CDF/CDFGenericButton.vue')['default']
     CDFGenericTooltipButton: typeof import('./src/components/CDF/CDFGenericTooltipButton.vue')['default']
     CDFManager: typeof import('./src/components/CDF/CDFManager.vue')['default']

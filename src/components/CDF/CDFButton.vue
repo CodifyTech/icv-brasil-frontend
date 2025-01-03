@@ -50,6 +50,7 @@ const _elementIdToken = `app-button-${Math.random().toString(36).slice(2, 7)}`
   <VBtn
     :id="_elementIdToken"
     :ref="elementButton"
+    class="cdf-button"
     :color="color"
     :variant="variant"
     :size="size"
@@ -92,3 +93,11 @@ const _elementIdToken = `app-button-${Math.random().toString(36).slice(2, 7)}`
     </div>
   </VBtn>
 </template>
+
+<style lang="scss">
+.cdf-button{
+  .v-btn__prepend{
+    margin: 0;
+  }
+}
+</style>

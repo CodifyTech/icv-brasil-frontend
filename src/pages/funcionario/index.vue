@@ -48,133 +48,24 @@ const {
 const headers: ComputedRef<IHeader[]> = computed(() => {
   return [
     {
-      title: t('funcionario.headers.nome'),
+      title: 'Nome',
       key: 'nome',
     },
-
     {
-      title: t('funcionario.headers.rg'),
-      key: 'rg',
-    },
-
-    {
-      title: t('funcionario.headers.cpf'),
+      title: 'CPF',
       key: 'cpf',
     },
-
     {
-      title: t('funcionario.headers.telefone_1'),
+      title: 'Telefone',
       key: 'telefone_1',
     },
-
     {
-      title: t('funcionario.headers.telefone_2'),
-      key: 'telefone_2',
-    },
-
-    {
-      title: t('funcionario.headers.email_1'),
+      title: 'Email',
       key: 'email_1',
     },
-
     {
-      title: t('funcionario.headers.email_2'),
-      key: 'email_2',
-    },
-
-    {
-      title: t('funcionario.headers.logradouro'),
-      key: 'logradouro',
-    },
-
-    {
-      title: t('funcionario.headers.bairro'),
-      key: 'bairro',
-    },
-
-    {
-      title: t('funcionario.headers.cidade'),
+      title: 'Cidade',
       key: 'cidade',
-    },
-
-    {
-      title: t('funcionario.headers.uf'),
-      key: 'uf',
-    },
-
-    {
-      title: t('funcionario.headers.aeroporto_proximo'),
-      key: 'aeroporto_proximo',
-    },
-
-    {
-      title: t('funcionario.headers.razao_social'),
-      key: 'razao_social',
-    },
-
-    {
-      title: t('funcionario.headers.nome_fantasia'),
-      key: 'nome_fantasia',
-    },
-
-    {
-      title: t('funcionario.headers.cnpj'),
-      key: 'cnpj',
-    },
-
-    {
-      title: t('funcionario.headers.valor_hh'),
-      key: 'valor_hh',
-    },
-
-    {
-      title: t('funcionario.headers.valor_diaria'),
-      key: 'valor_diaria',
-    },
-
-    {
-      title: t('funcionario.headers.valor_demanda'),
-      key: 'valor_demanda',
-    },
-
-    {
-      title: t('funcionario.headers.valor_deslocamento'),
-      key: 'valor_deslocamento',
-    },
-
-    {
-      title: t('funcionario.headers.valor_refeicao'),
-      key: 'valor_refeicao',
-    },
-
-    {
-      title: t('funcionario.headers.valor_pedagio'),
-      key: 'valor_pedagio',
-    },
-
-    {
-      title: t('funcionario.headers.valor_hospedagem'),
-      key: 'valor_hospedagem',
-    },
-
-    {
-      title: t('funcionario.headers.valor_outros'),
-      key: 'valor_outros',
-    },
-
-    {
-      title: t('funcionario.headers.banco'),
-      key: 'banco',
-    },
-
-    {
-      title: t('funcionario.headers.agencia'),
-      key: 'agencia',
-    },
-
-    {
-      title: t('funcionario.headers.conta'),
-      key: 'conta',
     },
   ]
 })
@@ -182,135 +73,33 @@ const headers: ComputedRef<IHeader[]> = computed(() => {
 const terms: ComputedRef<ITerm[]> = computed(() => {
   return [
     {
-      title: t('funcionario.terms.nome'),
+      title: 'Nome',
       value: 'nome',
     },
-
     {
-      title: t('funcionario.terms.rg'),
-      value: 'rg',
-    },
-
-    {
-      title: t('funcionario.terms.cpf'),
+      title: 'CPF',
       value: 'cpf',
+      mask: '###.###.###-##',
     },
-
     {
-      title: t('funcionario.terms.telefone_1'),
+      title: 'Telefone',
       value: 'telefone_1',
+      mask: '(##) #####-####',
     },
-
     {
-      title: t('funcionario.terms.telefone_2'),
-      value: 'telefone_2',
-    },
-
-    {
-      title: t('funcionario.terms.email_1'),
+      title: 'Email',
       value: 'email_1',
     },
-
     {
-      title: t('funcionario.terms.email_2'),
-      value: 'email_2',
-    },
-
-    {
-      title: t('funcionario.terms.logradouro'),
-      value: 'logradouro',
-    },
-
-    {
-      title: t('funcionario.terms.bairro'),
-      value: 'bairro',
-    },
-
-    {
-      title: t('funcionario.terms.cidade'),
+      title: 'Cidade',
       value: 'cidade',
+      type: 'ENUM',
+      options: [
+        'São Paulo',
+        'Rio de Janeiro',
+      ],
     },
-
-    {
-      title: t('funcionario.terms.uf'),
-      value: 'uf',
-    },
-
-    {
-      title: t('funcionario.terms.aeroporto_proximo'),
-      value: 'aeroporto_proximo',
-    },
-
-    {
-      title: t('funcionario.terms.razao_social'),
-      value: 'razao_social',
-    },
-
-    {
-      title: t('funcionario.terms.nome_fantasia'),
-      value: 'nome_fantasia',
-    },
-
-    {
-      title: t('funcionario.terms.cnpj'),
-      value: 'cnpj',
-    },
-
-    {
-      title: t('funcionario.terms.valor_hh'),
-      value: 'valor_hh',
-    },
-
-    {
-      title: t('funcionario.terms.valor_diaria'),
-      value: 'valor_diaria',
-    },
-
-    {
-      title: t('funcionario.terms.valor_demanda'),
-      value: 'valor_demanda',
-    },
-
-    {
-      title: t('funcionario.terms.valor_deslocamento'),
-      value: 'valor_deslocamento',
-    },
-
-    {
-      title: t('funcionario.terms.valor_refeicao'),
-      value: 'valor_refeicao',
-    },
-
-    {
-      title: t('funcionario.terms.valor_pedagio'),
-      value: 'valor_pedagio',
-    },
-
-    {
-      title: t('funcionario.terms.valor_hospedagem'),
-      value: 'valor_hospedagem',
-    },
-
-    {
-      title: t('funcionario.terms.valor_outros'),
-      value: 'valor_outros',
-    },
-
-    {
-      title: t('funcionario.terms.banco'),
-      value: 'banco',
-    },
-
-    {
-      title: t('funcionario.terms.agencia'),
-      value: 'agencia',
-    },
-
-    {
-      title: t('funcionario.terms.conta'),
-      value: 'conta',
-    },
-  ]
+  ] as ITerm[]
 })
 
 const actions: ITableAction[] = [

@@ -2,6 +2,7 @@
 // eslint-disable-next-line no-restricted-imports
 import { VExpansionPanels } from 'vuetify/components'
 import { useConfirmDialogStore } from '@/stores/useConfirmDialogStore'
+import CDFButton from '@/components/CDF/CDFButton.vue'
 
 const props = withDefaults(
   defineProps<{
@@ -27,7 +28,7 @@ const emit = defineEmits<{
 }>()
 
 const expansionPanels = ref()
-const items = ref<any[]>(props.items ?? [])
+const items = ref<any[]>(props.items)
 const loading = ref<boolean>(false)
 
 const add = () => {
@@ -41,8 +42,21 @@ const add = () => {
 }
 
 const obterExpansionTitle = (index: number) => {
-  return props.items[index][props.itemTitle] ? `${props.itemLabel} ${props.items[index][props.itemTitle]}` : `${props.itemLabel} ${index + 1}`
+  const item = props.items[index]
+  if (!item)
+    return `${props.itemLabel} ${index + 1}`
+
+  const title = item[props.itemTitle]
+
+  return title ? `${props.itemLabel} ${title}` : `${props.itemLabel} ${index + 1}`
 }
+
+onUpdated(() => {
+  if (props.items)
+    items.value = props.items
+
+  nextTick()
+})
 </script>
 
 <template>
@@ -52,13 +66,17 @@ const obterExpansionTitle = (index: number) => {
     class="cdf-manager-card"
   >
     <template #append>
-      <VBtn
+      <CDFButton
         v-if="!isReadOnly"
         prepend-icon="tabler-plus"
-        :text="`Adicionar ${title ?? ''}`"
         variant="outlined"
+        :is-text="$vuetify.display.smAndUp"
+        :size="$vuetify.display.smAndUp ? 'default' : 'small'"
+        color="primary"
         @click="add"
-      />
+      >
+        Adicionar {{ title ?? '' }}
+      </CDFButton>
     </template>
 
     <VDivider />

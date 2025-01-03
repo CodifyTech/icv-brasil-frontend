@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import type { IAtestadoOcupacional, IEPI, IFormacao, IQualificacao } from '@/pages/funcionario/types'
+import {IUser} from "@/pages/users/types";
 
 const defaultValue = {
   nome: '',
@@ -7,8 +8,8 @@ const defaultValue = {
   cpf: '',
   telefone_1: '',
   telefone_2: '',
-  email_1: '',
-  email_2: '',
+  email: '',
+  password: '',
   logradouro: '',
   bairro: '',
   cidade: '',
@@ -29,9 +30,13 @@ const defaultValue = {
   agencia: '',
   conta: '',
 
+  user: {
+    email: '',
+    password: '',
+  } as IUser,
   formacoes: [] as IFormacao[],
-  atestado_saude: [] as IAtestadoOcupacional[],
-  epi: [] as IEPI[],
+  atestado_ocupacionals: [] as IAtestadoOcupacional[],
+  epis: [] as IEPI[],
   qualificacoes: [] as IQualificacao[],
 }
 
