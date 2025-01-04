@@ -29,4 +29,11 @@ export default [
     action: 'list',
     subject: 'cliente',
   },
+  {
+    title: 'Proposta',
+    icon: { icon: 'tabler-template' },
+    to: 'proposta',
+    action: 'list',
+    subject: 'proposta',
+  },
 ]
