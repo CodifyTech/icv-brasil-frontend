@@ -67,7 +67,7 @@ onBeforeRouteLeave(() => {
       >
         <CDFTextField
           v-model="data.razao_social"
-          label="Razao social"
+          label="Razão Social"
           placeholder="Digite o Razao social"
           :rules="[rules.requiredValidator]"
         />
@@ -78,8 +78,8 @@ onBeforeRouteLeave(() => {
       >
         <CDFTextField
           v-model="data.nome_fantasia"
-          label="Nome fantasia"
-          placeholder="Digite o Nome fantasia"
+          label="Nome Fantasia"
+          placeholder="Digite o nome fantasia"
           :rules="[]"
         />
       </VCol>
@@ -90,8 +90,8 @@ onBeforeRouteLeave(() => {
         <CDFTextField
           v-model="data.cnpj"
           v-mask="'##.###.###/####-##'"
-          label="Cnpj"
-          placeholder="Digite o Cnpj"
+          label="CNPJ"
+          placeholder="Digite o CNPJ"
           :rules="[rules.requiredValidator]"
         />
       </VCol>
@@ -99,7 +99,7 @@ onBeforeRouteLeave(() => {
       <VCol cols="12">
         <CDFManager
           v-model:items="data.filiais"
-          title="Filial"
+          title="Filials"
           item-title="razao_social"
           item-label="Filial"
           message-add="Adicionar Filial"
@@ -113,8 +113,8 @@ onBeforeRouteLeave(() => {
               >
                 <CDFTextField
                   v-model="item.razao_social"
-                  label="Razao social"
-                  placeholder="Digite o Razao social"
+                  label="Razão Social"
+                  placeholder="Digite o Razão Social"
                   :rules="[rules.requiredValidator]"
                 />
               </VCol>
@@ -124,8 +124,8 @@ onBeforeRouteLeave(() => {
               >
                 <CDFTextField
                   v-model="item.nome_fantasia"
-                  label="Nome fantasia"
-                  placeholder="Digite o Nome fantasia"
+                  label="Nome Fantasia"
+                  placeholder="Digite o Nome Fantasia"
                   :rules="[]"
                 />
               </VCol>
@@ -136,8 +136,8 @@ onBeforeRouteLeave(() => {
                 <CDFTextField
                   v-model="item.cnpj"
                   v-mask="'##.###.###/####-##'"
-                  label="Cnpj"
-                  placeholder="Digite o Cnpj"
+                  label="CNPJ"
+                  placeholder="Digite o CNPJ"
                   :rules="[rules.requiredValidator]"
                 />
               </VCol>
