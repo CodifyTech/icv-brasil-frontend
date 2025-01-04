@@ -1,7 +1,11 @@
 import { defineStore } from 'pinia'
+import type { IFilial } from '@/pages/cliente/types'
 
 const defaultValue = {
-  razao_social: '', nome_fantasia: '', cnpj: '',
+  razao_social: '',
+  nome_fantasia: '',
+  cnpj: '',
+  filiais: [] as IFilial[],
 }
 
 export const useClienteStore = defineStore('crud/cliente', {
