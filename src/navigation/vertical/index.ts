@@ -22,4 +22,11 @@ export default [
     action: 'list',
     subject: 'funcionario',
   },
+  {
+    title: 'Cliente',
+    icon: { icon: 'tabler-template' },
+    to: 'cliente',
+    action: 'list',
+    subject: 'cliente',
+  },
 ]

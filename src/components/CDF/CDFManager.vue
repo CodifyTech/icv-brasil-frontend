@@ -42,7 +42,7 @@ const add = () => {
 }
 
 const obterExpansionTitle = (index: number) => {
-  const item = props.items[index]
+  const item = items.value[index]
   if (!item)
     return `${props.itemLabel} ${index + 1}`
 
