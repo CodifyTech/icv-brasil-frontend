@@ -1,6 +1,7 @@
 <script setup lang="ts">
 // eslint-disable-next-line no-restricted-imports
 import { VExpansionPanels } from 'vuetify/components'
+import { VForm } from 'vuetify/components/VForm'
 import { useConfirmDialogStore } from '@/stores/useConfirmDialogStore'
 import CDFButton from '@/components/CDF/CDFButton.vue'
 
@@ -40,6 +41,45 @@ const add = () => {
   setTimeout(() => {
     expansionPanels.value = items.value.length
   }, 300)
+}
+
+const formManagers = {} as Record<number, VForm> // Objeto simples, usado diretamente
+
+const validateContentForm = async (index: number): Promise<boolean> => {
+  const formRef = formManagers[index] // Busca referência do índice
+  if (!formRef)
+    return false
+
+  const { valid } = await formRef.validate()
+
+  return valid
+}
+
+const isEmptyItem = (item: any): boolean => {
+  return Object.values(item).every(value => value === null || value === '' || value === undefined)
+}
+
+const save = async (item: any, index: number) => {
+  const valid = await validateContentForm(index) // Valida APENAS o conteúdo do índice atual
+
+  if (valid) {
+    items.value[index] = item // Atualiza somente o item relacionado
+    expansionPanels.value = null
+    emit('update:items', items.value)
+  }
+}
+
+const cancel = (index: number) => {
+  const currentItem = items.value[index]
+
+  if (isEmptyItem(currentItem)) {
+    // Remove o item se ele estiver vazio
+    items.value.splice(index, 1)
+    emit('update:items', items.value)
+  }
+
+  // Fecha o painel sem remover
+  expansionPanels.value = null
 }
 
 const obterExpansionTitle = (index: number) => {
@@ -122,10 +162,24 @@ onUpdated(() => {
             <VCard flat>
               <VDivider />
               <VCardText class="px-2">
-                <slot
-                  :item="item"
-                  name="content"
-                />
+                <VForm
+                  id="formManager"
+                  :ref="el => {
+                    if (el) {
+                      formManagers[index] = el // Apenas registra o índice
+                    }
+                    else {
+                      delete formManagers[index] // Remove referências inválidas
+                    }
+                  }"
+                  :key="`form-${index}`"
+                >
+                  <slot
+                    :item="item"
+                    :index="index"
+                    name="content"
+                  />
+                </VForm>
               </VCardText>
               <VDivider />
               <VCardActions class="mt-2">
@@ -133,11 +187,7 @@ onUpdated(() => {
                   v-if="!isReadOnly"
                   variant="outlined"
                   color="info"
-                  @click="() => {
-                    items[index] = item
-                    expansionPanels = null
-                    emit('update:items', items)
-                  }"
+                  @click="() => save(item, index)"
                 >
                   Salvar
                 </CDFButton>
@@ -146,9 +196,7 @@ onUpdated(() => {
                   text="Cancelar"
                   variant="outlined"
                   color="error"
-                  @click="() => {
-                    expansionPanels = null
-                  }"
+                  @click="() => cancel(index)"
                 >
                   Cancelar
                 </CDFButton>

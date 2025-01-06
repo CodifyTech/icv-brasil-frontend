@@ -10,4 +10,11 @@ export interface IFilial {
   nome_fantasia: string
   cnpj: string
   cliente_id?: string
+  logradouro: string
+  numero: string
+  complemento: string
+  bairro: string
+  cep: string
+  cidade: string
+  estado: string
 }

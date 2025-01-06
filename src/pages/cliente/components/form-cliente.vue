@@ -59,60 +59,21 @@ onBeforeRouteLeave(() => {
     back="/cliente"
   >
     <template #content>
-      <VCol
-        cols="12"
-        md="4"
-      >
-        <CDFTextField
-          v-model="data.razao_social"
-          label="Razão Social"
-          placeholder="Digite o Razao social"
-          :rules="[rules.requiredValidator]"
-        />
-      </VCol>
-      <VCol
-        cols="12"
-        md="4"
-      >
-        <CDFTextField
-          v-model="data.nome_fantasia"
-          label="Nome Fantasia"
-          placeholder="Digite o nome fantasia"
-          :rules="[]"
-        />
-      </VCol>
-      <VCol
-        cols="12"
-        md="4"
-      >
-        <CDFTextField
-          v-model="data.cnpj"
-          v-mask="'##.###.###/####-##'"
-          label="CNPJ"
-          placeholder="Digite o CNPJ"
-          :rules="[rules.requiredValidator]"
-        />
-      </VCol>
-
       <VCol cols="12">
-        <CDFManager
-          v-model:items="data.filiais"
-          title="Filials"
-          item-title="razao_social"
-          item-label="Filial"
-          message-add="Adicionar Filial"
-          :template="{ razao_social: '', nome_fantasia: '', cnpj: '' }"
+        <VCard
+          title="Matriz"
+          variant="outlined"
         >
-          <template #content="{ item }: { item: IFilial }">
+          <VCardText>
             <VRow>
               <VCol
                 cols="12"
                 md="4"
               >
                 <CDFTextField
-                  v-model="item.razao_social"
+                  v-model="data.razao_social"
                   label="Razão Social"
-                  placeholder="Digite o Razão Social"
+                  placeholder="Digite o Razao social"
                   :rules="[rules.requiredValidator]"
                 />
               </VCol>
@@ -121,9 +82,9 @@ onBeforeRouteLeave(() => {
                 md="4"
               >
                 <CDFTextField
-                  v-model="item.nome_fantasia"
+                  v-model="data.nome_fantasia"
                   label="Nome Fantasia"
-                  placeholder="Digite o Nome Fantasia"
+                  placeholder="Digite o nome fantasia"
                   :rules="[]"
                 />
               </VCol>
@@ -132,16 +93,83 @@ onBeforeRouteLeave(() => {
                 md="4"
               >
                 <CDFTextField
-                  v-model="item.cnpj"
+                  v-model="data.cnpj"
                   v-mask="'##.###.###/####-##'"
                   label="CNPJ"
                   placeholder="Digite o CNPJ"
                   :rules="[rules.requiredValidator]"
                 />
               </VCol>
+
+              <VDivider />
+
+              <VCol cols="12">
+                <CDFManager
+                  v-model:items="data.filiais"
+                  v-model:form="form"
+                  title="Filials"
+                  item-title="razao_social"
+                  item-label="Filial"
+                  message-add="Adicionar Filial"
+                  :template="{
+                    razao_social: '',
+                    nome_fantasia: '',
+                    cnpj: '',
+                    logradouro: '',
+                    numero: '',
+                    complemento: '',
+                    bairro: '',
+                    cep: '',
+                    cidade: '',
+                    estado: '',
+                  }"
+                >
+                  <template #content="{ item, index }: { item: IFilial, index: number }">
+                    <VRow>
+                      <VCol
+                        cols="12"
+                        md="4"
+                      >
+                        <CDFTextField
+                          v-model="item.razao_social"
+                          label="Razão Social"
+                          placeholder="Digite o Razão Social"
+                          :rules="[rules.requiredValidator]"
+                        />
+                      </VCol>
+                      <VCol
+                        cols="12"
+                        md="4"
+                      >
+                        <CDFTextField
+                          v-model="item.nome_fantasia"
+                          label="Nome Fantasia"
+                          placeholder="Digite o Nome Fantasia"
+                          :rules="[]"
+                        />
+                      </VCol>
+                      <VCol
+                        cols="12"
+                        md="4"
+                      >
+                        <CDFTextField
+                          v-model="item.cnpj"
+                          v-mask="'##.###.###/####-##'"
+                          label="CNPJ"
+                          placeholder="Digite o CNPJ"
+                          :rules="[rules.requiredValidator]"
+                        />
+                      </VCol>
+                      <VCol cols="12">
+                        <Endereco v-model:data="data.filiais[index]" />
+                      </VCol>
+                    </VRow>
+                  </template>
+                </CDFManager>
+              </VCol>
             </VRow>
-          </template>
-        </CDFManager>
+          </VCardText>
+        </VCard>
       </VCol>
     </template>
   </LayoutForms>

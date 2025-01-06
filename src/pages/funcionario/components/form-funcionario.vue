@@ -16,7 +16,6 @@ const { isEditing } = withDefaults(defineProps<{
 })
 
 const store = useFuncionarioStore()
-const router = useRouter()
 
 onMounted(() => {
   // 👉 methods
@@ -257,8 +256,8 @@ onBeforeRouteLeave(() => {
                             >
                               <CDFTextField
                                 v-model="item.validate"
-                                label="Validate"
-                                placeholder="Digite o validate"
+                                label="Validade"
+                                placeholder="Digite a Validade"
                                 type="date"
                                 :rules="[]"
                               />
@@ -281,8 +280,8 @@ onBeforeRouteLeave(() => {
                             >
                               <CDFTextField
                                 v-model="item.validate_avaliacao"
-                                label="Validate Avaliação"
-                                placeholder="Digite o validate avaliação"
+                                label="Validade Avaliação"
+                                placeholder="Digite a validade da avaliação"
                                 type="date"
                                 :rules="[]"
                               />
@@ -330,7 +329,7 @@ onBeforeRouteLeave(() => {
                               <CDFTextField
                                 v-model="item.validade"
                                 label="Validade"
-                                placeholder="Digite o validade"
+                                placeholder="Digite a validade"
                                 type="date"
                                 :rules="[]"
                               />

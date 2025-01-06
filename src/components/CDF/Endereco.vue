@@ -44,7 +44,7 @@ async function pesquisarCEP() {
 <template>
   <div>
     <AlertDialog
-      v-model:isDialogVisible="alertCepErrado"
+      v-model:is-dialog-visible="alertCepErrado"
       title="O cep informado está incorreto."
     />
 
