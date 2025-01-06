@@ -1,24 +1,15 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { CurrencyDisplay, useCurrencyInput } from 'vue-currency-input'
+import { watch } from 'vue'
 
-defineOptions({
-  name: 'InputDinheiro',
-  inheritAttrs: false,
-})
+defineOptions({ name: 'InputDinheiro', inheritAttrs: false })
 
-const props = withDefaults(defineProps<{
-  modelValue: number
-  maxValue?: number
-  precision?: number
-  hideCurrencySymbolOnFocus?: boolean
-  hideGroupingSeparatorOnFocus?: boolean
-  hideNegligibleDecimalDigitsOnFocus?: boolean
-  autoDecimalDigits?: boolean
-  useGrouping?: boolean
-  accountingSign?: boolean
-}>(), {
-  maxValue: 9999999999999.99,
+const props = defineProps({ modelValue: Number })
+
+const { inputRef, formattedValue, numberValue, setValue } = useCurrencyInput({
+  currency: 'BRL',
+  currencyDisplay: 'hidden',
+  valueRange: { min: 0 },
   precision: 2,
   hideCurrencySymbolOnFocus: true,
   hideGroupingSeparatorOnFocus: false,
@@ -26,57 +17,44 @@ const props = withDefaults(defineProps<{
   autoDecimalDigits: true,
   useGrouping: true,
   accountingSign: false,
-})
-
-const emit = defineEmits<{
-  (e: 'update:modelValue', value: number): void
-}>()
-
-const modelValue = toRef(props, 'modelValue', 0)
-const maxValue = toRef(props, 'maxValue')
-const precision = toRef(props, 'precision')
-const hideCurrencySymbolOnFocus = toRef(props, 'hideCurrencySymbolOnFocus')
-const hideGroupingSeparatorOnFocus = toRef(props, 'hideGroupingSeparatorOnFocus')
-const hideNegligibleDecimalDigitsOnFocus = toRef(props, 'hideNegligibleDecimalDigitsOnFocus')
-const autoDecimalDigits = toRef(props, 'autoDecimalDigits')
-const useGrouping = toRef(props, 'useGrouping')
-const accountingSign = toRef(props, 'accountingSign')
-
-const {
-  inputRef,
-  formattedValue,
-  numberValue,
-  setValue,
-} = useCurrencyInput({
   locale: 'pt-BR',
-  currency: 'BRL',
   currencyDisplay: CurrencyDisplay.hidden,
-  valueRange: {
-    max: maxValue.value,
+})
+
+watch(
+  () => props.modelValue,
+  value => {
+    setValue(value)
   },
-  precision: precision.value,
-  hideCurrencySymbolOnFocus: hideCurrencySymbolOnFocus.value,
-  hideGroupingSeparatorOnFocus: hideGroupingSeparatorOnFocus.value,
-  hideNegligibleDecimalDigitsOnFocus: hideNegligibleDecimalDigitsOnFocus.value,
-  autoDecimalDigits: autoDecimalDigits.value,
-  useGrouping: useGrouping.value,
-  accountingSign: accountingSign.value,
+)
+
+const elementId = computed(() => {
+  const attrs = useAttrs()
+  const _elementIdToken = attrs.id || attrs.label
+
+  return _elementIdToken ? `app-text-field-${_elementIdToken}-${Math.random().toString(36).slice(2, 7)}` : undefined
 })
 
-const newValue = computed(() => {
-  setValue(maxValue.value > 0 && modelValue.value >= maxValue.value ? maxValue.value : modelValue.value)
-  emit('update:modelValue', numberValue.value ?? 0)
-
-  return formattedValue.value
-})
+const label = computed(() => useAttrs().label as string | undefined)
 </script>
 
 <template>
-  <AppTextField
-    v-bind="{
-      ...$attrs,
-    }"
-    ref="inputRef"
-    v-model="newValue"
-  />
+  <div
+    class="app-text-field flex-grow-1"
+    :class="$attrs.class"
+  >
+    <VLabel
+      v-if="label"
+      :for="elementId"
+      class="mb-1 text-body-2 text-high-emphasis"
+      :text="label"
+    />
+    <VTextField
+      :id="elementId"
+      ref="inputRef"
+      v-model="formattedValue"
+      :label="undefined"
+      variant="outlined"
+    />
+  </div>
 </template>

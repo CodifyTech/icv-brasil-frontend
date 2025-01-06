@@ -23,10 +23,17 @@ export default [
     subject: 'funcionario',
   },
   {
-    title: 'Cliente',
-    icon: { icon: 'tabler-template' },
+    title: 'Clientes',
+    icon: { icon: 'fa-light fa-users' },
     to: 'cliente',
     action: 'list',
     subject: 'cliente',
+  },
+  {
+    title: 'Propostas',
+    icon: { icon: 'fa-light fa-percent' },
+    to: 'proposta',
+    action: 'list',
+    subject: 'proposta',
   },
 ]
