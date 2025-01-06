@@ -36,7 +36,7 @@ const fileName = () => {
       :text="label"
     />
     <AppTextField
-      v-if="typeof $attrs.modelValue === 'string'"
+      v-if="typeof $attrs.modelValue === 'string' && isEmpty($attrs.modelValue)"
       :value="fileName()"
       readonly
     >
