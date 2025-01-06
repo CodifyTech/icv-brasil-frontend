@@ -4,7 +4,7 @@ import { VForm } from 'vuetify/components/VForm'
 import { usePropostaStore } from '../store/usePropostaStore'
 import LayoutForms from '@/components/CDF/LayoutForms.vue'
 import * as rules from '@/validators/cdf-rules'
-import { blurHandler } from '@/utils/generals'
+import { blurHandler, formatCurrency } from '@/utils/generals'
 import NovoServicoModal from '@/pages/proposta/components/NovoServicoModal.vue'
 
 const { isEditing } = withDefaults(defineProps<{
@@ -70,7 +70,7 @@ const validateStep = async (step: number) => {
   // Validar o formulário e esperar a resolução do resultado
   const result = await form.value.validate()
 
-  // Se o formulário não for válido, definir hasError como true
+  // Se o formulário for inválido, definir hasError como true
   hasError = !result.valid
 
   // Atualizar o estado do item no array `headers`
@@ -184,7 +184,7 @@ const handleNextStep = async () => {
               />
             </template>
           </VStepperHeader>
-          <VStepperWindow>
+          <VStepperWindow class="my-2 mx-0">
             <VStepperWindowItem :value="1">
               <VForm
                 ref="form"
@@ -298,11 +298,18 @@ const handleNextStep = async () => {
                         :key="index"
                       >
                         <td>{{ item?.nome }}</td>
-                        <td>{{ item?.valor_total_custos }}</td>
-                        <td>{{ item?.valor_k_minimo }}</td>
-                        <td>{{ item?.valor_diaria_minimo }}</td>
-                        <td>{{ item?.valor_contrato }}</td>
-                        <td class="d-flex justify-center gap-1">
+                        <td>{{ formatCurrency(item?.valor_total_custos) }}</td>
+                        <td>{{ formatCurrency(item?.valor_k_minimo) }}</td>
+                        <td>{{ formatCurrency(item?.valor_diaria_minimo) }}</td>
+                        <td>
+                          <InputDinheiro
+                            v-model="item.valor_contrato"
+                            placeholder="Digite o valor contrato"
+                            prepend-inner-icon="tabler-currency-real"
+                            :rules="[]"
+                          />
+                        </td>
+                        <td class="d-flex justify-center align-center gap-1">
                           <IconBtn
                             color="warning"
                             @click="() => {
@@ -346,8 +353,12 @@ const handleNextStep = async () => {
                 Anterior
               </VBtn>
               <VSpacer />
-              <VBtn @click="handleNextStep">
-                Próximo
+              <VBtn
+                @click="() => {
+                  step > 1 ? isEditing ? update() : save() : handleNextStep()
+                }"
+              >
+                {{ step > 1 ? 'Finalizar' : 'Próximo' }}
               </VBtn>
             </div>
           </template>

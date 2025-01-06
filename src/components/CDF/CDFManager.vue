@@ -13,6 +13,7 @@ const props = withDefaults(
     itemTitle?: string
     itemLabel?: string
     template: object
+    buttonAdd?: string
     messageEmpty?: string
     messageAdd?: string
   }>(),
@@ -75,7 +76,7 @@ onUpdated(() => {
         color="primary"
         @click="add"
       >
-        Adicionar {{ title ?? '' }}
+        Adicionar {{ buttonAdd ?? '' }}
       </CDFButton>
     </template>
 

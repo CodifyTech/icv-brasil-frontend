@@ -1,4 +1,5 @@
 export interface IProposta {
+  id?: string
   pessoa_contato: string
   consultor: string
   telefone: string
@@ -6,7 +7,6 @@ export interface IProposta {
   area: string
   status: string
   filial_id: string
-
 }
 
 export interface IServico {
@@ -32,32 +32,32 @@ export interface IServico {
 }
 
 export interface ICusto {
-  id?: number
+  id?: string
   nome: string
   valor: number
   servico_id?: string
 }
 export interface IDespesa {
-  id?: number
+  id?: string
   nome: string
   valor: number
   servico_id?: string
 }
 export interface ITributo {
-  id?: number
+  id?: string
   nome: string
   aliquota: number
   servico_id?: string
 }
 export interface IDespesaIndireta {
-  id?: number
+  id?: string
   nome: string
   valor: number
   servico_id?: string
 }
 
 export interface IDespesaDireta {
-  id?: number
+  id?: string
   nome: string
   valor: number
   servico_id?: string

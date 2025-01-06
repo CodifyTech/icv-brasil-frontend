@@ -6,10 +6,6 @@ import type { ICusto, IDespesa, IDespesaDireta, IDespesaIndireta, ITributo } fro
 const store = usePropostaStore()
 
 const {
-
-} = store
-
-const {
   data,
   modal,
 } = storeToRefs(store)
@@ -21,7 +17,7 @@ const {
     max-width="800"
     fullscreen
   >
-    <VToolbar>
+    <VToolbar color="#FFFFFF">
       <VBtn
         icon="tabler-x"
         @click="modal.isDialogVisible = false"
@@ -61,8 +57,11 @@ const {
 
         <VCard flat>
           <VCardText class="pa-0">
-            <VRow>
-              <VCol cols="4">
+            <VRow class="mb-8">
+              <VCol
+                cols="12"
+                md="4"
+              >
                 <CDFManager
                   v-model:items="modal.servico.custos"
                   title="Custos"
@@ -90,7 +89,10 @@ const {
                   </template>
                 </CDFManager>
               </VCol>
-              <VCol cols="4">
+              <VCol
+                cols="12"
+                md="4"
+              >
                 <CDFManager
                   v-model:items="modal.servico.despesas"
                   title="Despesas"
@@ -118,7 +120,10 @@ const {
                   </template>
                 </CDFManager>
               </VCol>
-              <VCol cols="4">
+              <VCol
+                cols="12"
+                md="4"
+              >
                 <CDFManager
                   v-model:items="modal.servico.tributos"
                   title="Tributos"
@@ -146,8 +151,10 @@ const {
                   </template>
                 </CDFManager>
               </VCol>
-
-              <VCol cols="4">
+              <VCol
+                cols="12"
+                md="4"
+              >
                 <CDFManager
                   v-model:items="modal.servico.despesas_diretas"
                   title="Despesas Diretas"
@@ -175,7 +182,10 @@ const {
                   </template>
                 </CDFManager>
               </VCol>
-              <VCol cols="4">
+              <VCol
+                cols="12"
+                md="4"
+              >
                 <CDFManager
                   v-model:items="modal.servico.despesas_indiretas"
                   title="Despesas Indiretas"
@@ -203,59 +213,62 @@ const {
                   </template>
                 </CDFManager>
               </VCol>
-              <VCol cols="4">
+              <VCol
+                cols="12"
+                md="4"
+              >
                 <VCard variant="outlined">
-                  <template #title>
+                  <VCardTitle class="py-4">
                     Resultado Mínimo Aprovado
-                  </template>
+                  </VCardTitle>
                   <VDivider />
                   <VCardText>
                     <InputDinheiro
                       v-model="modal.servico.valor_total_hd"
-                      label="Valor total hd"
-                      placeholder="Digite o Valor total hd"
+                      label="Valor Total HD"
+                      placeholder="Digite o valor total hd"
                       prepend-inner-icon="tabler-currency-real"
                       :rules="[]"
                     />
                     <InputDinheiro
                       v-model="modal.servico.valor_total_despesas"
-                      label="Valor total despesas"
-                      placeholder="Digite o Valor total despesas"
+                      label="Valor Total Despesas"
+                      placeholder="Digite o valor total despesas"
                       prepend-inner-icon="tabler-currency-real"
                       :rules="[]"
                     />
                     <InputDinheiro
                       v-model="modal.servico.valor_total_tributos"
-                      label="Valor total tributos"
-                      placeholder="Digite o Valor total tributos"
+                      label="Valor Total Tributos"
+                      placeholder="Digite o valor total tributos"
                       prepend-inner-icon="tabler-currency-real"
                       :rules="[]"
                     />
                     <InputDinheiro
                       v-model="modal.servico.valor_total_despesas_indiretas"
-                      label="Valor total despesas indiretas"
-                      placeholder="Digite o Valor total despesas indiretas"
+                      label="Valor Total Despesas Indiretas"
+                      placeholder="Digite o valor total despesas indiretas"
                       prepend-inner-icon="tabler-currency-real"
                       :rules="[]"
                     />
                     <InputDinheiro
                       v-model="modal.servico.valor_total"
-                      label="Valor total"
-                      placeholder="Digite o Valor total"
+                      label="Valor Total"
+                      placeholder="Digite o valor total"
                       prepend-inner-icon="tabler-currency-real"
                       :rules="[]"
                     />
                     <InputDinheiro
                       v-model="modal.servico.valor_k_minimo"
-                      label="Valor k minimo"
-                      placeholder="Digite o Valor k minimo"
+                      label="Valor K Minímo"
+                      placeholder="Digite o valor k minimo"
                       prepend-inner-icon="tabler-currency-real"
                       :rules="[]"
                     />
                     <InputDinheiro
                       v-model="modal.servico.valor_diaria_minimo"
-                      label="Valor diaria minimo"
-                      placeholder="Digite o Valor diaria minimo"
+                      label="Valor Diaria Minímo"
+                      placeholder="Digite o valor diaria minimo"
                       prepend-inner-icon="tabler-currency-real"
                       :rules="[]"
                     />
