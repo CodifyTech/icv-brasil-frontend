@@ -142,25 +142,6 @@ const logo = useGenerateImageVariant(logoDark, logoLight)
                   Crie uma conta
                 </a>
               </VCol>
-
-              <VCol
-                cols="12"
-                class="d-flex align-center"
-              >
-                <VDivider />
-
-                <span class="mx-4">ou</span>
-
-                <VDivider />
-              </VCol>
-
-              <!-- auth providers -->
-              <VCol
-                cols="12"
-                class="text-center"
-              >
-                <AuthProvider />
-              </VCol>
             </VRow>
           </VForm>
         </VCardText>
