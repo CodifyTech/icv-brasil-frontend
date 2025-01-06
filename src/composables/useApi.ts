@@ -36,7 +36,7 @@ useApi.interceptors.response.use(response => {
       useCookie('userData').value = null
       useLocalStorage('userAbilityRules', []).value = null
       useCookie('accessToken').value = null
-      window.document.location.href = '/admin/auth/login'
+      window.document.location.href = '/auth/login'
 
       snackbarStore.showSnackbar({
         text: 'Sua sessão expirou, faça login novamente.',
