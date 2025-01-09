@@ -1,5 +1,6 @@
 import { objectToFormData } from '@octetstream/object-to-form-data'
-import type { AxiosError } from 'axios'
+import type {AxiosError, AxiosResponse} from 'axios'
+import type axios from 'axios'
 import useApi from '@/composables/useApi'
 import { cleanEmptyFieldsPayload } from '@/utils/generals'
 
@@ -87,7 +88,7 @@ class ApiService {
     data?: object | string,
     id?: string,
     formData?: boolean,
-  ): Promise<TRequest> {
+  ): Promise<AxiosResponse<T>> {
     // Pre-processa dados
     const payload = this.preprocessData(data, formData)
 
@@ -107,14 +108,6 @@ class ApiService {
       data: payload,
       headers: payload instanceof FormData ? { 'Content-Type': 'multipart/form-data', 'public': this._isPublic } : { public: this._isPublic },
     })
-      .then(response => {
-        return response.data
-      })
-      .catch(error => {
-        this.handleError(error as AxiosError)
-
-        return error
-      })
   }
 
   /**
@@ -129,7 +122,7 @@ class ApiService {
     httpVerb: string,
     query?: any,
     id?: string,
-  ): Promise<TRequest> {
+  ): Promise<AxiosResponse<T>> {
     const url = this.getURL(id === null || id === undefined ? this._endpoint : `${this._endpoint}/${id}`, query)
 
     return await useApi.request<TRequest>({
@@ -140,14 +133,6 @@ class ApiService {
         'public': this._isPublic,
       },
     })
-      .then(({ data }) => {
-        return data
-      })
-      .catch(error => {
-        this.handleError(error as AxiosError)
-
-        return error.data
-      })
   }
 
   /**
