@@ -2,7 +2,6 @@
 import { VForm } from 'vuetify/components/VForm'
 import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
 import { useAuthStore } from '@/pages/auth/login/store/useAuthStore'
-import AuthProvider from '@/views/pages/authentication/AuthProvider.vue'
 import { useGenerateImageVariant } from '@core/composable/useGenerateImageVariant'
 import vitrine from '@images/pages/vitrine.webp'
 import authV2MaskDark from '@images/pages/misc-mask-dark.png'
@@ -81,7 +80,7 @@ const logo = useGenerateImageVariant(logoDark, logoLight)
         </VCardText>
 
         <AlertDialog
-          v-model:isDialogVisible="messages.error.isError"
+          v-model:is-dialog-visible="messages.error.isError"
           :title="messages.error.messages"
         />
         <VCardText>

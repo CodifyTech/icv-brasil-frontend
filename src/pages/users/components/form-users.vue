@@ -2,7 +2,7 @@
 import { storeToRefs } from 'pinia'
 import LayoutForms from '@/components/CDF/LayoutForms.vue'
 import { useUsersStore } from '@/pages/users/store/useUsersStore'
-import { confirmedValidator, emailValidator, requiredValidator } from '@/validators/cdf-rules'
+import { confirmedValidator, emailValidator, lengthValidator, requiredValidator } from '@/validators/cdf-rules'
 import type { IUser } from '@/pages/users/types'
 
 const {
@@ -20,7 +20,7 @@ const {
 }>()
 
 const store = useUsersStore()
-const user = useCookie<IUser>('userData')
+const isPasswordVisible = ref(false)
 
 const {
   form,
@@ -35,6 +35,10 @@ const {
   update,
   resetForm,
 } = store
+
+onMounted(() => {
+  fetchPerfis()
+})
 
 onBeforeRouteLeave(() => {
   resetForm()
@@ -110,7 +114,7 @@ onBeforeRouteLeave(() => {
           :loading="loading.item"
           type="text"
         >
-          <CDFAutoComplete
+          <AppSelect
             v-model="data.role"
             :label="$t('users.form.role.label')"
             :placeholder="$t('users.form.role.placeholder')"
@@ -119,7 +123,6 @@ onBeforeRouteLeave(() => {
             :items="roles"
             :loading="loading.roles"
             return-object
-            :fetch-items="() => fetchPerfis()"
           />
         </VSkeletonLoader>
       </VCol>
@@ -151,9 +154,11 @@ onBeforeRouteLeave(() => {
             v-model="data.password"
             :label="$t('users.form.password.label')"
             :placeholder="$t('users.form.password.placeholder')"
-            :rules="isEditing ? [] : [requiredValidator]"
-            type="password"
+            :rules="isEditing ? [lengthValidator(data.password, 8)] : [requiredValidator, lengthValidator(data.password, 8)]"
             :loading="loading.item"
+            :type="isPasswordVisible ? 'text' : 'password'"
+            :append-inner-icon="isPasswordVisible ? 'tabler-eye-off' : 'tabler-eye'"
+            @click:append-inner="isPasswordVisible = !isPasswordVisible"
           />
         </VSkeletonLoader>
       </VCol>
@@ -170,9 +175,11 @@ onBeforeRouteLeave(() => {
             v-model="data.password_confirmation"
             :label="$t('users.form.password_confirmation.label')"
             :placeholder="$t('users.form.password_confirmation.placeholder')"
-            :rules="isEditing ? [] : [requiredValidator, confirmedValidator(data.password, data.password_confirmation)]"
-            type="password"
+            :rules="isEditing ? [confirmedValidator(data.password ?? '', data.password_confirmation ?? ''), lengthValidator(data.password, 8)] : [requiredValidator, confirmedValidator(data.password ?? '', data.password_confirmation ?? ''), lengthValidator(data.password, 8)]"
             :loading="loading.item"
+            :type="isPasswordVisible ? 'text' : 'password'"
+            :append-inner-icon="isPasswordVisible ? 'tabler-eye-off' : 'tabler-eye'"
+            @click:append-inner="isPasswordVisible = !isPasswordVisible"
           />
         </VSkeletonLoader>
       </VCol>
