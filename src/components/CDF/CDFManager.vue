@@ -137,7 +137,13 @@ onUpdated(() => {
               align="center"
               justify="space-between"
             >
-              <span>{{ obterExpansionTitle(index) }}</span>
+              <slot
+                :item="item"
+                :index="index"
+                name="header"
+              >
+                <span>{{ obterExpansionTitle(index) }}</span>
+              </slot>
               <div class="pr-5">
                 <IconBtn
                   icon="tabler-trash"

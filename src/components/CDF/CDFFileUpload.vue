@@ -36,12 +36,12 @@ const fileName = () => {
       :text="label"
     />
     <AppTextField
-      v-if="typeof $attrs.modelValue === 'string' && isEmpty($attrs.modelValue)"
+      v-if="typeof $attrs.modelValue === 'string' && !isEmpty($attrs.modelValue)"
       :value="fileName()"
       readonly
     >
       <template #prepend>
-        <VIcon icon="fa-solid fa-up-from-line"></VIcon>
+        <VIcon icon="fa-solid fa-up-from-line" />
       </template>
       <template #append>
         <IconBtn @click="() => viewFile($attrs.modelValue)">

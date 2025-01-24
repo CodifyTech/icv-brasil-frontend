@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { useFuncionarioStore } from '../store/useFuncionarioStore'
+import { formatDate } from '@/utils/formatters'
 import LayoutForms from '@/components/CDF/LayoutForms.vue'
 import * as cdfRules from '@/validators/cdf-rules'
 import CDFManager from '@/components/CDF/CDFManager.vue'
@@ -196,6 +197,13 @@ onBeforeRouteLeave(() => {
                           conselho_classe: '',
                         }"
                       >
+                        <template #header="{ item }: { item: IFormacao }">
+                          <div class="d-flex flex-column gap-2 pa-4">
+                            <VLabel v-if="item.nome">
+                              {{ item.nome }}
+                            </VLabel>
+                          </div>
+                        </template>
                         <template #content="{ item }: {item: IFormacao}">
                           <VRow>
                             <VCol
@@ -237,6 +245,22 @@ onBeforeRouteLeave(() => {
                           validate_avaliacao: '',
                         }"
                       >
+                        <template #header="{ item }: { item: IQualificacao }">
+                          <div class="d-flex flex-column gap-2 pa-4">
+                            <VLabel v-if="item.nome">
+                              Qualificação: {{ item.nome }}
+                            </VLabel>
+                            <VLabel v-if="item.validate">
+                              Validade: {{ formatDate(item.validate) }}
+                            </VLabel>
+                            <VLabel v-if="item.validate">
+                              Ultima Avaliação: {{ formatDate(item.utilma_avaliacao) }}
+                            </VLabel>
+                            <VLabel v-if="item.validate">
+                              Validade da Avaliação: {{ formatDate(item.validate_avaliacao) }}
+                            </VLabel>
+                          </div>
+                        </template>
                         <template #content="{ item }: { item: IQualificacao }">
                           <VRow>
                             <VCol
@@ -269,7 +293,7 @@ onBeforeRouteLeave(() => {
                               <CDFTextField
                                 v-model="item.utilma_avaliacao"
                                 label="Utilma Avaliação"
-                                placeholder="Digite o utilma avaliação"
+                                placeholder="Digite o ultima avaliação"
                                 type="date"
                                 :rules="[]"
                               />
@@ -309,6 +333,16 @@ onBeforeRouteLeave(() => {
                           exame: '',
                         }"
                       >
+                        <template #header="{ item }: { item: IAtestadoOcupacional }">
+                          <div class="d-flex flex-column gap-2 pa-4">
+                            <VLabel v-if="item.nome">
+                              Atestado: {{ item.nome }}
+                            </VLabel>
+                            <VLabel v-if="item.validade">
+                              Validade: {{ formatDate(item.validade) }}
+                            </VLabel>
+                          </div>
+                        </template>
                         <template #content="{ item }: {item: IAtestadoOcupacional}">
                           <VRow>
                             <VCol
@@ -360,6 +394,16 @@ onBeforeRouteLeave(() => {
                           ca: '',
                         }"
                       >
+                        <template #header="{ item }: { item: IEPI }">
+                          <div class="d-flex flex-column gap-2 pa-4">
+                            <VLabel v-if="item.nome">
+                              Nome: {{ item.nome }}
+                            </VLabel>
+                            <VLabel v-if="item.ca">
+                              CA: {{ item.ca }}
+                            </VLabel>
+                          </div>
+                        </template>
                         <template #content="{ item }: {item: IEPI}">
                           <VRow>
                             <VCol
