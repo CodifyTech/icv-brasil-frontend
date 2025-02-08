@@ -2,6 +2,7 @@
 import { usePropostaStore } from '@/pages/proposta/store/usePropostaStore'
 import CDFManager from '@/components/CDF/CDFManager.vue'
 import type { ICusto, IDespesa, IDespesaDireta, IDespesaIndireta, ITributo } from '@/pages/proposta/types'
+import { formatCurrency } from '@/utils/generals'
 
 const store = usePropostaStore()
 
@@ -47,20 +48,21 @@ const {
     </VToolbar>
 
     <VCard flat>
-      <VCardText class="d-flex flex-column gap-2">
-        <CDFTextField
-          v-model="modal.servico.nome"
-          label="Serviço Solicitado"
-          placeholder="Digite o serviço solicitado"
-          :rules="[]"
-        />
-
-        <VCard flat>
-          <VCardText class="pa-0">
-            <VRow class="mb-8">
+      <VCardText>
+        <VRow>
+          <VCol cols="12">
+            <CDFTextField
+              v-model="modal.servico.nome"
+              label="Serviço Solicitado"
+              placeholder="Digite o serviço solicitado"
+              :rules="[]"
+            />
+          </VCol>
+          <VCol cols="10">
+            <VRow>
               <VCol
                 cols="12"
-                md="4"
+                md="6"
               >
                 <CDFManager
                   v-model:items="modal.servico.custos"
@@ -91,7 +93,7 @@ const {
               </VCol>
               <VCol
                 cols="12"
-                md="4"
+                md="6"
               >
                 <CDFManager
                   v-model:items="modal.servico.despesas"
@@ -213,71 +215,26 @@ const {
                   </template>
                 </CDFManager>
               </VCol>
-              <VCol
-                cols="12"
-                md="4"
-              >
-                <VCard variant="outlined">
-                  <VCardTitle class="py-4">
-                    Resultado Mínimo Aprovado
-                  </VCardTitle>
-                  <VDivider />
-                  <VCardText>
-                    <InputDinheiro
-                      v-model="modal.servico.valor_total_hd"
-                      label="Valor Total HD"
-                      placeholder="Digite o valor total hd"
-                      prepend-inner-icon="tabler-currency-real"
-                      :rules="[]"
-                    />
-                    <InputDinheiro
-                      v-model="modal.servico.valor_total_despesas"
-                      label="Valor Total Despesas"
-                      placeholder="Digite o valor total despesas"
-                      prepend-inner-icon="tabler-currency-real"
-                      :rules="[]"
-                    />
-                    <InputDinheiro
-                      v-model="modal.servico.valor_total_tributos"
-                      label="Valor Total Tributos"
-                      placeholder="Digite o valor total tributos"
-                      prepend-inner-icon="tabler-currency-real"
-                      :rules="[]"
-                    />
-                    <InputDinheiro
-                      v-model="modal.servico.valor_total_despesas_indiretas"
-                      label="Valor Total Despesas Indiretas"
-                      placeholder="Digite o valor total despesas indiretas"
-                      prepend-inner-icon="tabler-currency-real"
-                      :rules="[]"
-                    />
-                    <InputDinheiro
-                      v-model="modal.servico.valor_total"
-                      label="Valor Total"
-                      placeholder="Digite o valor total"
-                      prepend-inner-icon="tabler-currency-real"
-                      :rules="[]"
-                    />
-                    <InputDinheiro
-                      v-model="modal.servico.valor_k_minimo"
-                      label="Valor K Minímo"
-                      placeholder="Digite o valor k minimo"
-                      prepend-inner-icon="tabler-currency-real"
-                      :rules="[]"
-                    />
-                    <InputDinheiro
-                      v-model="modal.servico.valor_diaria_minimo"
-                      label="Valor Diaria Minímo"
-                      placeholder="Digite o valor diaria minimo"
-                      prepend-inner-icon="tabler-currency-real"
-                      :rules="[]"
-                    />
-                  </VCardText>
-                </VCard>
-              </VCol>
             </VRow>
-          </VCardText>
-        </VCard>
+          </VCol>
+          <VCol cols="2">
+            <VCard variant="outlined">
+              <VCardTitle class="py-4">
+                Resultado Mínimo Aprovado
+              </VCardTitle>
+              <VDivider />
+              <VCardText class="px-2">
+                <span class="d-flex gap-2"><b>Valor HD:</b> {{ formatCurrency(modal.servico.valor_total_hd) }}</span>
+                <span class="d-flex gap-2"><b>Valor Despesas:</b> {{ formatCurrency(modal.servico.valor_total_despesas) }}</span>
+                <span class="d-flex gap-2"><b>Valor Tributos:</b> {{ formatCurrency(modal.servico.valor_total_tributos) }}</span>
+                <span class="d-flex gap-2"><b>Valor Despesas Indiretas:</b> {{ formatCurrency(modal.servico.valor_total_despesas_indiretas) }}</span>
+                <span class="d-flex gap-2"><b>Valor K Mínimo:</b> {{ formatCurrency(modal.servico.valor_k_minimo) }}</span>
+                <span class="d-flex gap-2"><b>Valor Diária Mínimo:</b> {{ formatCurrency(modal.servico.valor_diaria_minimo) }}</span>
+                <span class="d-flex gap-2"><b>Valor Total:</b> {{ formatCurrency(modal.servico.valor_total) }}</span>
+              </VCardText>
+            </VCard>
+          </VCol>
+        </VRow>
       </VCardText>
     </VCard>
   </VDialog>
