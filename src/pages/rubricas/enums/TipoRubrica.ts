@@ -1,5 +1,7 @@
 export enum TipoRubricaEnum {
+  TRIBUTOS = 'tributos',
   CUSTOS = 'custos',
   DESPESAS = 'despesas',
-  TRIBUTOS = 'tributos',
+  DESPESAS_DIRETAS = 'despesas_diretas',
+  DESPESAS_INDIRETAS = 'despesas_indiretas',
 }

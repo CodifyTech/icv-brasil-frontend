@@ -56,6 +56,30 @@ const managers = computed(() => {
       },
       messageAdd: 'Adicionar Despesa',
     },
+    {
+      title: 'Despesas Diretas',
+      items: items.value.despesas,
+      template: {
+        id: '',
+        nome: '',
+        tipo: TipoRubricaEnum.DESPESAS_DIRETAS,
+        tipo_valor: 'VALOR',
+        valor: 0,
+      },
+      messageAdd: 'Adicionar Despesa',
+    },
+    {
+      title: 'Despesas Indiretas',
+      items: items.value.despesas,
+      template: {
+        id: '',
+        nome: '',
+        tipo: TipoRubricaEnum.DESPESAS_INDIRETAS,
+        tipo_valor: 'VALOR',
+        valor: 0,
+      },
+      messageAdd: 'Adicionar Despesa',
+    },
   ]
 })
 

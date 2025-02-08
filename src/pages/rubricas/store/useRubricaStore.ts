@@ -9,6 +9,8 @@ export const useRubricaStore = defineStore('rubrica', {
       custos: [],
       tributos: [],
       despesas: [],
+      despesas_diretas: [],
+      despesas_indiretas: [],
     } as IRubricas,
   }),
   actions: {

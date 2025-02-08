@@ -2,6 +2,8 @@ export interface IRubricas {
   custos: IRubrica[]
   despesas: IRubrica[]
   tributos: IRubrica[]
+  despesas_diretas: IRubrica[]
+  despesas_indiretas: IRubrica[]
 }
 
 export interface IRubrica {
