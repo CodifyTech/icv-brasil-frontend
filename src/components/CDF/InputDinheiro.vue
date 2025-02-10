@@ -4,7 +4,10 @@ import { watch } from 'vue'
 
 defineOptions({ name: 'InputDinheiro', inheritAttrs: false })
 
-const props = defineProps({ modelValue: Number })
+const props = defineProps<{
+  modelValue: number
+  readonly?: boolean
+}>()
 
 const { inputRef, formattedValue, numberValue, setValue } = useCurrencyInput({
   currency: 'BRL',
@@ -55,6 +58,7 @@ const label = computed(() => useAttrs().label as string | undefined)
       v-model="formattedValue"
       :label="undefined"
       variant="outlined"
+      :readonly="readonly"
     />
   </div>
 </template>

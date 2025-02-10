@@ -3,13 +3,14 @@ import { defineStore } from 'pinia'
 import PropostaService from '../services/PropostaService'
 import type { ICusto, IDespesa, IDespesaDireta, IDespesaIndireta, IServico, ITributo } from '@/pages/proposta/types'
 import { useSuccessDialogStore } from '@/stores/useSuccessDialogStore'
+import type { IRubrica } from '@/pages/rubricas/types'
 
 const defaultValue = {
   pessoa_contato: '',
   consultor: '',
   telefone: '',
   email: '',
-  area: null,
+  area: 'OIA - O&G',
   status: '',
   servicos: [] as IServico[],
   filial_id: null,
@@ -111,6 +112,38 @@ export const usePropostaStore = defineStore('crud/proposta', {
         }).catch(() => {
           this.filiais = []
           this.loading.filial = false
+        })
+    },
+
+    async obterRubricasFixas() {
+      await PropostaService.fetchAll<{
+        tributos: IRubrica[]
+        despesas_indiretas: IRubrica[]
+        despesas_diretas: IRubrica[]
+      }>({}, 'listar/rubricas-fixas')
+        .then(data => {
+          data.tributos.forEach((item: IRubrica) => {
+            this.modal.servico.tributos.push({
+              nome: item.nome,
+              aliquota: item.valor,
+            })
+          })
+
+          data.despesas_indiretas.forEach((item: IRubrica) => {
+            console.log(item)
+
+            this.modal.servico.despesas_indiretas.push({
+              nome: item.nome,
+              valor: item.valor,
+            })
+          })
+
+          data.despesas_diretas.forEach((item: IRubrica) => {
+            this.modal.servico.despesas_diretas.push({
+              nome: item.nome,
+              valor: item.valor,
+            })
+          })
         })
     },
   },
