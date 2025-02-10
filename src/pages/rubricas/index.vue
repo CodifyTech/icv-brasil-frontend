@@ -58,7 +58,7 @@ const managers = computed(() => {
     },
     {
       title: 'Despesas Diretas',
-      items: items.value.despesas,
+      items: items.value.despesas_diretas,
       template: {
         id: '',
         nome: '',
@@ -70,7 +70,7 @@ const managers = computed(() => {
     },
     {
       title: 'Despesas Indiretas',
-      items: items.value.despesas,
+      items: items.value.despesas_indiretas,
       template: {
         id: '',
         nome: '',

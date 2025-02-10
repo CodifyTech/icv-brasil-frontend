@@ -160,9 +160,9 @@ onUpdated(() => {
               </slot>
               <div class="pr-5">
                 <IconBtn
+                  v-if="!isReadOnly"
                   icon="tabler-trash"
                   variant="text"
-                  :readonly="isReadOnly"
                   @click="() => {
                     useConfirmDialogStore().showConfirmDialog(
                       'Deseja realmente excluir este item?',

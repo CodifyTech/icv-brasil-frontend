@@ -239,14 +239,12 @@ const handleNextStep = async () => {
                     cols="12"
                     md="4"
                   >
-                    <AppAutocomplete
+                    <AppTextField
                       v-model="data.area"
+                      readonly
                       label="Area"
                       placeholder="Digite o Area"
                       :items="[]"
-                      item-value=""
-                      item-title=""
-                      :return-object="false"
                     />
                   </VCol>
                 </VRow>
@@ -299,7 +297,7 @@ const handleNextStep = async () => {
                       >
                         <td>{{ item?.nome }}</td>
                         <td>{{ formatCurrency(item?.valor_total_custos) }}</td>
-                        <td>{{ formatCurrency(item?.valor_k_minimo) }}</td>
+                        <td>{{ item?.valor_k_minimo }}%</td>
                         <td>{{ formatCurrency(item?.valor_diaria_minimo) }}</td>
                         <td>
                           <InputDinheiro

@@ -36,4 +36,11 @@ export default [
     action: 'list',
     subject: 'proposta',
   },
+  {
+    title: 'Rubricas',
+    icon: { icon: 'fa-light fa-receipt' },
+    to: 'rubricas',
+    action: 'list',
+    subject: 'rubrica',
+  },
 ]
