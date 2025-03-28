@@ -50,6 +50,7 @@ declare module 'vue-router/auto-routes' {
     'proposta-components-form-proposta': RouteRecordInfo<'proposta-components-form-proposta', '/proposta/components/form-proposta', Record<never, never>, Record<never, never>>,
     'proposta-components-novo-servico-modal': RouteRecordInfo<'proposta-components-novo-servico-modal', '/proposta/components/NovoServicoModal', Record<never, never>, Record<never, never>>,
     'proposta-editar-id': RouteRecordInfo<'proposta-editar-id', '/proposta/editar/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
+    'rubricas': RouteRecordInfo<'rubricas', '/rubricas', Record<never, never>, Record<never, never>>,
     'second-page': RouteRecordInfo<'second-page', '/second-page', Record<never, never>, Record<never, never>>,
     'settings-tab': RouteRecordInfo<'settings-tab', '/settings/:tab', { tab: ParamValue<true> }, { tab: ParamValue<false> }>,
     'settings-components-account-settings-connections': RouteRecordInfo<'settings-components-account-settings-connections', '/settings/components/AccountSettingsConnections', Record<never, never>, Record<never, never>>,

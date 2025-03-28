@@ -239,14 +239,10 @@ const handleNextStep = async () => {
                     cols="12"
                     md="4"
                   >
-                    <AppAutocomplete
+                    <AppTextField
                       v-model="data.area"
                       label="Área"
                       placeholder="Digite o Área"
-                      :items="[]"
-                      item-value=""
-                      item-title=""
-                      :return-object="false"
                     />
                   </VCol>
                 </VRow>

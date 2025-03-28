@@ -17,6 +17,7 @@ const props = withDefaults(
     buttonAdd?: string
     messageEmpty?: string
     messageAdd?: string
+    isAddIconButton?: boolean
   }>(),
   {
     title: '', // valor padrão para 'title'
@@ -26,12 +27,16 @@ const props = withDefaults(
 )
 
 const emit = defineEmits<{
+  (e: 'update:item-add', value: never, index: number): void
+  (e: 'update:item-update', value: never, index: number): void
+  (e: 'update:item-destroy', value: never, index: number): void
   (e: 'update:items', value: never[]): void
 }>()
 
 const expansionPanels = ref()
 const items = ref<any[]>(props.items)
 const loading = ref<boolean>(false)
+const isEditing = ref<boolean>(props.isEditing)
 
 const add = () => {
   items.value.push({
@@ -65,6 +70,15 @@ const save = async (item: any, index: number) => {
   if (valid) {
     items.value[index] = item // Atualiza somente o item relacionado
     expansionPanels.value = null
+
+    if (item.id && item.id !== '')
+      isEditing.value = true
+
+    if (!isEditing.value)
+      emit('update:item-add', item, index)
+    else
+      emit('update:item-update', item, index)
+
     emit('update:items', items.value)
   }
 }
@@ -111,8 +125,8 @@ onUpdated(() => {
         v-if="!isReadOnly"
         prepend-icon="tabler-plus"
         variant="outlined"
-        :is-text="$vuetify.display.smAndUp"
-        :size="$vuetify.display.smAndUp ? 'default' : 'small'"
+        :is-text="isAddIconButton || $vuetify.display.smAndUp"
+        :size="isAddIconButton || $vuetify.display.smAndUp ? 'default' : 'small'"
         color="primary"
         @click="add"
       >
@@ -146,9 +160,9 @@ onUpdated(() => {
               </slot>
               <div class="pr-5">
                 <IconBtn
+                  v-if="!isReadOnly"
                   icon="tabler-trash"
                   variant="text"
-                  :readonly="isReadOnly"
                   @click="() => {
                     useConfirmDialogStore().showConfirmDialog(
                       'Deseja realmente excluir este item?',
@@ -156,6 +170,10 @@ onUpdated(() => {
                       'Não',
                       loading,
                       async () => {
+                        if (item.id && item.id !== '') {
+                          emit('update:item-destroy', item, index)
+                        }
+
                         items.splice(index, 1)
                         emit('update:items', items)
                       })
