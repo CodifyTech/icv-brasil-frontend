@@ -53,8 +53,7 @@ watch(() => modal.value.servico, value => {
 
   // Soma total dos tributos
   value.valor_total_tributos = iss + irpj + cssl + pis + cofins
-
-  value.valor_total = ((totalBaseCalculo + value.valor_total_tributos) * Number(`1.${value.valor_k_minimo ?? 0}`))
+  value.valor_total = ((totalBaseCalculo + value.valor_total_tributos) * (1 + ((value.valor_k_minimo ?? 0) / 100)))
 }, { deep: true })
 
 onMounted(async () => {
@@ -80,6 +79,7 @@ onMounted(async () => {
 
       <VToolbarItems>
         <VBtn
+          color="primary"
           @click="() => {
             modal.isDialogVisible = false
 

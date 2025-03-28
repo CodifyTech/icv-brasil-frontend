@@ -50,27 +50,18 @@ const headers: ComputedRef<IHeader[]> = computed(() => {
       title: 'Pessoa contato',
       key: 'pessoa_contato',
     },
-
     {
       title: 'Consultor',
       key: 'consultor',
     },
-
     {
-      title: 'Telefone',
-      key: 'telefone',
+      title: 'Cliente',
+      key: 'filial.nome_fantasia',
     },
-
-    {
-      title: 'Email',
-      key: 'email',
-    },
-
     {
       title: 'Área',
       key: 'area',
     },
-
     {
       title: 'Status',
       key: 'status',
@@ -81,7 +72,7 @@ const headers: ComputedRef<IHeader[]> = computed(() => {
 const terms: ComputedRef<ITerm[]> = computed(() => {
   return [
     {
-      title: 'Pessoa contato',
+      title: 'Pessoa Contato',
       value: 'pessoa_contato',
     },
 
@@ -89,27 +80,20 @@ const terms: ComputedRef<ITerm[]> = computed(() => {
       title: 'Consultor',
       value: 'consultor',
     },
-
     {
-      title: 'Telefone',
-      value: 'telefone',
+      title: 'Cliente',
+      value: 'nome_fantasia',
+      relationship: 'filial',
     },
-
-    {
-      title: 'E-mail',
-      value: 'email',
-    },
-
     {
       title: 'Área',
       value: 'area',
     },
-
     {
       title: 'Status',
       value: 'status',
     },
-  ]
+  ] as ITerm[]
 })
 
 const actions: ITableAction[] = [
