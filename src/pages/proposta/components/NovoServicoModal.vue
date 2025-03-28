@@ -80,17 +80,30 @@ onMounted(async () => {
         <VBtn
           @click="() => {
             modal.isDialogVisible = false
-            data.servicos.push(modal.servico)
+
+            if (modal.servico.id) {
+              // Serviço já existe, então atualiza o existente
+              const index = data.servicos.findIndex(s => s.id === modal.servico.id)
+              if (index !== -1) {
+                data.servicos[index] = { ...modal.servico }
+              }
+            }
+            else {
+              // Serviço novo, adiciona à lista
+              data.servicos.push(modal.servico)
+            }
+
+            // Reseta o modal
             modal.servico = {
               custos: [],
               despesas: [],
               tributos: [],
               despesas_indiretas: [],
-              despesas_diretas: []
+              despesas_diretas: [],
             }
           }"
         >
-          Inserir Serviço
+          Salvar
         </VBtn>
       </VToolbarItems>
     </VToolbar>
@@ -306,12 +319,12 @@ onMounted(async () => {
                 </VCardTitle>
                 <VDivider />
                 <VCardText class="pl-4">
-                  <span class="d-flex gap-2"><b>Valor Custos:</b> {{ formatCurrency(modal.servico.valor_total_custos) }}</span>
-                  <span class="d-flex gap-2"><b>Valor Despesas:</b> {{ formatCurrency(modal.servico.valor_total_despesas) }}</span>
-                  <span class="d-flex gap-2"><b>Valor Tributos:</b> {{ formatCurrency(modal.servico.valor_total_tributos) }}</span>
-                  <span class="d-flex gap-2"><b>Valor Diária Mínimo:</b> {{ formatCurrency(modal.servico.valor_diaria_minimo) }}</span>
-                  <span class="d-flex gap-2"><b>Valor K Mínimo:</b> {{ formatCurrency(modal.servico.valor_k_minimo) }}</span>
-                  <span class="d-flex gap-2"><b>Valor Total:</b> {{ formatCurrency(modal.servico.valor_total) }}</span>
+                  <span class="d-flex gap-2"><b>Custos:</b> {{ formatCurrency(modal.servico.valor_total_custos) }}</span>
+                  <span class="d-flex gap-2"><b>Despesas:</b> {{ formatCurrency(modal.servico.valor_total_despesas) }}</span>
+                  <span class="d-flex gap-2"><b>Tributos:</b> {{ formatCurrency(modal.servico.valor_total_tributos) }}</span>
+                  <span class="d-flex gap-2"><b>Diária Mínimo:</b> {{ formatCurrency(modal.servico.valor_diaria_minimo) }}</span>
+                  <span class="d-flex gap-2"><b>K Mínimo:</b> {{ formatCurrency(modal.servico.valor_k_minimo) }}</span>
+                  <span class="d-flex gap-2"><b>Total:</b> {{ formatCurrency(modal.servico.valor_total) }}</span>
                 </VCardText>
               </VCard>
             </VCol>
