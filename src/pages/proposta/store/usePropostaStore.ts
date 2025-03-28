@@ -116,12 +116,18 @@ export const usePropostaStore = defineStore('crud/proposta', {
     },
 
     async obterRubricasFixas() {
+      // Limpar os arrays existentes ou inicializá-los se forem nulos
+      this.modal.servico.tributos = this.modal.servico.tributos?.length ? [] : []
+      this.modal.servico.despesas_indiretas = this.modal.servico.despesas_indiretas?.length ? [] : []
+      this.modal.servico.despesas_diretas = this.modal.servico.despesas_diretas?.length ? [] : []
+
       await PropostaService.fetchAll<{
         tributos: IRubrica[]
         despesas_indiretas: IRubrica[]
         despesas_diretas: IRubrica[]
       }>({}, 'listar/rubricas-fixas')
         .then(data => {
+          // Adicionar tributos
           data.tributos.forEach((item: IRubrica) => {
             this.modal.servico.tributos.push({
               nome: item.nome,
@@ -129,21 +135,24 @@ export const usePropostaStore = defineStore('crud/proposta', {
             })
           })
 
+          // Adicionar despesas indiretas
           data.despesas_indiretas.forEach((item: IRubrica) => {
-            console.log(item)
-
             this.modal.servico.despesas_indiretas.push({
               nome: item.nome,
               valor: item.valor,
             })
           })
 
+          // Adicionar despesas diretas
           data.despesas_diretas.forEach((item: IRubrica) => {
             this.modal.servico.despesas_diretas.push({
               nome: item.nome,
               valor: item.valor,
             })
           })
+        })
+        .catch(error => {
+          console.error('Erro ao obter rubricas fixas:', error)
         })
     },
   },

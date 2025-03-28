@@ -16,11 +16,13 @@ const {
 } = storeToRefs(store)
 
 watch(() => modal.value.servico, value => {
+  console.log(value)
+
   // Calcula os totais de custos e despesas
-  const totalCustos = value.custos.reduce((sum, custo) => sum + (custo.valor || 0), 0)
-  const totalDespesas = value.despesas.reduce((sum, despesa) => sum + (despesa.valor || 0), 0)
-  const totalDespesasDiretas = value.despesas_diretas.reduce((sum, despesa) => sum + (despesa.valor || 0), 0)
-  const totalDespesasIndiretas = value.despesas_indiretas.reduce((sum, despesa) => sum + (despesa.valor || 0), 0)
+  const totalCustos = value.custos.reduce((sum, custo) => sum + (custo.valor || 0), 0) ?? 0
+  const totalDespesas = value.despesas.reduce((sum, despesa) => sum + (despesa.valor || 0), 0) ?? 0
+  const totalDespesasDiretas = value.despesas_diretas?.reduce((sum, despesa) => sum + (despesa.valor || 0), 0) ?? 0
+  const totalDespesasIndiretas = value.despesas_indiretas?.reduce((sum, despesa) => sum + (despesa.valor || 0), 0) ?? 0
 
   // Base de cálculo total para os tributos
   const totalBaseCalculo = totalCustos + totalDespesas + totalDespesasDiretas + totalDespesasIndiretas
@@ -41,7 +43,7 @@ watch(() => modal.value.servico, value => {
   const irpjAliquota = getAliquotaByNome('IRPJ')
   const csslAliquota = getAliquotaByNome('CSLL')
   const pisAliquota = getAliquotaByNome('PIS')
-  const cofinsAliquota = getAliquotaByNome('CONFIS')
+  const cofinsAliquota = getAliquotaByNome('COFINS')
 
   const iss = (totalBaseCalculo * issAliquota) / 100
   const irpj = ((((totalBaseCalculo * irpjAliquota) / 100) * 15) / 100)
@@ -319,12 +321,12 @@ onMounted(async () => {
                 </VCardTitle>
                 <VDivider />
                 <VCardText class="pl-4">
-                  <span class="d-flex gap-2"><b>Custos:</b> {{ formatCurrency(modal.servico.valor_total_custos) }}</span>
-                  <span class="d-flex gap-2"><b>Despesas:</b> {{ formatCurrency(modal.servico.valor_total_despesas) }}</span>
-                  <span class="d-flex gap-2"><b>Tributos:</b> {{ formatCurrency(modal.servico.valor_total_tributos) }}</span>
-                  <span class="d-flex gap-2"><b>Diária Mínimo:</b> {{ formatCurrency(modal.servico.valor_diaria_minimo) }}</span>
-                  <span class="d-flex gap-2"><b>K Mínimo:</b> {{ formatCurrency(modal.servico.valor_k_minimo) }}</span>
-                  <span class="d-flex gap-2"><b>Total:</b> {{ formatCurrency(modal.servico.valor_total) }}</span>
+                  <span class="d-flex gap-2"><b>Custos:</b> <VSpacer /> {{ formatCurrency(modal.servico.valor_total_custos) }}</span>
+                  <span class="d-flex gap-2"><b>Despesas:</b> <VSpacer /> {{ formatCurrency(modal.servico.valor_total_despesas) }}</span>
+                  <span class="d-flex gap-2"><b>Tributos:</b> <VSpacer /> {{ formatCurrency(modal.servico.valor_total_tributos) }}</span>
+                  <span class="d-flex gap-2"><b>Diária Mínimo:</b> <VSpacer /> {{ formatCurrency(modal.servico.valor_diaria_minimo) }}</span>
+                  <span class="d-flex gap-2"><b>K Mínimo:</b> <VSpacer /> {{ formatCurrency(modal.servico.valor_k_minimo) }}</span>
+                  <span class="d-flex gap-2"><b>Total:</b> <VSpacer /> {{ formatCurrency(modal.servico.valor_total) }}</span>
                 </VCardText>
               </VCard>
             </VCol>
