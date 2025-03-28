@@ -5,8 +5,8 @@ export type StringOrNumber = string | number
 
 withDefaults(defineProps<{
   loading?: boolean
-  variant: VariantButton
-  color: ColorButton
+  variant?: VariantButton
+  color?: ColorButton
   tooltipText?: string
   size?: StringOrNumber
   rounded?: string | number | boolean

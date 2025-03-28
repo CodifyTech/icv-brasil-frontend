@@ -232,7 +232,7 @@ const handleNextStep = async () => {
                     <CDFTextField
                       v-model="data.email"
                       label="Email"
-                      placeholder="Digite o Email"
+                      placeholder="Digite o E-mail"
                     />
                   </VCol>
                   <VCol
@@ -241,8 +241,8 @@ const handleNextStep = async () => {
                   >
                     <AppAutocomplete
                       v-model="data.area"
-                      label="Area"
-                      placeholder="Digite o Area"
+                      label="Área"
+                      placeholder="Digite o Área"
                       :items="[]"
                       item-value=""
                       item-title=""

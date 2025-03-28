@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import type { IAtestadoOcupacional, IEPI, IFormacao, IQualificacao } from '@/pages/funcionario/types'
-import {IUser} from "@/pages/users/types";
+import type { IUser } from '@/pages/users/types'
 
 const defaultValue = {
   nome: '',
@@ -29,7 +29,6 @@ const defaultValue = {
   banco: '',
   agencia: '',
   conta: '',
-
   user: {
     email: '',
     password: '',

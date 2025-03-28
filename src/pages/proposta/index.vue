@@ -15,7 +15,6 @@ withDefaults(defineProps<{
 })
 
 const i18n = getI18n()
-const { t } = useI18n(i18n)
 
 definePage({
   meta: {
@@ -68,7 +67,7 @@ const headers: ComputedRef<IHeader[]> = computed(() => {
     },
 
     {
-      title: 'Area',
+      title: 'Área',
       key: 'area',
     },
 
@@ -97,12 +96,12 @@ const terms: ComputedRef<ITerm[]> = computed(() => {
     },
 
     {
-      title: 'Email',
+      title: 'E-mail',
       value: 'email',
     },
 
     {
-      title: 'Area',
+      title: 'Área',
       value: 'area',
     },
 

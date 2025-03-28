@@ -107,7 +107,7 @@ onBeforeRouteLeave(() => {
                 <CDFManager
                   v-model:items="data.filiais"
                   v-model:form="form"
-                  title="Filials"
+                  title="Filiais"
                   item-title="razao_social"
                   item-label="Filial"
                   message-add="Adicionar Filial"

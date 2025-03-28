@@ -12,7 +12,7 @@ const props = withDefaults(defineProps<{
   isHeader: boolean
   isActions: boolean
   isEditing: boolean
-  isReadOnly: boolean
+  isReadOnly?: boolean
   loading: boolean
 }>(), {
   isHeader: true,
