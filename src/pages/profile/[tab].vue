@@ -1,9 +1,14 @@
 <script lang="ts" setup>
 import AccountSettingsAccount from './components/AccountSettingsAccount.vue'
-import AccountSettingsBillingAndPlans from './components/AccountSettingsBillingAndPlans.vue'
-import AccountSettingsSecurity from './components/AccountSettingsSecurity.vue'
 
 const route = useRoute('profile-tab')
+
+definePage({
+  meta: {
+    action: 'list',
+    subject: 'profile',
+  },
+})
 
 const activeTab = computed({
   get: () => route.params.tab,
@@ -13,10 +18,6 @@ const activeTab = computed({
 // tabs
 const tabs = [
   { title: 'Conta', icon: 'tabler-users', tab: 'account' },
-  /*
-    { title: 'Segurança', icon: 'tabler-lock', tab: 'security' },
-    { title: 'Faturamento e planos', icon: 'tabler-file-text', tab: 'billing-plans' },
-  */
 ]
 
 definePage({
@@ -59,16 +60,16 @@ definePage({
 
       <!-- Security -->
       <!--
-      <VWindowItem value="security">
+        <VWindowItem value="security">
         <AccountSettingsSecurity />
-      </VWindowItem>
+        </VWindowItem>
       -->
 
       <!-- Billing -->
       <!--
-      <VWindowItem value="billing-plans">
+        <VWindowItem value="billing-plans">
         <AccountSettingsBillingAndPlans />
-      </VWindowItem>
+        </VWindowItem>
       -->
     </VWindow>
   </div>

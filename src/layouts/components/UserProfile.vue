@@ -3,6 +3,7 @@ import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
 import CDFAvatar from '@/components/CDF/CDFAvatar.vue'
 import { useAuthStore } from '@/pages/auth/login/store/useAuthStore'
 import type { IUser } from '@/pages/users/types'
+import {can} from "@layouts/plugins/casl";
 
 // TODO: Get type from backend
 const { logout } = useAuthStore()
@@ -10,8 +11,22 @@ const userData = useCookie<IUser>('userData')
 
 const userProfileList = [
   { type: 'divider' },
-  { type: 'navItem', icon: 'tabler-user', title: 'Perfil', to: { name: 'profile-tab', params: { tab: 'account' } } },
-  { type: 'navItem', icon: 'tabler-settings', title: 'Configuração', to: { name: 'settings-tab', params: { tab: 'notification' } } },
+  {
+    type: 'navItem',
+    icon: 'tabler-user',
+    title: 'Perfil',
+    subject: 'profile',
+    action: 'read',
+    to: { name: 'profile-tab', params: { tab: 'account' } },
+  },
+  {
+    type: 'navItem',
+    icon: 'tabler-settings',
+    title: 'Configuração',
+    subject: 'config',
+    action: 'read',
+    to: { name: 'settings-tab', params: { tab: 'notification' } },
+  },
 ]
 </script>
 
@@ -85,7 +100,7 @@ const userProfileList = [
               :key="item.title"
             >
               <VListItem
-                v-if="item.type === 'navItem'"
+                v-if="item.type === 'navItem' && can(item.action, item.subject)"
                 :to="item.to"
               >
                 <template #prepend>
