@@ -19,12 +19,6 @@ const activeTab = computed({
 const tabs = [
   { title: 'Conta', icon: 'tabler-users', tab: 'account' },
 ]
-
-definePage({
-  meta: {
-    navActiveLink: 'profile-tab',
-  },
-})
 </script>
 
 <template>

@@ -110,7 +110,7 @@ onBeforeRouteLeave(() => {
                       >
                         <CDFTextField
                           v-model="data.telefone_1"
-                          v-mask="'(##) ####-####'"
+                          v-mask="data.telefone_1.length > 14 ? '(##) ####-####' : '(##) #####-####'"
                           type="tel"
                           label="Telefone 1"
                           placeholder="Digite o número do telefone 1"
@@ -123,7 +123,7 @@ onBeforeRouteLeave(() => {
                       >
                         <CDFTextField
                           v-model="data.telefone_2"
-                          v-mask="'(##) ####-####'"
+                          v-mask="data.telefone_2.length > 14 ? '(##) #####-####' : '(##) ####-####'"
                           type="tel"
                           label="Telefone 2"
                           placeholder="Digite o número do telefone 2"

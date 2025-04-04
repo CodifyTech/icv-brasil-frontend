@@ -3,7 +3,7 @@ import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
 import CDFAvatar from '@/components/CDF/CDFAvatar.vue'
 import { useAuthStore } from '@/pages/auth/login/store/useAuthStore'
 import type { IUser } from '@/pages/users/types'
-import {can} from "@layouts/plugins/casl";
+import { can } from '@layouts/plugins/casl'
 
 // TODO: Get type from backend
 const { logout } = useAuthStore()
