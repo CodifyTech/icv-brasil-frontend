@@ -9,7 +9,7 @@ const props = defineProps<{
   readonly?: boolean
 }>()
 
-const { inputRef, formattedValue, numberValue, setValue } = useCurrencyInput({
+const { inputRef, formattedValue, setValue } = useCurrencyInput({
   currency: undefined,
   currencyDisplay: CurrencyDisplay.hidden,
   valueRange: { min: 0 },
