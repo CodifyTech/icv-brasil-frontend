@@ -219,7 +219,7 @@ const handleNextStep = async () => {
                   >
                     <CDFTextField
                       v-model="data.telefone"
-                      v-mask="'(##) ####-####'"
+                      v-mask="data.telefone.length > 14 ? '(##) ####-####' : '(##) #####-####'"
                       type="tel"
                       label="Telefone"
                       placeholder="Digite o Telefone"
