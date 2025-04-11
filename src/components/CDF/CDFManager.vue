@@ -11,13 +11,13 @@ const props = withDefaults(
     items: any[]
     isEditing?: boolean
     isReadOnly?: boolean
+    isAddDisabled?: boolean
     itemTitle?: string
     itemLabel?: string
     template: object
     buttonAdd?: string
     messageEmpty?: string
     messageAdd?: string
-    isAddIconButton?: boolean
   }>(),
   {
     title: '', // valor padrão para 'title'
@@ -27,16 +27,12 @@ const props = withDefaults(
 )
 
 const emit = defineEmits<{
-  (e: 'update:item-add', value: never, index: number): void
-  (e: 'update:item-update', value: never, index: number): void
-  (e: 'update:item-destroy', value: never, index: number): void
   (e: 'update:items', value: never[]): void
 }>()
 
 const expansionPanels = ref()
 const items = ref<any[]>(props.items)
 const loading = ref<boolean>(false)
-const isEditing = ref<boolean>(props.isEditing)
 
 const add = () => {
   items.value.push({
@@ -70,15 +66,6 @@ const save = async (item: any, index: number) => {
   if (valid) {
     items.value[index] = item // Atualiza somente o item relacionado
     expansionPanels.value = null
-
-    if (item.id && item.id !== '')
-      isEditing.value = true
-
-    if (!isEditing.value)
-      emit('update:item-add', item, index)
-    else
-      emit('update:item-update', item, index)
-
     emit('update:items', items.value)
   }
 }
@@ -122,11 +109,11 @@ onUpdated(() => {
   >
     <template #append>
       <CDFButton
-        v-if="!isReadOnly"
+        v-if="!isReadOnly && !isAddDisabled"
         prepend-icon="tabler-plus"
         variant="outlined"
-        :is-text="isAddIconButton || $vuetify.display.smAndUp"
-        :size="isAddIconButton || $vuetify.display.smAndUp ? 'default' : 'small'"
+        :is-text="$vuetify.display.smAndUp"
+        :size="$vuetify.display.smAndUp ? 'default' : 'small'"
         color="primary"
         @click="add"
       >
@@ -151,29 +138,27 @@ onUpdated(() => {
               align="center"
               justify="space-between"
             >
-              <slot
-                :item="item"
-                :index="index"
-                name="header"
+              <span>{{ obterExpansionTitle(index) }}</span>
+              <div
+                class="pr-5"
+                @click.stop
               >
-                <span>{{ obterExpansionTitle(index) }}</span>
-              </slot>
-              <div class="pr-5">
+                <slot
+                  :item="item"
+                  :index="index"
+                  name="actions"
+                />
                 <IconBtn
-                  v-if="!isReadOnly"
                   icon="tabler-trash"
                   variant="text"
-                  @click="() => {
+                  :readonly="isReadOnly"
+                  @click.stop="() => {
                     useConfirmDialogStore().showConfirmDialog(
                       'Deseja realmente excluir este item?',
                       'Sim',
                       'Não',
                       loading,
                       async () => {
-                        if (item.id && item.id !== '') {
-                          emit('update:item-destroy', item, index)
-                        }
-
                         items.splice(index, 1)
                         emit('update:items', items)
                       })
@@ -247,17 +232,17 @@ onUpdated(() => {
 </template>
 
 <style lang="scss">
-.cdf-manager-card{
-  .v-card-item{
+.cdf-manager-card {
+  .v-card-item {
     padding: 12px;
   }
 }
-.cdf-manager{
+
+.cdf-manager {
   display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-  justify-content: center;
+  flex-flow: column wrap;
   align-items: center;
-  min-height: 120px;
+  justify-content: center;
+  min-block-size: 120px;
 }
 </style>
