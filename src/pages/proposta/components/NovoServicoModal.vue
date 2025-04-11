@@ -3,6 +3,8 @@ import { usePropostaStore } from '@/pages/proposta/store/usePropostaStore'
 import CDFManager from '@/components/CDF/CDFManager.vue'
 import type { ICusto, IDespesa, IDespesaDireta, IDespesaIndireta, ITributo } from '@/pages/proposta/types'
 import { formatCurrency } from '@/utils/generals'
+import InputPorcentagem from "@/components/CDF/InputPorcentagem.vue";
+import * as rules from '@/validators/cdf-rules'
 
 const store = usePropostaStore()
 
@@ -101,7 +103,7 @@ onMounted(async () => {
               despesas: [],
               tributos: [],
               despesas_indiretas: [],
-              despesas_diretas: [],
+              despesas_diretas: []
             }
           }"
         >
@@ -118,7 +120,7 @@ onMounted(async () => {
               v-model="modal.servico.nome"
               label="Serviço Solicitado"
               placeholder="Digite o serviço solicitado"
-              :rules="[]"
+              :rules="[rules.requiredValidator]"
             />
           </VCol>
           <VCol cols="6">
@@ -127,16 +129,16 @@ onMounted(async () => {
               label="Valor Diária Mínima"
               placeholder="Digite o valor da diária mínima"
               prepend-inner-icon="tabler-currency-real"
-              :rules="[]"
+              :rules="[rules.requiredValidator]"
             />
           </VCol>
           <VCol cols="6">
-            <InputDinheiro
+            <InputPorcentagem
               v-model="modal.servico.valor_k_minimo"
-              label="Valor do K Mímino"
-              placeholder="Digite o valor do k mínimo"
-              prepend-inner-icon="tabler-currency-real"
-              :rules="[]"
+              label="K Mímino"
+              placeholder="Digite o k mínimo"
+              prepend-inner-icon="tabler-percentage"
+              :rules="[rules.requiredValidator]"
             />
           </VCol>
           <VRow class="mx-0">
@@ -325,7 +327,7 @@ onMounted(async () => {
                   <span class="d-flex gap-2"><b>Despesas:</b> <VSpacer /> {{ formatCurrency(modal.servico.valor_total_despesas) }}</span>
                   <span class="d-flex gap-2"><b>Tributos:</b> <VSpacer /> {{ formatCurrency(modal.servico.valor_total_tributos) }}</span>
                   <span class="d-flex gap-2"><b>Diária Mínimo:</b> <VSpacer /> {{ formatCurrency(modal.servico.valor_diaria_minimo) }}</span>
-                  <span class="d-flex gap-2"><b>K Mínimo:</b> <VSpacer /> {{ formatCurrency(modal.servico.valor_k_minimo) }}</span>
+                  <span class="d-flex gap-2"><b>K Mínimo:</b> <VSpacer /> {{ modal.servico.valor_k_minimo }}%</span>
                   <span class="d-flex gap-2"><b>Total:</b> <VSpacer /> {{ formatCurrency(modal.servico.valor_total) }}</span>
                 </VCardText>
               </VCard>
