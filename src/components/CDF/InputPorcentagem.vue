@@ -71,7 +71,6 @@ const label = computed(() => useAttrs().label as string | undefined)
       variant="outlined"
       :readonly="readonly"
       append-inner-content="%"
-      v-bind="$attrs"
     />
   </div>
 </template>
