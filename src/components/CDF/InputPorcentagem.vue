@@ -9,10 +9,6 @@ const props = defineProps<{
   readonly?: boolean
 }>()
 
-const emit = defineEmits<{
-  (e: 'update:modelValue', value: number): void
-}>()
-
 const { inputRef, formattedValue, numberValue, setValue } = useCurrencyInput({
   currency: undefined,
   currencyDisplay: CurrencyDisplay.hidden,
@@ -31,14 +27,6 @@ watch(
   () => props.modelValue,
   value => {
     setValue(value)
-  },
-  { immediate: true },
-)
-
-watch(
-  () => numberValue.value,
-  value => {
-    emit('update:modelValue', value || 0)
   },
 )
 
