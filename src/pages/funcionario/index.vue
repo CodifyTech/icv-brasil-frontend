@@ -84,7 +84,7 @@ const terms: ComputedRef<ITerm[]> = computed(() => {
     {
       title: 'Telefone',
       value: 'telefone_1',
-      mask: '(##) #####-####',
+      mask: '(##) ######-####',
     },
     {
       title: 'Email',

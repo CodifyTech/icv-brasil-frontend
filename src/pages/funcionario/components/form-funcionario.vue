@@ -123,7 +123,7 @@ onBeforeRouteLeave(() => {
                       >
                         <CDFTextField
                           v-model="data.telefone_2"
-                          v-mask="data.telefone_2.length > 14 ? '(##) #####-####' : '(##) ####-####'"
+                          v-mask="data.telefone_2.length > 14 ? '(##) ####-####' : '(##) #####-####'"
                           type="tel"
                           label="Telefone 2"
                           placeholder="Digite o número do telefone 2"
@@ -292,7 +292,7 @@ onBeforeRouteLeave(() => {
                             >
                               <CDFTextField
                                 v-model="item.utilma_avaliacao"
-                                label="Utilma Avaliação"
+                                label="Última Avaliação"
                                 placeholder="Digite o ultima avaliação"
                                 type="date"
                                 :rules="[]"
