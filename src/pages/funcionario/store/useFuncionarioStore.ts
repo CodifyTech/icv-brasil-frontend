@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
-import type { IAtestadoOcupacional, IEPI, IFormacao, IQualificacao } from '@/pages/funcionario/types'
+import type { IAtestadoOcupacional, IEPI, IFormacao, IFuncionarioAnexo, IQualificacao } from '@/pages/funcionario/types'
 import type { IUser } from '@/pages/users/types'
+import type { IDepartamento } from '@/pages/departamento/types'
+import FuncionarioService from '@/pages/funcionario/services/FuncionarioService'
 
 const defaultValue = {
   nome: '',
@@ -18,6 +20,7 @@ const defaultValue = {
   razao_social: '',
   nome_fantasia: '',
   cnpj: '',
+  departamento_id: null,
   valor_hh: 0,
   valor_diaria: 0,
   valor_demanda: 0,
@@ -29,6 +32,8 @@ const defaultValue = {
   banco: '',
   agencia: '',
   conta: '',
+  anexo_dados_bancarios: null,
+  user_id: null,
   user: {
     email: '',
     password: '',
@@ -37,6 +42,7 @@ const defaultValue = {
   atestado_ocupacionals: [] as IAtestadoOcupacional[],
   epis: [] as IEPI[],
   qualificacoes: [] as IQualificacao[],
+  anexos: [] as IFuncionarioAnexo[],
 }
 
 export const useFuncionarioStore = defineStore('crud/funcionario', {
@@ -45,15 +51,32 @@ export const useFuncionarioStore = defineStore('crud/funcionario', {
     sortKeyDefault: 'nome',
     defaultValue,
     useres: [],
+    departamentos: [] as IDepartamento[],
     loading: {
       save: false,
       item: false,
       items: false,
       destroy: false,
       user: false,
+      departamentos: false,
     },
   }),
   actions: {
     // 👉 methods
+    async fetchDepartamentos(search?: string) {
+      this.loading.departamentos = true
+      await FuncionarioService.fetchAll<{
+        data: IDepartamento[]
+      }>({
+        search,
+      }, 'listar/departamentos')
+        .then(data => {
+          this.departamentos = data
+          this.loading.departamentos = false
+        }).catch(() => {
+          this.departamentos = []
+          this.loading.departamentos = false
+        })
+    },
   },
 })

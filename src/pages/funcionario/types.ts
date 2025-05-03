@@ -25,13 +25,23 @@ export interface IFuncionario {
   banco: string
   agencia: string
   conta: string
-  user_id: string
+  anexo_dados_bancarios: File | string | null
+  user_id?: string
+  departamento_id?: string
+}
+
+export interface IFuncionarioAnexo {
+  id?: string
+  nome: string
+  anexo: File | string | null
+  funcionario_id?: string
 }
 
 export interface IFormacao {
   id?: string
   nome: string
   conselho_classe: string
+  anexo: File | string | null
 }
 
 export interface IQualificacao {
@@ -40,17 +50,19 @@ export interface IQualificacao {
   validate: string
   utilma_avaliacao: string
   validate_avaliacao: string
+  anexo: File | string | null
 }
 
 export interface IAtestadoOcupacional {
   id?: string
   nome: string
   validade: string
-  exame: string
+  exame: File | string | null
 }
 
 export interface IEPI {
   id?: string
   nome: string
   ca: string
+  anexo: File | string | null
 }
