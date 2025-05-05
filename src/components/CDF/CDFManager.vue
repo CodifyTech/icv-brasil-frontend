@@ -117,7 +117,7 @@ onUpdated(() => {
         color="primary"
         @click="add"
       >
-        Adicionar {{ buttonAdd ?? '' }}
+        Novo {{ buttonAdd ?? '' }}
       </CDFButton>
     </template>
 
@@ -204,7 +204,7 @@ onUpdated(() => {
                   color="info"
                   @click="() => save(item, index)"
                 >
-                  Salvar
+                  Adicionar
                 </CDFButton>
                 <CDFButton
                   v-if="!isReadOnly"
