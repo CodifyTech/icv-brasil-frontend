@@ -14,7 +14,6 @@ export default [
   },
   { heading: 'Principal' },
   ...users,
-  ...utils,
   {
     title: 'Funcionários',
     icon: { icon: 'fa-light fa-user-tie' },
@@ -43,4 +42,12 @@ export default [
     action: 'list',
     subject: 'rubrica',
   },
+  {
+    title: 'Departamentos',
+    icon: { icon: 'fa-light fa-buildings' },
+    to: 'departamento',
+    action: 'list',
+    subject: 'departamento',
+  },
+  ...utils,
 ]

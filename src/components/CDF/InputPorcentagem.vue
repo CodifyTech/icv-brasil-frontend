@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { CurrencyDisplay, useCurrencyInput } from 'vue-currency-input'
-import { watch } from 'vue'
+import { computed, useAttrs, watch } from 'vue'
 
 defineOptions({ name: 'InputPorcentagem', inheritAttrs: false })
 
@@ -9,8 +9,12 @@ const props = defineProps<{
   readonly?: boolean
 }>()
 
-const { inputRef, formattedValue, setValue } = useCurrencyInput({
-  currency: undefined,
+const emit = defineEmits<{
+  (e: 'update:modelValue', value: number): void
+}>()
+
+const { inputRef, formattedValue, numberValue, setValue } = useCurrencyInput({
+  currency: 'BRL', // Precisa ser uma string válida, mesmo que não seja exibida
   currencyDisplay: CurrencyDisplay.hidden,
   valueRange: { min: 0 },
   precision: 2,
@@ -27,6 +31,14 @@ watch(
   () => props.modelValue,
   value => {
     setValue(value)
+  },
+  { immediate: true },
+)
+
+watch(
+  () => numberValue.value,
+  value => {
+    emit('update:modelValue', value || 0)
   },
 )
 
@@ -55,10 +67,13 @@ const label = computed(() => useAttrs().label as string | undefined)
       :id="elementId"
       ref="inputRef"
       v-model="formattedValue"
-      :label="undefined"
-      variant="outlined"
-      :readonly="readonly"
       append-inner-content="%"
+      v-bind="{
+        ...$attrs,
+        label: undefined,
+        variant: 'outlined',
+        readonly,
+      }"
     />
   </div>
 </template>

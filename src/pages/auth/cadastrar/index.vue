@@ -1,20 +1,19 @@
 <script setup lang="ts">
+import * as rules from '@/validators/cdf-rules'
 import { useGenerateImageVariant } from "@core/composable/useGenerateImageVariant"
 import { VForm } from 'vuetify/components/VForm'
-import * as rules from '@/validators/cdf-rules'
 
 import AuthProvider from '@/views/pages/authentication/AuthProvider.vue'
 import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
-import { themeConfig } from '@themeConfig'
 
+import logoDark from '@images/logo-dark.svg?raw'
+import logoLight from '@images/logo-light.svg?raw'
 import authV2RegisterIllustrationBorderedDark from '@images/pages/auth-v2-register-illustration-bordered-dark.png'
 import authV2RegisterIllustrationBorderedLight from '@images/pages/auth-v2-register-illustration-bordered-light.png'
 import authV2RegisterIllustrationDark from '@images/pages/auth-v2-register-illustration-dark.png'
 import authV2RegisterIllustrationLight from '@images/pages/auth-v2-register-illustration-light.png'
 import authV2MaskDark from '@images/pages/misc-mask-dark.png'
 import authV2MaskLight from '@images/pages/misc-mask-light.png'
-import logoDark from '@images/logo-dark.svg?raw'
-import logoLight from '@images/logo-light.svg?raw'
 
 const imageVariant = useGenerateImageVariant(authV2RegisterIllustrationLight,
   authV2RegisterIllustrationDark,

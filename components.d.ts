@@ -68,6 +68,7 @@ declare module 'vue' {
     ErrorHeader: typeof import('./src/components/ErrorHeader.vue')['default']
     I18n: typeof import('./src/@core/components/I18n.vue')['default']
     InputDinheiro: typeof import('./src/components/CDF/InputDinheiro.vue')['default']
+    InputPorcentagem: typeof import('./src/components/CDF/InputPorcentagem.vue')['default']
     LayoutForms: typeof import('./src/components/CDF/LayoutForms.vue')['default']
     LayoutTable: typeof import('./src/components/CDF/LayoutTable.vue')['default']
     LoaderDialog: typeof import('./src/components/CDF/LoaderDialog.vue')['default']
