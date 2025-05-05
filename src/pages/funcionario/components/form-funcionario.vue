@@ -123,7 +123,7 @@ watch(() => data.value, (newData) => {
                       >
                         <CDFTextField
                           v-model="data.telefone_1"
-                          v-mask="data.telefone_1?.length > 14 ? '(##) ####-####' : '(##) #####-####'"
+                          v-mask="'(##) #####-####'"
                           type="tel"
                           label="Telefone 1"
                           placeholder="Digite o número do telefone 1"
@@ -136,7 +136,7 @@ watch(() => data.value, (newData) => {
                       >
                         <CDFTextField
                           v-model="data.telefone_2"
-                          v-mask="data.telefone_2?.length > 14 ? '(##) ####-####' : '(##) #####-####'"
+                          v-mask="'(##) #####-####'"
                           type="tel"
                           label="Telefone 2"
                           placeholder="Digite o número do telefone 2"
