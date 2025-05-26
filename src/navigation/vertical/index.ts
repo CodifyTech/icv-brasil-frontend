@@ -1,5 +1,5 @@
-import utils from './utils'
 import users from './users'
+import utils from './utils'
 
 // This function returns an array of objects, each representing a navigation item.
 // Each object has properties like title, to, and icon.
@@ -49,5 +49,19 @@ export default [
     action: 'list',
     subject: 'departamento',
   },
+  {
+    title: 'Cargo',
+    icon: { icon: 'fa-solid fa-suitcase' },
+    to: 'cargo',
+    action: 'list',
+    subject: 'cargo',
+  },
   ...utils,
+  {
+    title: 'TipoDocumento',
+    icon: { icon: 'tabler-template' },
+    to: 'tipodocumento',
+    action: 'list',
+    subject: 'tipodocumento',
+  },
 ]
