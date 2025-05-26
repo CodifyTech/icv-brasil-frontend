@@ -56,12 +56,12 @@ export default [
     action: 'list',
     subject: 'cargo',
   },
-  ...utils,
   {
-    title: 'TipoDocumento',
+    title: 'Tipo Documento',
     icon: { icon: 'tabler-template' },
     to: 'tipodocumento',
     action: 'list',
     subject: 'tipodocumento',
   },
+  ...utils,
 ]
