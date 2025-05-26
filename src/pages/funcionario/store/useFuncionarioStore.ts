@@ -1,10 +1,11 @@
 import { defineStore } from 'pinia'
-import type { IAtestadoOcupacional, IEPI, IFormacao, IFuncionarioAnexo, IQualificacao } from '@/pages/funcionario/types'
-import type { IUser } from '@/pages/users/types'
 import type { IDepartamento } from '@/pages/departamento/types'
 import FuncionarioService from '@/pages/funcionario/services/FuncionarioService'
+import type { IAtestadoOcupacional, IEPI, IFormacao, IFuncionarioAnexo, IQualificacao, ITipoDocumento } from '@/pages/funcionario/types'
+import type { IUser } from '@/pages/users/types'
 
 const defaultValue = {
+  foto: '',
   nome: '',
   rg: '',
   cpf: '',
@@ -21,14 +22,6 @@ const defaultValue = {
   nome_fantasia: '',
   cnpj: '',
   departamento_id: null,
-  valor_hh: 0,
-  valor_diaria: 0,
-  valor_demanda: 0,
-  valor_deslocamento: 0,
-  valor_refeicao: 0,
-  valor_pedagio: 0,
-  valor_hospedagem: 0,
-  valor_outros: 0,
   banco: '',
   agencia: '',
   conta: '',
@@ -52,6 +45,7 @@ export const useFuncionarioStore = defineStore('crud/funcionario', {
     defaultValue,
     useres: [],
     departamentos: [] as IDepartamento[],
+    tipoDocumentos: [] as ITipoDocumento[],
     loading: {
       save: false,
       item: false,
@@ -59,6 +53,7 @@ export const useFuncionarioStore = defineStore('crud/funcionario', {
       destroy: false,
       user: false,
       departamentos: false,
+      tipoDocumentos: false,
     },
   }),
   actions: {
@@ -76,6 +71,19 @@ export const useFuncionarioStore = defineStore('crud/funcionario', {
         }).catch(() => {
           this.departamentos = []
           this.loading.departamentos = false
+        })
+    },
+    async fetchTipoDocumentos(search?: string) {
+      this.loading.tipoDocumentos = true
+      await FuncionarioService.fetchAll<ITipoDocumento[]>({
+        search,
+      }, 'listar/tipo-documentos')
+        .then(data => {
+          this.tipoDocumentos = data
+          this.loading.tipoDocumentos = false
+        }).catch(() => {
+          this.tipoDocumentos = []
+          this.loading.tipoDocumentos = false
         })
     },
   },

@@ -66,3 +66,22 @@ export interface IEPI {
   ca: string
   anexo: File | string | null
 }
+
+export interface IHonorario {
+  id?: string
+  perfil: string
+  valor_hh: number
+  valor_diaria: number
+  valor_demanda: number
+  valor_deslocamento: number
+  valor_refeicao: number
+  valor_pedagio: number
+  valor_hospedagem: number
+  valor_outros: number
+  funcionario_id: string
+}
+
+export interface ITipoDocumento {
+  id: string
+  nome: string
+}

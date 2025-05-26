@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { useFuncionarioStore } from '../store/useFuncionarioStore'
-import { formatDate } from '@/utils/formatters'
-import LayoutForms from '@/components/CDF/LayoutForms.vue'
-import * as cdfRules from '@/validators/cdf-rules'
-import CDFManager from '@/components/CDF/CDFManager.vue'
-import type { IAtestadoOcupacional, IEPI, IFormacao, IQualificacao, IFuncionarioAnexo } from '@/pages/funcionario/types'
+import CDFDialogManager from '@/components/CDF/CDFDialogManager.vue'
 import CDFFileUpload from '@/components/CDF/CDFFileUpload.vue'
+import LayoutForms from '@/components/CDF/LayoutForms.vue'
+import type { IAtestadoOcupacional, IEPI, IFormacao, IFuncionarioAnexo, IHonorario, IQualificacao } from '@/pages/funcionario/types'
+import { formatDate } from '@/utils/formatters'
+import * as cdfRules from '@/validators/cdf-rules'
 
 const { isEditing } = withDefaults(defineProps<{
   isEditing: boolean
@@ -23,6 +23,7 @@ const {
   data,
   loading,
   departamentos,
+  tipoDocumentos,
 } = storeToRefs(store)
 
 const tab = ref('dados_pessoais')
@@ -32,11 +33,13 @@ const {
   update,
   resetForm,
   fetchDepartamentos,
+  fetchTipoDocumentos,
 } = store
 
 onMounted(() => {
   // 👉 methods
   fetchDepartamentos()
+  fetchTipoDocumentos()
 })
 
 onBeforeRouteLeave(() => {
@@ -44,11 +47,11 @@ onBeforeRouteLeave(() => {
 })
 
 // Adicione este watcher para garantir que user sempre exista
-watch(() => data.value, (newData) => {
+watch(() => data.value, newData => {
   if (!newData.user) {
     newData.user = {
       email: '',
-      password: ''
+      password: '',
     }
   }
 }, { immediate: true, deep: true })
@@ -86,6 +89,15 @@ watch(() => data.value, (newData) => {
                 >
                   <VCardText class="pt-0 pb-2">
                     <VRow>
+                      <VCol
+                        cols="12"
+                        class="d-flex justify-center"
+                      >
+                        <EnviarImagem
+                          v-model="data.foto"
+                          :placeholder="data.nome"
+                        />
+                      </VCol>
                       <VCol cols="12">
                         <CDFTextField
                           v-model="data.nome"
@@ -216,7 +228,7 @@ watch(() => data.value, (newData) => {
                     class="pa-2"
                   >
                     <div class="d-flex flex-column gap-2">
-                      <CDFManager
+                      <CDFDialogManager
                         v-model:items="data.formacoes"
                         title="Formação"
                         item-title="nome"
@@ -268,9 +280,9 @@ watch(() => data.value, (newData) => {
                             </VCol>
                           </VRow>
                         </template>
-                      </CDFManager>
+                      </CDFDialogManager>
 
-                      <CDFManager
+                      <CDFDialogManager
                         v-model:items="data.qualificacoes"
                         title="Qualificação"
                         item-title="nome"
@@ -358,7 +370,7 @@ watch(() => data.value, (newData) => {
                             </VCol>
                           </VRow>
                         </template>
-                      </CDFManager>
+                      </CDFDialogManager>
                     </div>
                   </VTabsWindowItem>
 
@@ -367,7 +379,7 @@ watch(() => data.value, (newData) => {
                     class="pa-2"
                   >
                     <div class="d-flex flex-column gap-2">
-                      <CDFManager
+                      <CDFDialogManager
                         v-model:items="data.atestado_ocupacionals"
                         title="Atestado Ocupacional"
                         item-title="nome"
@@ -393,7 +405,7 @@ watch(() => data.value, (newData) => {
                           <VRow>
                             <VCol
                               cols="12"
-                              md="4"
+                              md="6"
                             >
                               <CDFTextField
                                 v-model="item.nome"
@@ -404,7 +416,7 @@ watch(() => data.value, (newData) => {
                             </VCol>
                             <VCol
                               cols="12"
-                              md="4"
+                              md="6"
                             >
                               <CDFTextField
                                 v-model="item.validade"
@@ -414,10 +426,7 @@ watch(() => data.value, (newData) => {
                                 :rules="[]"
                               />
                             </VCol>
-                            <VCol
-                              cols="12"
-                              md="4"
-                            >
+                            <VCol cols="12">
                               <CDFFileUpload
                                 v-model="item.exame"
                                 label="Exame"
@@ -427,9 +436,9 @@ watch(() => data.value, (newData) => {
                             </VCol>
                           </VRow>
                         </template>
-                      </CDFManager>
+                      </CDFDialogManager>
 
-                      <CDFManager
+                      <CDFDialogManager
                         v-model:items="data.epis"
                         title="EPI"
                         item-title="nome"
@@ -438,6 +447,7 @@ watch(() => data.value, (newData) => {
                         :template="{
                           nome: '',
                           ca: '',
+                          validade: null,
                           anexo: null,
                         }"
                       >
@@ -453,10 +463,7 @@ watch(() => data.value, (newData) => {
                         </template>
                         <template #content="{ item }: {item: IEPI}">
                           <VRow>
-                            <VCol
-                              cols="12"
-                              md="6"
-                            >
+                            <VCol cols="12">
                               <CDFTextField
                                 v-model="item.nome"
                                 label="Nome"
@@ -475,6 +482,18 @@ watch(() => data.value, (newData) => {
                                 :rules="[cdfRules.requiredValidator]"
                               />
                             </VCol>
+                            <VCol
+                              cols="12"
+                              md="6"
+                            >
+                              <CDFTextField
+                                v-model="item.validade"
+                                label="Validade"
+                                placeholder="Digite a validade"
+                                type="date"
+                                :rules="[]"
+                              />
+                            </VCol>
                             <VCol cols="12">
                               <CDFFileUpload
                                 v-model="item.anexo"
@@ -484,7 +503,7 @@ watch(() => data.value, (newData) => {
                             </VCol>
                           </VRow>
                         </template>
-                      </CDFManager>
+                      </CDFDialogManager>
                     </div>
                   </VTabsWindowItem>
 
@@ -591,7 +610,7 @@ watch(() => data.value, (newData) => {
                     class="pa-2"
                   >
                     <div class="d-flex flex-column gap-2">
-                      <CDFManager
+                      <CDFDialogManager
                         v-model:items="data.anexos"
                         title="Anexo"
                         item-title="nome"
@@ -615,10 +634,13 @@ watch(() => data.value, (newData) => {
                               cols="12"
                               md="6"
                             >
-                              <CDFTextField
+                              <AppSelect
                                 v-model="item.nome"
-                                label="Nome"
-                                placeholder="Digite o nome"
+                                label="Tipo Documento"
+                                placeholder="Selecione o tipo de documento"
+                                :items="tipoDocumentos"
+                                item-title="nome"
+                                item-value="nome"
                                 :rules="[cdfRules.requiredValidator]"
                               />
                             </VCol>
@@ -634,7 +656,7 @@ watch(() => data.value, (newData) => {
                             </VCol>
                           </VRow>
                         </template>
-                      </CDFManager>
+                      </CDFDialogManager>
                     </div>
                   </VTabsWindowItem>
 
@@ -642,15 +664,47 @@ watch(() => data.value, (newData) => {
                     value="honrarios"
                     class="pa-2"
                   >
-                    <VCard variant="outlined">
-                      <VCardText>
+                    <CDFDialogManager
+                      v-model:items="data.honorarios"
+                      title="Honorários"
+                      item-title="perfil"
+                      item-label="Honorário"
+                      message-add="Novo Honorário"
+                      :template="{
+                        perfil: '',
+                        valor_hh: 0,
+                        valor_diaria: 0,
+                        valor_demanda: 0,
+                        valor_deslocamento: 0,
+                        valor_refeicao: 0,
+                        valor_pedagio: 0,
+                        valor_hospedagem: 0,
+                        valor_outros: 0,
+                      }"
+                    >
+                      <template #header="{ item }: { item: IHonorario }">
+                        <div class="d-flex flex-column gap-2 pa-4">
+                          <VLabel v-if="item.perfil">
+                            {{ item.perfil }}
+                          </VLabel>
+                        </div>
+                      </template>
+                      <template #content="{ item }: {item: IHonorario}">
                         <VRow>
+                          <VCol cols="12">
+                            <AppTextField
+                              v-model="item.perfil"
+                              label="Perfil"
+                              placeholder="Digite o nome perfil"
+                              :rules="[]"
+                            />
+                          </VCol>
                           <VCol
                             cols="12"
                             md="4"
                           >
                             <InputDinheiro
-                              v-model="data.valor_hh"
+                              v-model="item.valor_hh"
                               label="Valor Hora Homem"
                               placeholder="Digite o valor da hora homem"
                               prepend-inner-icon="tabler-currency-real"
@@ -662,7 +716,7 @@ watch(() => data.value, (newData) => {
                             md="4"
                           >
                             <InputDinheiro
-                              v-model="data.valor_diaria"
+                              v-model="item.valor_diaria"
                               label="Digite o Valor Diária"
                               placeholder="Digite o valor da diária"
                               prepend-inner-icon="tabler-currency-real"
@@ -674,7 +728,7 @@ watch(() => data.value, (newData) => {
                             md="4"
                           >
                             <InputDinheiro
-                              v-model="data.valor_demanda"
+                              v-model="item.valor_demanda"
                               label="Valor Demanda"
                               placeholder="Digite o valor da demanda"
                               prepend-inner-icon="tabler-currency-real"
@@ -686,7 +740,7 @@ watch(() => data.value, (newData) => {
                             md="4"
                           >
                             <InputDinheiro
-                              v-model="data.valor_deslocamento"
+                              v-model="item.valor_deslocamento"
                               label="Valor Deslocamento"
                               placeholder="Digite o valor do deslocamento"
                               prepend-inner-icon="tabler-currency-real"
@@ -698,7 +752,7 @@ watch(() => data.value, (newData) => {
                             md="4"
                           >
                             <InputDinheiro
-                              v-model="data.valor_refeicao"
+                              v-model="item.valor_refeicao"
                               label="Valor Refeição"
                               placeholder="Digite o valor da refeição"
                               prepend-inner-icon="tabler-currency-real"
@@ -710,7 +764,7 @@ watch(() => data.value, (newData) => {
                             md="4"
                           >
                             <InputDinheiro
-                              v-model="data.valor_pedagio"
+                              v-model="item.valor_pedagio"
                               label="Valor Pedágio"
                               placeholder="Digite o valor do pedágio"
                               prepend-inner-icon="tabler-currency-real"
@@ -722,7 +776,7 @@ watch(() => data.value, (newData) => {
                             md="4"
                           >
                             <InputDinheiro
-                              v-model="data.valor_hospedagem"
+                              v-model="item.valor_hospedagem"
                               label="Valor Hospedagem"
                               placeholder="Digite o valor da hospedagem"
                               prepend-inner-icon="tabler-currency-real"
@@ -734,7 +788,7 @@ watch(() => data.value, (newData) => {
                             md="4"
                           >
                             <InputDinheiro
-                              v-model="data.valor_outros"
+                              v-model="item.valor_outros"
                               label="Valor Outros"
                               placeholder="Digite o valor de outros"
                               prepend-inner-icon="tabler-currency-real"
@@ -742,8 +796,8 @@ watch(() => data.value, (newData) => {
                             />
                           </VCol>
                         </VRow>
-                      </VCardText>
-                    </VCard>
+                      </template>
+                    </CDFDialogManager>
                   </VTabsWindowItem>
 
                   <VTabsWindowItem
