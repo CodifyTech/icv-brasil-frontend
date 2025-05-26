@@ -51,7 +51,7 @@ export default [
   },
   {
     title: 'Cargo',
-    icon: { icon: 'fa-solid fa-suitcase' },
+    icon: { icon: 'fa-light fa-suitcase' },
     to: 'cargo',
     action: 'list',
     subject: 'cargo',
