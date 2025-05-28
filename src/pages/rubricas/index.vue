@@ -7,6 +7,13 @@ import { TipoRubricaEnum } from '@/pages/rubricas/enums/TipoRubrica'
 
 const store = useRubricaStore()
 
+definePage({
+  meta: {
+    action: 'list',
+    subject: 'rubrica',
+  },
+})
+
 const {
   adicionarRubrica,
   listarRubricas,
