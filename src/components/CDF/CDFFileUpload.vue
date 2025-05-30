@@ -35,29 +35,27 @@ const fileName = () => {
       class="mb-1 text-body-2 text-high-emphasis"
       :text="label"
     />
-    <AppTextField
-      v-if="typeof $attrs.modelValue === 'string' && !isEmpty($attrs.modelValue)"
-      :value="fileName()"
-      readonly
-    >
-      <template #prepend>
-        <VIcon icon="fa-solid fa-up-from-line" />
-      </template>
-      <template #append>
-        <IconBtn @click="() => viewFile($attrs.modelValue)">
-          <VIcon
-            icon="fa-solid fa-eye"
-            size="14"
-          />
-        </IconBtn>
-        <IconBtn @click="() => $emit('update:modelValue', null)">
-          <VIcon
-            icon="fa-solid fa-trash"
-            size="14"
-          />
-        </IconBtn>
-      </template>
-    </AppTextField>
+    <div v-if="typeof $attrs.modelValue === 'string' && !isEmpty($attrs.modelValue)">
+      <input
+        class="app-file-upload-field"
+        :value="fileName()"
+        readonly
+        type="hidden"
+      >
+
+      <IconBtn @click="() => viewFile($attrs.modelValue)">
+        <VIcon
+          icon="fa-solid fa-eye"
+          size="14"
+        />
+      </IconBtn>
+      <IconBtn @click="() => $emit('update:modelValue', null)">
+        <VIcon
+          icon="fa-solid fa-trash"
+          size="14"
+        />
+      </IconBtn>
+    </div>
 
     <VFileInput
       v-else
@@ -81,3 +79,11 @@ const fileName = () => {
     </VFileInput>
   </div>
 </template>
+
+<style lang="scss">
+.app-file-upload-field {
+  .v-input__control {
+    display: none;
+  }
+}
+</style>
