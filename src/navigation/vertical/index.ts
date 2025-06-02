@@ -1,6 +1,3 @@
-import users from './users'
-import utils from './utils'
-
 // This function returns an array of objects, each representing a navigation item.
 // Each object has properties like title, to, and icon.
 // The title is the text displayed for the navigation item.
@@ -13,7 +10,13 @@ export default [
     icon: { icon: 'tabler-smart-home' },
   },
   { heading: 'Principal' },
-  ...users,
+  {
+    title: 'Usuários',
+    icon: { icon: 'tabler-users-group' },
+    to: 'users',
+    action: 'list',
+    subject: 'users',
+  },
   {
     title: 'Funcionários',
     icon: { icon: 'fa-light fa-user-tie' },
@@ -63,5 +66,12 @@ export default [
     action: 'list',
     subject: 'tipodocumento',
   },
-  ...utils,
+  {
+    title: 'Controle de Acesso',
+    icon: { icon: 'tabler-smart-home' },
+    children: [
+      { title: 'Perfis', to: 'acesso-perfis' },
+      { title: 'Permissões', to: 'acesso-permissoes' },
+    ],
+  },
 ]
