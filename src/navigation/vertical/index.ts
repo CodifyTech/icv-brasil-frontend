@@ -9,7 +9,6 @@ export default [
     to: { name: 'root' },
     icon: { icon: 'tabler-smart-home' },
   },
-  { heading: 'Principal' },
   {
     title: 'Usuários',
     icon: { icon: 'tabler-users-group' },
