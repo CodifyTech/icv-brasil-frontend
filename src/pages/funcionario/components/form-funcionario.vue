@@ -304,10 +304,10 @@ watch(() => data.value, newData => {
                             <VLabel v-if="item.validate">
                               Validade: {{ formatDate(item.validate) }}
                             </VLabel>
-                            <VLabel v-if="item.validate">
+                            <VLabel v-if="item.utilma_avaliacao">
                               Ultima Avaliação: {{ formatDate(item.utilma_avaliacao) }}
                             </VLabel>
-                            <VLabel v-if="item.validate">
+                            <VLabel v-if="item.validate_avaliacao">
                               Validade da Avaliação: {{ formatDate(item.validate_avaliacao) }}
                             </VLabel>
                           </div>
