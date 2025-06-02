@@ -5,7 +5,7 @@ const route = useRoute('profile-tab')
 
 definePage({
   meta: {
-    action: 'list',
+    action: 'edit',
     subject: 'profile',
   },
 })
