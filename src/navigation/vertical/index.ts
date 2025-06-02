@@ -61,7 +61,7 @@ export default [
     subject: 'cargo',
   },
   {
-    title: 'Tipo Documento',
+    title: 'Tipo Documentos',
     icon: { icon: 'fa-light fa-file-lines' },
     to: 'tipodocumento',
     action: 'list',
