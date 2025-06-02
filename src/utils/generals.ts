@@ -18,22 +18,42 @@ export const cleanEmptyFieldsPayload = (payload: any): Record<string, any> => {
   if (payload === null || payload === undefined)
     return {}
 
-  const cleanPayload: Record<string, any> = {} // Usando Record para melhor segurança de tipos
+  const cleanPayload: Record<string, any> = {}
 
   Object.entries(payload).forEach(([key, value]) => {
-    if (value && typeof value === 'object' && !Array.isArray(value) && !(value instanceof File)) {
+    if (Array.isArray(value)) {
+      // Recursively clean each item in the array
+      const cleanedArray = value
+        .map(item => (typeof item === 'object' && item !== null && !(item instanceof File) ? cleanEmptyFieldsPayload(item) : item))
+        .filter(item =>
+          item !== null
+          && item !== undefined
+          && item !== ''
+          && item !== 'null'
+          && item !== 'undefined'
+          && item !== '""'
+
+          // If item is object, keep only if it has keys
+          && (!(typeof item === 'object' && !Array.isArray(item)) || Object.keys(item).length > 0),
+        )
+
+      if (cleanedArray.length > 0)
+        cleanPayload[key] = cleanedArray
+    }
+    else if (value && typeof value === 'object' && !(value instanceof File)) {
       // Recursively clean nested object
       const nestedCleaned = cleanEmptyFieldsPayload(value)
-
       if (Object.keys(nestedCleaned).length > 0)
         cleanPayload[key] = nestedCleaned
     }
-    else if (value !== null
+    else if (
+      value !== null
       && value !== undefined
       && value !== ''
       && value !== 'null'
       && value !== 'undefined'
-      && value !== '""') {
+      && value !== '""'
+    ) {
       cleanPayload[key] = value
     }
   })

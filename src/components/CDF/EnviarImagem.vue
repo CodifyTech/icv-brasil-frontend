@@ -1,72 +1,51 @@
-<script lang="ts">
-import type { PropType } from 'vue'
-import { defineComponent, ref, watch } from 'vue'
+<script setup lang="ts">
+import { useFileDialog, useObjectUrl } from '@vueuse/core'
+import { ref, watch } from 'vue'
 
-export default defineComponent({
-  name: 'AvatarComponent',
-  props: {
-    // Prop para receber o arquivo
-    modelValue: {
-      type: Object as PropType<File | string | null>, // Será um arquivo ou null
-      default: null,
-    },
-    placeholder: {
-      type: Object as PropType<string | null>, // Será um arquivo ou null
-      default: null,
-    },
+const props = defineProps<{
+  modelValue: File | string | null
+  placeholder?: string | null
+}>()
+
+const emit = defineEmits<{
+  (e: 'update:modelValue', value: File | string | null): void
+}>()
+
+// Preview da imagem
+const previewImage = ref<string | null>(null)
+
+// FileDialog do vueuse
+const { open, onChange, reset } = useFileDialog({ accept: 'image/*' })
+
+// Atualiza preview quando modelValue muda
+watch(
+  () => props.modelValue,
+  newValue => {
+    if (newValue instanceof File)
+      previewImage.value = useObjectUrl(newValue).value ?? null
+    else
+      previewImage.value = newValue as string | null
   },
-  emits: ['update:modelValue'], // Emite o update para two-way binding
+  { immediate: true },
+)
 
-  setup(props, { emit }) {
-    const fileInput = ref<HTMLInputElement | null>(null) // Referência ao input de arquivos
-    const previewImage = ref<string | null>(null) // Controle do preview da imagem
+// Abre seletor de arquivos
+function triggerFileUpload() {
+  open()
+}
 
-    // Atualiza o preview sempre que o modelValue mudar
-    watch(
-      () => props.modelValue,
-      newValue => {
-        if (newValue instanceof File) {
-          // Cria o URL do Blob se modelValue for um arquivo
-          previewImage.value = URL.createObjectURL(newValue)
-        }
-        else {
-          // Reseta o preview se não existir arquivo
-          previewImage.value = props.modelValue
-        }
-      },
-      { immediate: true }, // Executa assim que o componente for montado
-    )
-
-    // Abrir seletor de arquivos
-    const triggerFileUpload = () => {
-      fileInput.value?.click() // Dispara o clique no input escondido
-    }
-
-    // Manipula o upload do arquivo
-    const handleFileUpload = (event: Event) => {
-      const target = event.target as HTMLInputElement
-      const file = target.files?.[0] // Obtém o primeiro arquivo selecionado
-
-      if (file)
-        emit('update:modelValue', file) // Atualiza o modelValue com o arquivo selecionado
-    }
-
-    // Remove o arquivo carregado
-    const removeImage = () => {
-      emit('update:modelValue', null) // Atualiza modelValue para null
-      if (fileInput.value)
-        fileInput.value.value = '' // Reseta o campo do input
-    }
-
-    return {
-      fileInput,
-      previewImage,
-      triggerFileUpload,
-      handleFileUpload,
-      removeImage,
-    }
-  },
+// Quando arquivo é selecionado
+onChange((files: FileList | File[] | null) => {
+  const file = Array.isArray(files) ? files[0] : files?.[0]
+  if (file)
+    emit('update:modelValue', file)
 })
+
+// Remove imagem
+function removeImage() {
+  emit('update:modelValue', null)
+  reset()
+}
 </script>
 
 <template>
@@ -78,7 +57,8 @@ export default defineComponent({
       variant="tonal"
       size="150"
       :foto="previewImage"
-      :name="placeholder || 'Avatar'"
+      :name="props.placeholder || 'Avatar'"
+      @click="triggerFileUpload"
     />
     <div class="enviar-imagem-actions">
       <!-- Upload Button -->
@@ -107,36 +87,26 @@ export default defineComponent({
         @click="removeImage"
       />
     </div>
-
-    <!-- Hidden File Input -->
-    <input
-      ref="fileInput"
-      type="file"
-      class="d-none"
-      accept="image/*"
-      @change="handleFileUpload"
-    >
   </div>
 </template>
 
 <style lang="scss">
 .enviar-imagem {
-  width: fit-content;
-  .enviar-imagem-avatar:hover{
-    opacity: 0.7;
+  inline-size: fit-content;
+
+  .enviar-imagem-avatar:hover {
     cursor: pointer;
+    opacity: 0.7;
   }
 
-  .enviar-imagem-actions{
+  .enviar-imagem-actions {
     position: absolute;
-    bottom: 30px;
-    right: -15px;
-    transform: translate(50%, 50%);
     display: flex;
     flex-direction: column;
     gap: 2px;
-
-    .enviar-imagem-btn{}
+    inset-block-end: 30px;
+    inset-inline-end: -15px;
+    transform: translate(50%, 50%);
   }
 }
 </style>

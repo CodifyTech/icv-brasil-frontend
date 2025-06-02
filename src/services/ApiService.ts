@@ -2,7 +2,6 @@ import { objectToFormData } from '@octetstream/object-to-form-data'
 import type { AxiosError } from 'axios'
 import useApi from '@/composables/useApi'
 import { cleanEmptyFieldsPayload } from '@/utils/generals'
-import axios from "axios";
 
 class ApiService {
   private readonly _endpoint: string
@@ -110,11 +109,6 @@ class ApiService {
     }).then(({ data }) => {
       return data
     })
-      .catch(error => {
-        this.handleError(error as AxiosError)
-
-        return error.data
-      })
   }
 
   /**

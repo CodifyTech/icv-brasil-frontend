@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import type { IDepartamento } from '@/pages/departamento/types'
 import FuncionarioService from '@/pages/funcionario/services/FuncionarioService'
-import type { IAtestadoOcupacional, IEPI, IFormacao, IFuncionarioAnexo, IQualificacao, ITipoDocumento } from '@/pages/funcionario/types'
+import type { IAtestadoOcupacional, IEPI, IFormacao, IFuncionarioAnexo, IHonorario, IQualificacao, ITipoDocumento } from '@/pages/funcionario/types'
 import type { IUser } from '@/pages/users/types'
 
 const defaultValue = {
@@ -36,6 +36,7 @@ const defaultValue = {
   epis: [] as IEPI[],
   qualificacoes: [] as IQualificacao[],
   anexos: [] as IFuncionarioAnexo[],
+  honorarios: [] as IHonorario[],
 }
 
 export const useFuncionarioStore = defineStore('crud/funcionario', {
@@ -60,9 +61,7 @@ export const useFuncionarioStore = defineStore('crud/funcionario', {
     // 👉 methods
     async fetchDepartamentos(search?: string) {
       this.loading.departamentos = true
-      await FuncionarioService.fetchAll<{
-        data: IDepartamento[]
-      }>({
+      await FuncionarioService.fetchAll<IDepartamento[]>({
         search,
       }, 'listar/departamentos')
         .then(data => {
