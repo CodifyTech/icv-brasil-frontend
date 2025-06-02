@@ -8,6 +8,8 @@ export default [
     title: 'Home',
     to: { name: 'root' },
     icon: { icon: 'tabler-smart-home' },
+    action: 'read',
+    subject: 'auth',
   },
   {
     title: 'Usuários',
