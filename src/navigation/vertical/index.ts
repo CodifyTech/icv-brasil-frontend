@@ -62,7 +62,7 @@ export default [
   },
   {
     title: 'Tipo Documento',
-    icon: { icon: 'tabler-template' },
+    icon: { icon: 'fa-light fa-file-lines' },
     to: 'tipodocumento',
     action: 'list',
     subject: 'tipodocumento',
