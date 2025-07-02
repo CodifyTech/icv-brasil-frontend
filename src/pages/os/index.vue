@@ -1,5 +1,11 @@
 <script setup lang="ts">
-import { useInmetroStore } from '../inmetro/store/useInmetroStore'
+import moment from 'moment'
+import {
+  getOSStatusColor,
+  getOSStatusIcon,
+  getOSStatusLabel,
+} from '../../enums/OSStatusEnum'
+import { useOrdemServicoStore } from '@/pages/os/store/useOrdemServicoStore'
 
 definePage({
   meta: {
@@ -8,79 +14,15 @@ definePage({
   },
 })
 
-const store = useInmetroStore()
+const store = useOrdemServicoStore()
 
-const { relatoriosFinalizados, loading, filtros } = storeToRefs(store)
+const { ordensServico } = storeToRefs(store)
 
 onMounted(async () => {
   await Promise.all([
     store.fetchOrdensServico(),
-    store.fetchRelatoriosFinalizados(),
   ])
 })
-
-// Filtros para pesquisa avançada
-const clienteOptions = ref([
-  { title: 'Todos', value: '' },
-  { title: 'ACME', value: 'acme' },
-  { title: 'BETA Corp', value: 'beta' },
-])
-
-const inspetorOptions = ref([
-  { title: 'Todos', value: '' },
-  { title: 'João Silva', value: 'joao_silva' },
-  { title: 'Maria Santos', value: 'maria_santos' },
-])
-
-const escopoOptions = ref([
-  { title: 'Todos', value: '' },
-  { title: 'Dimensional', value: 'dimensional' },
-  { title: 'Visual', value: 'visual' },
-  { title: 'Soldagem', value: 'soldagem' },
-])
-
-const tipoInspecaoOptions = ref([
-  { title: 'Todos', value: '' },
-  { title: 'Visual', value: 'visual' },
-  { title: 'Ultrassom', value: 'ultrassom' },
-])
-
-const filtroForm = ref({
-  cliente: '',
-  data_inspecao_inicio: '',
-  data_inspecao_fim: '',
-  inspetor: '',
-  fornecedor: '',
-  escopo: '',
-  tipo_inspecao: '',
-  ordem_servico: '',
-  pedido: '',
-  certificado: '',
-})
-
-const pesquisar = () => {
-  // Aplicar filtros
-  Object.assign(filtros.value, filtroForm.value)
-  store.fetchRelatoriosFinalizados()
-}
-
-const exportarCSV = () => {
-  store.exportarCSV()
-}
-
-const getStatusColor = (status: string) => {
-  const colors = {
-    em_analise: 'info',
-    andamento: 'warning',
-    finalizado: 'success',
-  }
-
-  return colors[status as keyof typeof colors] || 'grey'
-}
-
-const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString('pt-BR')
-}
 
 const estatisticas = ref({
   total: 0,
@@ -88,8 +30,6 @@ const estatisticas = ref({
   emAndamento: 0,
   finalizados: 0,
 })
-
-const ordensServico = ref([])
 </script>
 
 <template>
@@ -235,20 +175,22 @@ const ordensServico = ref([])
             </VBtn>
           </VCardTitle>
 
-          <VCardText>
+          <VDivider />
+
+          <VCardText class="pa-0">
             <VList v-if="ordensServico?.length > 0">
               <VListItem
-                v-for="os in ordensServico?.slice(0, 5)"
+                v-for="os in ordensServico?.slice(0, 10)"
                 :key="os.id"
-                :to="`/inmetro/visualizar/${os.id}`"
+                :to="`/os/visualizar/${os.id}`"
               >
                 <template #prepend>
                   <VAvatar
                     size="40"
-                    :color="os.status === 'finalizado' ? 'success' : os.status === 'andamento' ? 'warning' : 'info'"
+                    :color="getOSStatusColor(os.status)"
                     variant="tonal"
                   >
-                    <VIcon :icon="os.status === 'finalizado' ? 'tabler-check' : os.status === 'andamento' ? 'tabler-progress' : 'tabler-clock'" />
+                    <VIcon :icon="getOSStatusIcon(os.status)" />
                   </VAvatar>
                 </template>
 
@@ -257,16 +199,16 @@ const ordensServico = ref([])
                 </VListItemTitle>
 
                 <VListItemSubtitle>
-                  {{ os.cliente?.razao_social || os.cliente_nome }} • {{ new Date(os.data_abertura).toLocaleDateString('pt-BR') }}
+                  {{ os.cliente?.razao_social || os.cliente_nome }} • {{ moment(os.data_abertura).format('DD/MM/YYYY') }}
                 </VListItemSubtitle>
 
                 <template #append>
                   <VChip
-                    :color="os.status === 'finalizado' ? 'success' : os.status === 'andamento' ? 'warning' : 'info'"
+                    :color="getOSStatusColor(os.status)"
                     variant="tonal"
                     size="small"
                   >
-                    {{ os.status }}
+                    {{ getOSStatusLabel(os.status) }}
                   </VChip>
                 </template>
               </VListItem>
@@ -324,18 +266,20 @@ const ordensServico = ref([])
               Listar Todas as OS
             </VBtn>
 
-            <VBtn
+            <!--
+              <VBtn
               block
               color="info"
               variant="outlined"
               class="mb-3"
               @click="store.exportarCSV"
-            >
+              >
               <VIcon start>
-                tabler-download
+              tabler-download
               </VIcon>
               Exportar Relatório
-            </VBtn>
+              </VBtn>
+            -->
           </VCardText>
         </VCard>
       </VCol>

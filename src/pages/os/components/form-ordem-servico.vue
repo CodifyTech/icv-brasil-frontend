@@ -1,44 +1,54 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import CDFTextField from '@/components/CDF/CDFTextField.vue'
-import LayoutForms from '@/components/CDF/LayoutForms.vue'
 import { useInmetroStore } from '@/pages/inmetro/store/useInmetroStore'
-import type { IMaterialEquipamento, IOrdemServicoAnexo } from '@/pages/inmetro/types'
+import { useOrdemServicoStore } from '@/pages/os/store/useOrdemServicoStore'
 import * as rules from '@/validators/cdf-rules'
 
-const { isEditing } = withDefaults(defineProps<{
-  isEditing: boolean
-  isHeader: boolean
-}>(), {
-  isEditing: false,
-  isHeader: true,
-})
+const { isEditing = false, isHeader = true } = defineProps<{
+  isEditing?: boolean
+  isHeader?: boolean
+}>()
 
-const store = useInmetroStore()
+// Store de dados de apoio (escopos, tipos de serviço, responsáveis)
+const inmetroStore = useInmetroStore()
+
+// Store de operações de OS (CRUD, form, etc)
+const osStore = useOrdemServicoStore()
 
 onMounted(async () => {
-  await store.loadClientes()
-  await store.fetchEscopo()
-  await store.fetchTipoServico()
-  await store.fetchResponsavel()
+  // Carregar dados de apoio sempre
+  await Promise.all([
+    osStore.loadClientes(),
+    inmetroStore.fetchEscopo(),
+    inmetroStore.fetchTipoServico(),
+    inmetroStore.fetchResponsavel(),
+  ])
 })
+
+// Watcher para reativo quando formData mudar (útil para edição)
+watch(() => osStore.formData, (newFormData: any) => {
+  if (newFormData && Object.keys(newFormData).length > 0)
+    console.log('FormData atualizado:', newFormData)
+}, { deep: true })
 
 const {
   formRef,
   formData,
   loading,
   clientes,
-  statusOptions,
+} = storeToRefs(osStore)
+
+const {
   escopos,
   tiposServico,
   responsaveis,
-} = storeToRefs(store)
+} = storeToRefs(inmetroStore)
 
 const {
   save,
   update,
   resetForm,
-} = store
+} = osStore
 
 onBeforeRouteLeave(() => {
   resetForm()
@@ -101,20 +111,6 @@ const perfilResponsavelOptions = ref([])
                   :items="clientes"
                   item-title="razao_social"
                   item-value="id"
-                  :rules="[rules.requiredValidator]"
-                />
-              </VCol>
-              <VCol
-                cols="12"
-                md="4"
-              >
-                <AppAutocomplete
-                  v-model="formData.status"
-                  label="Status"
-                  placeholder="Selecione o status"
-                  :items="statusOptions"
-                  item-title="title"
-                  item-value="value"
                   :rules="[rules.requiredValidator]"
                 />
               </VCol>
@@ -206,7 +202,7 @@ const perfilResponsavelOptions = ref([])
 
       <VCol cols="12">
         <CDFManager
-          v-model:items="formData.materialEquipamentos"
+          v-model:items="formData.material_equipamentos"
           v-model:form="formRef"
           title="Material/Equipamento"
           item-title="descricao"
@@ -216,10 +212,10 @@ const perfilResponsavelOptions = ref([])
             descricao: '',
           }"
         >
-          <template #header="{ item }: { item: IMaterialEquipamento }">
+          <template #header="{ item }">
             {{ item.descricao || 'Novo Material/Equipamento' }}
           </template>
-          <template #content="{ item }: { item: IMaterialEquipamento }">
+          <template #content="{ item }">
             <VRow>
               <VCol cols="12">
                 <CDFTextField
@@ -248,10 +244,10 @@ const perfilResponsavelOptions = ref([])
             inmetro_flag: false,
           }"
         >
-          <template #header="{ item }: { item: IOrdemServicoAnexo }">
+          <template #header="{ item }">
             {{ item.nome || 'Novo Anexo' }}
           </template>
-          <template #content="{ item }: { item: IOrdemServicoAnexo }">
+          <template #content="{ item }">
             <VRow>
               <VCol cols="4">
                 <CDFTextField
@@ -262,7 +258,7 @@ const perfilResponsavelOptions = ref([])
                 />
               </VCol>
               <VCol cols="6">
-                <VFileInput
+                <CDFFileUpload
                   v-model="item.anexo"
                   label="Documentos e Imagens"
                   show-size

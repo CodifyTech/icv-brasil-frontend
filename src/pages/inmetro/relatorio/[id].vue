@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
-import { useInmetroStore } from '@/pages/inmetro/store/useInmetroStore'
+import { useOrdemServicoStore } from '@/pages/os/store/useOrdemServicoStore'
 
 definePage({
   meta: {
@@ -10,7 +10,7 @@ definePage({
 })
 
 const route = useRoute()
-const store = useInmetroStore()
+const store = useOrdemServicoStore()
 const printMode = ref(false)
 
 const {
@@ -112,7 +112,7 @@ const handleDownloadPDF = async () => {
           >
             tabler-file
           </VIcon>
-          <span>Relatório de Inspeção</span>
+          <span>Relatório</span>
         </div>
         <div class="d-flex ga-2">
           <VBtn
@@ -123,19 +123,21 @@ const handleDownloadPDF = async () => {
           >
             Imprimir
           </VBtn>
-          <VBtn
+          <!--
+            <VBtn
             variant="outlined"
             color="secondary"
             prepend-icon="tabler-download"
             @click="handleDownloadPDF"
-          >
+            >
             Download PDF
-          </VBtn>
+            </VBtn>
+          -->
           <VBtn
             variant="tonal"
             color="default"
             prepend-icon="tabler-arrow-left"
-            :to="`/os/visualizar/${ordemServicoAtual.id}`"
+            to="/inmetro"
           >
             Voltar
           </VBtn>
@@ -152,7 +154,7 @@ const handleDownloadPDF = async () => {
         <!-- Cabeçalho do relatório -->
         <div class="text-center mb-8">
           <h1 class="text-h4 font-weight-bold mb-2">
-            RELATÓRIO DE INSPEÇÃO
+            RELATÓRIO
           </h1>
           <div class="text-h6 text-medium-emphasis">
             Número: {{ ordemServicoAtual?.num_relatorio }}
@@ -181,19 +183,13 @@ const handleDownloadPDF = async () => {
               <tbody>
                 <tr>
                   <td class="font-weight-bold bg-grey-lighten-5">
-                    Número do Relatório:
-                  </td>
-                  <td>{{ ordemServicoAtual?.num_relatorio }}</td>
-                </tr>
-                <tr>
-                  <td class="font-weight-bold bg-grey-lighten-5">
                     Número do Pedido:
                   </td>
                   <td>{{ ordemServicoAtual?.num_pedido_compra || '-' }}</td>
                 </tr>
                 <tr>
                   <td class="font-weight-bold bg-grey-lighten-5">
-                    Data da Inspeção:
+                    Data da Execução:
                   </td>
                   <td>{{ formatDate(ordemServicoAtual?.data_execucao) }}</td>
                 </tr>
@@ -227,12 +223,6 @@ const handleDownloadPDF = async () => {
                     Tipo de Serviço:
                   </td>
                   <td>{{ ordemServicoAtual?.tipo_servico?.nome || '-' }}</td>
-                </tr>
-                <tr>
-                  <td class="font-weight-bold bg-grey-lighten-5">
-                    Material/Equipamento:
-                  </td>
-                  <td>{{ ordemServicoAtual.material_equipamento || '-' }}</td>
                 </tr>
                 <tr>
                   <td class="font-weight-bold bg-grey-lighten-5">

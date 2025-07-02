@@ -93,8 +93,8 @@ const _elementIdToken = `app-button-${Math.random().toString(36).slice(2, 7)}`
 </template>
 
 <style lang="scss">
-.cdf-button{
-  .v-btn__prepend{
+.cdf-button {
+  .v-btn__prepend {
     margin: 0;
   }
 }

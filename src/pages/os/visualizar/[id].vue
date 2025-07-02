@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import { useInmetroStore } from '@/pages/inmetro/store/useInmetroStore'
+import { useOrdemServicoStore } from '@/pages/os/store/useOrdemServicoStore'
 
 definePage({
   meta: {
@@ -11,7 +11,7 @@ definePage({
 })
 
 const route = useRoute()
-const store = useInmetroStore()
+const store = useOrdemServicoStore()
 
 const { ordemServicoAtual, loading } = storeToRefs(store)
 const { fetchOrdemServico, resetOrdemAtual } = store
@@ -202,7 +202,7 @@ const statusColor = computed(() => {
               color="primary"
               variant="outlined"
               class="mb-3"
-              :to="`/inmetro/editar/${ordemServicoAtual.id}`"
+              :to="`/os/editar/${ordemServicoAtual.id}`"
             >
               <VIcon start>
                 tabler-edit
@@ -210,29 +210,31 @@ const statusColor = computed(() => {
               Editar
             </VBtn>
 
-            <VBtn
+            <!--
+              <VBtn
               v-if="ordemServicoAtual.status === 'finalizado'"
               block
               color="success"
               variant="outlined"
               class="mb-3"
-            >
+              >
               <VIcon start>
-                tabler-download
+              tabler-download
               </VIcon>
               Download Relatório
-            </VBtn>
+              </VBtn>
 
-            <VBtn
+              <VBtn
               block
               color="info"
               variant="outlined"
-            >
+              >
               <VIcon start>
-                tabler-upload
+              tabler-upload
               </VIcon>
               Upload Anexos
-            </VBtn>
+              </VBtn>
+            -->
           </VCardText>
         </VCard>
       </VCol>
@@ -249,20 +251,22 @@ const statusColor = computed(() => {
               <VCol
                 v-for="anexo in ordemServicoAtual.anexos"
                 :key="anexo.id"
-                cols="12"
-                sm="6"
-                md="4"
+                cols="2"
               >
-                <VCard variant="outlined">
+                <VCard
+                  :href="anexo.anexo"
+                  target="_blank"
+                  variant="outlined"
+                >
                   <VCardText class="text-center">
                     <VIcon
                       size="48"
                       class="mb-2"
                     >
-                      {{ anexo.tipo_arquivo?.includes('image') ? 'tabler-photo' : 'tabler-file' }}
+                      tabler-file
                     </VIcon>
                     <p class="text-body-2 mb-1">
-                      {{ anexo.nome_arquivo }}
+                      {{ anexo.nome }}
                     </p>
                     <VChip
                       v-if="anexo.inmetro_flag"

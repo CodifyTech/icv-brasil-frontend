@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import FormOrdemServico from '../components/form-ordem-servico.vue'
-import { useInmetroStore } from '@/pages/inmetro/store/useInmetroStore'
+import { useOrdemServicoStore } from '@/pages/os/store/useOrdemServicoStore'
 
 definePage({
   meta: {
@@ -10,7 +10,7 @@ definePage({
   },
 })
 
-const { resetForm } = useInmetroStore()
+const { resetForm } = useOrdemServicoStore()
 
 onBeforeRouteLeave(() => {
   resetForm()

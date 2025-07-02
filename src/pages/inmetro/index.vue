@@ -1,5 +1,22 @@
 <script setup lang="ts">
+import {
+  getOSResultadoColor,
+  getOSResultadoLabel,
+} from '../../enums/OSResultadoEnum'
+import {
+  OsStatusEnum,
+  getOSStatusColor,
+  getOSStatusLabel,
+} from '../../enums/OSStatusEnum'
 import { useInmetroStore } from './store/useInmetroStore'
+import type { IOrdemServico } from './types/index'
+import CDFMoreBtn from '@/components/CDF/CDFMoreBtn.vue'
+import DialogDocumentosAnexos from '@/pages/os/components/DialogDocumentosAnexos.vue'
+import DialogFinalizarOs from '@/pages/os/components/DialogFinalizarOS.vue'
+import DialogMaterialEquipamento from '@/pages/os/components/DialogMaterialEquipamento.vue'
+import DialogReprovarOs from '@/pages/os/components/DialogReprovarOS.vue'
+import { useOrdemServicoStore } from '@/pages/os/store/useOrdemServicoStore'
+import { useSnackbarStore } from '@/stores/useSnackbarStore'
 
 definePage({
   meta: {
@@ -8,54 +25,44 @@ definePage({
   },
 })
 
-const store = useInmetroStore()
+const store = useOrdemServicoStore()
+const inmetroStore = useInmetroStore()
+const snackbarStore = useSnackbarStore()
 
 const { ordensServico, loading, filtros } = storeToRefs(store)
+
+const {
+  escopos,
+  tiposServico,
+  responsaveis,
+  clientes,
+} = storeToRefs(inmetroStore)
 
 onMounted(async () => {
   await Promise.all([
     store.fetchOrdensServico(),
   ])
+
+  inmetroStore.carregarDadosApoio()
 })
-
-// Filtros para pesquisa avançada
-const clienteOptions = ref([
-  { title: 'Todos', value: '' },
-  { title: 'ACME', value: 'acme' },
-  { title: 'BETA Corp', value: 'beta' },
-])
-
-const inspetorOptions = ref([
-  { title: 'Todos', value: '' },
-  { title: 'João Silva', value: 'joao_silva' },
-  { title: 'Maria Santos', value: 'maria_santos' },
-])
-
-const escopoOptions = ref([
-  { title: 'Todos', value: '' },
-  { title: 'Dimensional', value: 'dimensional' },
-  { title: 'Visual', value: 'visual' },
-  { title: 'Soldagem', value: 'soldagem' },
-])
-
-const tipoInspecaoOptions = ref([
-  { title: 'Todos', value: '' },
-  { title: 'Visual', value: 'visual' },
-  { title: 'Ultrassom', value: 'ultrassom' },
-])
 
 const filtroForm = ref({
-  cliente: '',
-  data_inspecao_inicio: '',
+  cliente: null,
+  data_inspecao_inicio: null,
   data_inspecao_fim: '',
-  inspetor: '',
+  responsavel: null,
   fornecedor: '',
-  escopo: '',
-  tipo_inspecao: '',
-  ordem_servico: '',
-  pedido: '',
-  certificado: '',
+  escopoAcreditacao: null,
+  tipo_servico_id: null,
+  num_pedido_compra: '',
+  certificado_associado: '',
 })
+
+const isDialogAprovarVisible = ref<boolean>(false)
+const isDialogReprovarVisible = ref<boolean>(false)
+const isDialogMaterialVisible = ref<boolean>(false)
+const isDialogDocumentosVisible = ref<boolean>(false)
+const ordemServicoSelecionada = ref<IOrdemServico | null>(null)
 
 const aplicarFiltros = async () => {
   filtros.value = { ...filtroForm.value }
@@ -64,16 +71,15 @@ const aplicarFiltros = async () => {
 
 const limparFiltros = () => {
   filtroForm.value = {
-    cliente: '',
-    data_inspecao_inicio: '',
+    cliente: null,
+    data_inspecao_inicio: null,
     data_inspecao_fim: '',
-    inspetor: '',
+    responsavel: '',
     fornecedor: '',
-    escopo: '',
-    tipo_inspecao: '',
-    ordem_servico: '',
-    pedido: '',
-    certificado: '',
+    escopoAcreditacao: null,
+    tipo_servico_id: null,
+    num_pedido_compra: '',
+    certificado_associado: '',
   }
   store.resetFiltros()
 }
@@ -87,14 +93,98 @@ const exportarRelatorios = async () => {
   }
 }
 
-const getStatusColor = (status: string) => {
-  const colors = {
-    finalizado: 'success',
-    em_analise: 'info',
-    andamento: 'warning',
-  }
+const confirmarFinalizacao = async (dados: { os: IOrdemServico | null; dadosFinalizacao: any }) => {
+  if (!dados.os)
+    return
 
-  return colors[status as keyof typeof colors] || 'grey'
+  try {
+    console.log('Finalizando OS:', dados.os)
+    console.log('Dados de finalização:', dados.dadosFinalizacao)
+
+    // Implementação da chamada para o backend
+    const osAtualizada = {
+      ...dados.os,
+      num_relatorio: dados.dadosFinalizacao.num_relatorio,
+      data_execucao: dados.dadosFinalizacao.data_execucao,
+      certificado_associado: dados.dadosFinalizacao.certificado_associado,
+      resultado: dados.dadosFinalizacao.resultado,
+      observacoes: dados.dadosFinalizacao.observacoes,
+      status: 'FINALIZADA',
+    }
+
+    // Chamada para a API
+    await store.finalizarOS(osAtualizada)
+
+    // Atualizar a lista após finalizar
+    await store.fetchOrdensServico()
+
+    // Fechar o dialog
+    isDialogAprovarVisible.value = false
+    ordemServicoSelecionada.value = null
+
+    // Mostrar mensagem de sucesso
+    snackbarStore.showSnackbar({
+      text: 'Ordem de serviço finalizada com sucesso!',
+      color: 'success',
+      timeout: 3000,
+    })
+  }
+  catch (error) {
+    console.error('Erro ao finalizar OS:', error)
+
+    // Mostrar mensagem de erro
+    snackbarStore.showSnackbar({
+      text: 'Erro ao finalizar ordem de serviço. Tente novamente.',
+      color: 'error',
+      timeout: 4000,
+    })
+  }
+}
+
+const confirmarReprovacao = async (dados: { os: IOrdemServico | null; dadosReprovacao: any }) => {
+  if (!dados.os)
+    return
+
+  try {
+    console.log('Reprovando OS:', dados.os)
+    console.log('Dados de reprovação:', dados.dadosReprovacao)
+
+    // Implementação da chamada para o backend
+    const osAtualizada = {
+      ...dados.os,
+      motivo_reprovacao: dados.dadosReprovacao.motivo_reprovacao,
+      observacoes_reprovacao: dados.dadosReprovacao.observacoes,
+      data_reprovacao: dados.dadosReprovacao.data_reprovacao,
+      status: 'REPROVADA',
+    }
+
+    // Chamada para a API
+    await store.reprovarOS(osAtualizada)
+
+    // Atualizar a lista após reprovar
+    await store.fetchOrdensServico()
+
+    // Fechar o dialog
+    isDialogReprovarVisible.value = false
+    ordemServicoSelecionada.value = null
+
+    // Mostrar mensagem de sucesso
+    snackbarStore.showSnackbar({
+      text: 'Ordem de serviço reprovada com sucesso!',
+      color: 'warning',
+      timeout: 3000,
+    })
+  }
+  catch (error) {
+    console.error('Erro ao reprovar OS:', error)
+
+    // Mostrar mensagem de erro
+    snackbarStore.showSnackbar({
+      text: 'Erro ao reprovar ordem de serviço. Tente novamente.',
+      color: 'error',
+      timeout: 4000,
+    })
+  }
 }
 
 const formatDate = (dateString: string) => {
@@ -130,7 +220,7 @@ const getItemValue = (item: any, key: string) => {
 
   <!-- Filtros -->
   <VCard class="mb-6">
-    <VCardTitle>
+    <VCardTitle class="py-4">
       <VIcon class="me-2">
         tabler-filter
       </VIcon>
@@ -146,9 +236,12 @@ const getItemValue = (item: any, key: string) => {
             <AppSelect
               v-model="filtroForm.cliente"
               label="Cliente"
-              :items="clienteOptions"
+              :items="clientes"
+              item-title="razao_social"
+              item-value="id"
               clearable
               hide-details
+              placeholder="Selecione o cliente"
             />
           </VCol>
           <VCol
@@ -180,11 +273,14 @@ const getItemValue = (item: any, key: string) => {
             md="3"
           >
             <AppSelect
-              v-model="filtroForm.inspetor"
-              label="Inspetor"
-              :items="inspetorOptions"
+              v-model="filtroForm.responsavel"
+              label="Responsável"
+              :items="responsaveis"
+              item-title="nome"
+              item-value="id"
               clearable
               hide-details
+              placeholder="Selecione o responsável"
             />
           </VCol>
           <VCol
@@ -196,6 +292,7 @@ const getItemValue = (item: any, key: string) => {
               label="Fornecedor"
               clearable
               hide-details
+              placeholder="Digite o nome do fornecedor"
             />
           </VCol>
           <VCol
@@ -203,11 +300,14 @@ const getItemValue = (item: any, key: string) => {
             md="3"
           >
             <AppSelect
-              v-model="filtroForm.escopo"
+              v-model="filtroForm.escopoAcreditacao"
               label="Escopo"
-              :items="escopoOptions"
+              :items="escopos"
               clearable
+              item-title="nome"
+              item-value="id"
               hide-details
+              placeholder="Selecione o escopo"
             />
           </VCol>
           <VCol
@@ -215,11 +315,14 @@ const getItemValue = (item: any, key: string) => {
             md="3"
           >
             <AppSelect
-              v-model="filtroForm.tipo_inspecao"
-              label="Tipo de Inspeção"
-              :items="tipoInspecaoOptions"
+              v-model="filtroForm.tipo_servico_id"
+              label="Tipo de Serviço"
+              :items="tiposServico"
+              item-title="nome"
+              item-value="id"
               clearable
               hide-details
+              placeholder="Selecione o tipo de serviço"
             />
           </VCol>
           <VCol
@@ -227,10 +330,11 @@ const getItemValue = (item: any, key: string) => {
             md="3"
           >
             <AppTextField
-              v-model="filtroForm.pedido"
+              v-model="filtroForm.num_pedido_compra"
               label="Nº Pedido"
               clearable
               hide-details
+              placeholder="Digite o número do pedido de compra"
             />
           </VCol>
           <VCol
@@ -238,10 +342,11 @@ const getItemValue = (item: any, key: string) => {
             md="3"
           >
             <AppTextField
-              v-model="filtroForm.certificado"
+              v-model="filtroForm.certificado_associado"
               label="Nº Certificado"
               clearable
               hide-details
+              placeholder="Digite o número do certificado associado"
             />
           </VCol>
         </VRow>
@@ -288,48 +393,126 @@ const getItemValue = (item: any, key: string) => {
         :loading="loading.relatorios"
         class="elevation-1"
       >
+        <template #[`item.material_equipamento`]="{ item }">
+          <VBtn
+            variant="text"
+            color="primary"
+            size="small"
+            @click="() => {
+              ordemServicoSelecionada = item
+              isDialogMaterialVisible = true
+            }"
+          >
+            <VIcon
+              icon="tabler-package"
+              class="me-1"
+            />
+            Ver Materiais
+          </VBtn>
+        </template>
+
         <template #[`item.data_inspecao`]="{ item }">
           {{ formatDate(getItemValue(item, 'data_inspecao')) }}
         </template>
 
         <template #[`item.resultado`]="{ item }">
           <VChip
-            :color="getItemValue(item, 'resultado') === 'aprovado' ? 'success' : getItemValue(item, 'resultado') === 'reprovado' ? 'error' : 'warning'"
+            v-if="getItemValue(item, 'resultado')"
+            :color="getOSResultadoColor(getItemValue(item, 'resultado'))"
             size="small"
           >
-            {{ getItemValue(item, 'resultado') }}
+            {{ getOSResultadoLabel(getItemValue(item, 'resultado')) }}
           </VChip>
         </template>
 
-        <template #[`item.documentos`]>
+        <template #[`item.documentos`]="{ item }">
           <VBtn
-            icon="tabler-paperclip"
-            size="small"
             variant="text"
-            title="Ver Anexos"
-          />
+            color="primary"
+            size="small"
+            @click="() => {
+              ordemServicoSelecionada = item
+              isDialogDocumentosVisible = true
+            }"
+          >
+            <VIcon
+              icon="tabler-paperclip"
+              class="me-1"
+            />
+            Ver Anexos
+          </VBtn>
         </template>
 
         <template #[`item.status`]="{ item }">
           <VChip
-            :color="getStatusColor(item.status)"
+            :color="getOSStatusColor(getItemValue(item, 'status'))"
             size="small"
           >
-            {{ item.status }}
+            {{ getOSStatusLabel(getItemValue(item, 'status')) }}
           </VChip>
         </template>
 
         <template #[`item.actions`]="{ item }">
-          <VBtn
-            size="small"
-            color="primary"
-            variant="text"
-            :to="`/inmetro/relatorio/${item.id}`"
-          >
-            Ver Detalhes
-          </VBtn>
+          <div class="d-flex gap-2">
+            <VBtn
+              size="small"
+              color="primary"
+              variant="text"
+              :to="`/inmetro/relatorio/${item.id}`"
+            >
+              <VIcon>tabler-eye</VIcon>
+            </VBtn>
+            <CDFMoreBtn
+              v-if="item.status === OsStatusEnum.EM_ANALISE || item.status === OsStatusEnum.ANDAMENTO"
+              color="gray"
+              :menu-list="[
+                {
+                  title: 'Aprovar',
+                  icon: 'tabler-check',
+                  color: 'success',
+                  click: () => {
+                    ordemServicoSelecionada = item
+                    isDialogAprovarVisible = true
+                  },
+                },
+                {
+                  title: 'Reprovar',
+                  color: 'error',
+                  icon: 'tabler-x',
+                  click: () => {
+                    ordemServicoSelecionada = item
+                    isDialogReprovarVisible = true
+                  },
+                },
+              ]"
+            />
+          </div>
         </template>
       </VDataTable>
     </VCardText>
   </VCard>
+
+  <DialogFinalizarOs
+    v-model:is-dialog-visible="isDialogAprovarVisible"
+    :os="ordemServicoSelecionada"
+    @confirm="confirmarFinalizacao"
+  />
+
+  <DialogReprovarOs
+    v-model:is-dialog-visible="isDialogReprovarVisible"
+    :os="ordemServicoSelecionada"
+    @confirm="confirmarReprovacao"
+  />
+
+  <DialogMaterialEquipamento
+    v-model:is-dialog-visible="isDialogMaterialVisible"
+    :os="ordemServicoSelecionada"
+    :carregar-materiais="() => store.carregarMateriais(ordemServicoSelecionada.id)"
+  />
+
+  <DialogDocumentosAnexos
+    v-model:is-dialog-visible="isDialogDocumentosVisible"
+    :os="ordemServicoSelecionada"
+    :carregar-anexos="() => store.carregarAnexos(ordemServicoSelecionada.id)"
+  />
 </template>
