@@ -1,4 +1,12 @@
 <script setup lang="ts">
+import AppAutocomplete from '@/@core/components/app-form-elements/AppAutocomplete.vue'
+import CDFMoreBtn from '@/components/CDF/CDFMoreBtn.vue'
+import DialogDocumentosAnexos from '@/pages/os/components/DialogDocumentosAnexos.vue'
+import DialogFinalizarOs from '@/pages/os/components/DialogFinalizarOS.vue'
+import DialogMaterialEquipamento from '@/pages/os/components/DialogMaterialEquipamento.vue'
+import DialogReprovarOs from '@/pages/os/components/DialogReprovarOS.vue'
+import { useOrdemServicoStore } from '@/pages/os/store/useOrdemServicoStore'
+import { useSnackbarStore } from '@/stores/useSnackbarStore'
 import {
   getOSResultadoColor,
   getOSResultadoLabel,
@@ -10,14 +18,6 @@ import {
 } from '../../enums/OSStatusEnum'
 import { useInmetroStore } from './store/useInmetroStore'
 import type { IOrdemServico } from './types/index'
-import AppAutocomplete from '@/@core/components/app-form-elements/AppAutocomplete.vue'
-import CDFMoreBtn from '@/components/CDF/CDFMoreBtn.vue'
-import DialogDocumentosAnexos from '@/pages/os/components/DialogDocumentosAnexos.vue'
-import DialogFinalizarOs from '@/pages/os/components/DialogFinalizarOS.vue'
-import DialogMaterialEquipamento from '@/pages/os/components/DialogMaterialEquipamento.vue'
-import DialogReprovarOs from '@/pages/os/components/DialogReprovarOS.vue'
-import { useOrdemServicoStore } from '@/pages/os/store/useOrdemServicoStore'
-import { useSnackbarStore } from '@/stores/useSnackbarStore'
 
 definePage({
   meta: {
@@ -392,6 +392,7 @@ const getItemValue = (item: any, key: string) => {
     <VCardText>
       <VDataTable
         :headers="[
+          { title: 'Nº OS', key: 'codigo', minWidth: '150px' },
           { title: 'Nº Pedido', key: 'num_pedido_compra', minWidth: '150px' },
           { title: 'Nº Relatório', key: 'num_relatorio', minWidth: '150px' },
           { title: 'Cliente', key: 'cliente.nome_fantasia', minWidth: '150px' },
