@@ -330,6 +330,37 @@ const handleDownloadPDF = async () => {
           </VCol>
         </VRow>
 
+        <VDivider v-if="ordemServicoAtual?.material_equipamentos?.length > 0" class="mb-4" />
+
+        <VRow v-if="ordemServicoAtual?.material_equipamentos?.length > 0" class="mb-4">
+          <VCol
+            cols="12"
+            class="pb-0"
+          >
+            <h2 class="text-h6 font-weight-bold border-bottom">
+              MATERIAL/EQUIPAMENTO
+            </h2>
+          </VCol>
+
+          <VCol cols="12">
+            <VTable
+              density="compact"
+              class="border rounded"
+            >
+              <tbody>
+                <tr
+                  v-for="(item, index) in ordemServicoAtual?.material_equipamentos"
+                  :key="index"
+                >
+                  <td>
+                    {{ item.descricao }}
+                  </td>
+                </tr>
+              </tbody>
+            </VTable>
+          </VCol>
+        </VRow>
+
         <VDivider v-if="ordemServicoAtual?.anexos?.length > 0" class="mb-4" />
 
         <VRow v-if="ordemServicoAtual?.anexos?.length > 0" class="mb-4">
@@ -371,37 +402,6 @@ const handleDownloadPDF = async () => {
                     >
                       Baixar
                     </VBtn>
-                  </td>
-                </tr>
-              </tbody>
-            </VTable>
-          </VCol>
-        </VRow>
-
-        <VDivider v-if="ordemServicoAtual?.material_equipamentos?.length > 0" class="mb-4" />
-
-        <VRow v-if="ordemServicoAtual?.material_equipamentos?.length > 0" class="mb-4">
-          <VCol
-            cols="12"
-            class="pb-0"
-          >
-            <h2 class="text-h6 font-weight-bold border-bottom">
-              MATERIAL/EQUIPAMENTO
-            </h2>
-          </VCol>
-
-          <VCol cols="12">
-            <VTable
-              density="compact"
-              class="border rounded"
-            >
-              <tbody>
-                <tr
-                  v-for="(item, index) in ordemServicoAtual?.material_equipamentos"
-                  :key="index"
-                >
-                  <td>
-                    {{ item.descricao }}
                   </td>
                 </tr>
               </tbody>
