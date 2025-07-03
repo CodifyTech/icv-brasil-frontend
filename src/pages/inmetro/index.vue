@@ -47,12 +47,12 @@ onMounted(async () => {
 })
 
 const filtroForm = ref({
-  cliente: null,
+  cliente_id: null,
   data_inspecao_inicio: null,
   data_inspecao_fim: '',
-  responsavel: null,
+  responsavel_id: null,
   fornecedor: '',
-  escopoAcreditacao: null,
+  escopo_acreditacao_id: null,
   tipo_servico_id: null,
   num_pedido_compra: '',
   certificado_associado: '',
@@ -71,12 +71,12 @@ const aplicarFiltros = async () => {
 
 const limparFiltros = () => {
   filtroForm.value = {
-    cliente: null,
+    cliente_id: null,
     data_inspecao_inicio: null,
     data_inspecao_fim: '',
-    responsavel: '',
+    responsavel_id: '',
     fornecedor: '',
-    escopoAcreditacao: null,
+    escopo_acreditacao_id: null,
     tipo_servico_id: null,
     num_pedido_compra: '',
     certificado_associado: '',
@@ -236,7 +236,7 @@ const getItemValue = (item: any, key: string) => {
             md="3"
           >
             <AppSelect
-              v-model="filtroForm.cliente"
+              v-model="filtroForm.cliente_id"
               label="Cliente"
               :items="clientes"
               item-title="razao_social"
@@ -275,7 +275,7 @@ const getItemValue = (item: any, key: string) => {
             md="3"
           >
             <AppSelect
-              v-model="filtroForm.responsavel"
+              v-model="filtroForm.responsavel_id"
               label="Responsável"
               :items="responsaveis"
               item-title="nome"
