@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { useClienteStore } from '../store/useClienteStore'
-import type { IFilial } from '@/pages/cliente/types'
 import LayoutForms from '@/components/CDF/LayoutForms.vue'
+import type { ICliente } from '@/pages/cliente/types'
 import * as rules from '@/validators/cdf-rules'
 
 const { isEditing } = withDefaults(defineProps<{
@@ -124,7 +124,7 @@ onBeforeRouteLeave(() => {
                     estado: '',
                   }"
                 >
-                  <template #content="{ item, index }: { item: IFilial, index: number }">
+                  <template #content="{ item, index }: { item: ICliente, index: number }">
                     <VRow>
                       <VCol
                         cols="12"

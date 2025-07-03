@@ -1,9 +1,7 @@
 <script setup lang="ts">
-// eslint-disable-next-line no-restricted-imports
 import { VExpansionPanels } from 'vuetify/components'
 import { VForm } from 'vuetify/components/VForm'
 import { useConfirmDialogStore } from '@/stores/useConfirmDialogStore'
-import CDFButton from '@/components/CDF/CDFButton.vue'
 
 const props = withDefaults(
   defineProps<{
@@ -108,7 +106,7 @@ onUpdated(() => {
     class="cdf-manager-card"
   >
     <template #append>
-      <CDFButton
+      <VBtn
         v-if="!isReadOnly && !isAddDisabled"
         prepend-icon="tabler-plus"
         variant="outlined"
@@ -118,7 +116,7 @@ onUpdated(() => {
         @click="add"
       >
         Novo {{ buttonAdd ?? '' }}
-      </CDFButton>
+      </VBtn>
     </template>
 
     <VDivider />
@@ -198,15 +196,15 @@ onUpdated(() => {
               </VCardText>
               <VDivider />
               <VCardActions class="mt-2">
-                <CDFButton
+                <VBtn
                   v-if="!isReadOnly"
                   variant="outlined"
                   color="info"
                   @click="() => save(item, index)"
                 >
                   Adicionar
-                </CDFButton>
-                <CDFButton
+                </VBtn>
+                <VBtn
                   v-if="!isReadOnly"
                   text="Cancelar"
                   variant="outlined"
@@ -214,7 +212,7 @@ onUpdated(() => {
                   @click="() => cancel(index)"
                 >
                   Cancelar
-                </CDFButton>
+                </VBtn>
               </VCardActions>
             </VCard>
           </VExpansionPanelText>
