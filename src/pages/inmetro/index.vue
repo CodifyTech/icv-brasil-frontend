@@ -303,7 +303,7 @@ const getItemValue = (item: any, key: string) => {
             md="3"
           >
             <AppAutocomplete
-              v-model="filtroForm.escopoAcreditacao"
+              v-model="filtroForm.certificado_associado"
               label="Escopo"
               :items="escopos"
               clearable
