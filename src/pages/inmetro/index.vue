@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AppAutocomplete from '@/@core/components/app-form-elements/AppAutocomplete.vue'
 import CDFMoreBtn from '@/components/CDF/CDFMoreBtn.vue'
 import DialogDocumentosAnexos from '@/pages/os/components/DialogDocumentosAnexos.vue'
 import DialogFinalizarOs from '@/pages/os/components/DialogFinalizarOS.vue'
@@ -235,7 +236,7 @@ const getItemValue = (item: any, key: string) => {
             cols="12"
             md="3"
           >
-            <AppSelect
+            <AppAutocomplete
               v-model="filtroForm.cliente_id"
               label="Cliente"
               :items="clientes"
@@ -289,7 +290,7 @@ const getItemValue = (item: any, key: string) => {
             cols="12"
             md="3"
           >
-            <AppTextField
+            <AppAutocomplete
               v-model="filtroForm.fornecedor"
               label="Fornecedor"
               clearable
@@ -301,7 +302,7 @@ const getItemValue = (item: any, key: string) => {
             cols="12"
             md="3"
           >
-            <AppSelect
+            <AppAutocomplete
               v-model="filtroForm.escopoAcreditacao"
               label="Escopo"
               :items="escopos"
