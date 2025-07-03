@@ -275,7 +275,7 @@ const getItemValue = (item: any, key: string) => {
             cols="12"
             md="3"
           >
-            <AppSelect
+            <AppAutocomplete
               v-model="filtroForm.responsavel_id"
               label="Responsável"
               :items="responsaveis"
@@ -290,7 +290,7 @@ const getItemValue = (item: any, key: string) => {
             cols="12"
             md="3"
           >
-            <AppAutocomplete
+            <AppTextField
               v-model="filtroForm.fornecedor"
               label="Fornecedor"
               clearable
