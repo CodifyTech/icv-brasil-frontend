@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useRoute } from 'vue-router'
 import { useOrdemServicoStore } from '@/pages/os/store/useOrdemServicoStore'
+import { useRoute } from 'vue-router'
 
 definePage({
   meta: {
@@ -308,7 +308,7 @@ const handleDownloadPDF = async () => {
             class="pb-0"
           >
             <h2 class="text-h6 font-weight-bold border-bottom">
-              RESULTADO DA INSPEÇÃO
+              RESULTADO
             </h2>
           </VCol>
 
@@ -371,6 +371,37 @@ const handleDownloadPDF = async () => {
                     >
                       Baixar
                     </VBtn>
+                  </td>
+                </tr>
+              </tbody>
+            </VTable>
+          </VCol>
+        </VRow>
+
+        <VDivider class="mb-4" />
+
+        <VRow class="mb-4">
+          <VCol
+            cols="12"
+            class="pb-0"
+          >
+            <h2 class="text-h6 font-weight-bold border-bottom">
+              MATERIAL/EQUIPAMENTO
+            </h2>
+          </VCol>
+
+          <VCol cols="12">
+            <VTable
+              density="compact"
+              class="border rounded"
+            >
+              <tbody>
+                <tr
+                  v-for="(item, index) in ordemServicoAtual.material_equipamentos"
+                  :key="index"
+                >
+                  <td>
+                    {{ item.descricao }}
                   </td>
                 </tr>
               </tbody>

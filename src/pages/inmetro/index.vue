@@ -1,4 +1,11 @@
 <script setup lang="ts">
+import CDFMoreBtn from '@/components/CDF/CDFMoreBtn.vue'
+import DialogDocumentosAnexos from '@/pages/os/components/DialogDocumentosAnexos.vue'
+import DialogFinalizarOs from '@/pages/os/components/DialogFinalizarOS.vue'
+import DialogMaterialEquipamento from '@/pages/os/components/DialogMaterialEquipamento.vue'
+import DialogReprovarOs from '@/pages/os/components/DialogReprovarOS.vue'
+import { useOrdemServicoStore } from '@/pages/os/store/useOrdemServicoStore'
+import { useSnackbarStore } from '@/stores/useSnackbarStore'
 import {
   getOSResultadoColor,
   getOSResultadoLabel,
@@ -10,13 +17,6 @@ import {
 } from '../../enums/OSStatusEnum'
 import { useInmetroStore } from './store/useInmetroStore'
 import type { IOrdemServico } from './types/index'
-import CDFMoreBtn from '@/components/CDF/CDFMoreBtn.vue'
-import DialogDocumentosAnexos from '@/pages/os/components/DialogDocumentosAnexos.vue'
-import DialogFinalizarOs from '@/pages/os/components/DialogFinalizarOS.vue'
-import DialogMaterialEquipamento from '@/pages/os/components/DialogMaterialEquipamento.vue'
-import DialogReprovarOs from '@/pages/os/components/DialogReprovarOS.vue'
-import { useOrdemServicoStore } from '@/pages/os/store/useOrdemServicoStore'
-import { useSnackbarStore } from '@/stores/useSnackbarStore'
 
 definePage({
   meta: {
@@ -205,6 +205,7 @@ const getItemValue = (item: any, key: string) => {
           Lista de Relatórios
         </h1>
       </div>
+      <!-- 
       <div class="d-flex gap-2">
         <VBtn
           color="secondary"
@@ -214,7 +215,8 @@ const getItemValue = (item: any, key: string) => {
         >
           Exportar CSV
         </VBtn>
-      </div>
+      </div> 
+      -->
     </VCardText>
   </VCard>
 

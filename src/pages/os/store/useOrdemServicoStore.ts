@@ -1,4 +1,3 @@
-import { defineStore } from 'pinia'
 import ClienteService from '@/pages/cliente/services/ClienteService'
 import type { ICliente } from '@/pages/cliente/types'
 import type { IEscopo } from '@/pages/escopo/types'
@@ -6,6 +5,8 @@ import type { IFuncionario } from '@/pages/funcionario/types'
 import InmetroService from '@/pages/inmetro/services/InmetroService'
 import type { IFiltrosInmetro, IMaterialEquipamento, IOrdemServico, IOrdemServicoAnexo } from '@/pages/inmetro/types'
 import type { ITipoServico } from '@/pages/tiposervico/types'
+import { useSnackbarStore } from '@/stores/useSnackbarStore'
+import { defineStore } from 'pinia'
 
 export const useOrdemServicoStore = defineStore('ordem-servico', {
   state: () => ({
@@ -42,6 +43,8 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
     escopos: [] as IEscopo[],
     tiposServico: [] as ITipoServico[],
     responsaveis: [] as IFuncionario[],
+    router: useRouter(),
+    snackbarStore: useSnackbarStore(),
   }),
 
   actions: {
@@ -98,36 +101,27 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
 
         this.ordensServico.unshift(data as IOrdemServico)
 
+        this.router.push('/os')
+
+        // Limpar formData após criação
+        this.resetForm()
+
+        this.snackbarStore.showSnackbar({
+          text: 'Ordem de serviço criada com sucesso!',
+          color: 'success',
+          timeout: 3000,
+        })
+
         return data
       }
       catch (error) {
+        this.snackbarStore.showSnackbar({
+          text: 'Erro ao criar ordem de serviço. Tente novamente.',
+          color: 'error',
+          timeout: 3000,
+        })
+
         console.error('Erro ao criar ordem de serviço:', error)
-        throw error
-      }
-      finally {
-        this.loading.save = false
-      }
-    },
-
-    // Alterar status da ordem de serviço
-    async alterarStatus(id: string, status: string) {
-      this.loading.save = true
-      try {
-        const data = await InmetroService.update({ status }, `${id}/alterar-status`)
-
-        // Atualizar na lista
-        const index = this.ordensServico.findIndex(os => os.id === id)
-        if (index !== -1)
-          this.ordensServico[index] = data as IOrdemServico
-
-        // Atualizar ordem atual
-        if (this.ordemServicoAtual?.id === id)
-          this.ordemServicoAtual = data as IOrdemServico
-
-        return data
-      }
-      catch (error) {
-        console.error('Erro ao alterar status:', error)
         throw error
       }
       finally {
@@ -298,9 +292,27 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
         this.ordemServicoAtual = data as IOrdemServico
         this.formData = { ...(data as IOrdemServico) }
 
+        this.router.push('/os')
+
+        this.router.push('/os')
+
+        // Limpar formData após criação
+        this.resetForm()
+
+        this.snackbarStore.showSnackbar({
+          text: 'Ordem de serviço atualizada com sucesso!',
+          color: 'success',
+          timeout: 3000,
+        })
+
         return data
       }
       catch (error) {
+        this.snackbarStore.showSnackbar({
+          text: 'Erro ao atualizar ordem de serviço. Tente novamente.',
+          color: 'error',
+          timeout: 3000,
+        })
         console.error('Erro ao atualizar ordem de serviço:', error)
         throw error
       }
