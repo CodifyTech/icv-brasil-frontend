@@ -330,9 +330,9 @@ const handleDownloadPDF = async () => {
           </VCol>
         </VRow>
 
-        <VDivider class="mb-4" />
+        <VDivider v-if="ordemServicoAtual?.anexos?.length > 0" class="mb-4" />
 
-        <VRow class="mb-4">
+        <VRow v-if="ordemServicoAtual?.anexos?.length > 0" class="mb-4">
           <VCol
             cols="12"
             class="pb-0"
@@ -349,7 +349,7 @@ const handleDownloadPDF = async () => {
             >
               <tbody>
                 <tr
-                  v-for="(item, index) in ordemServicoAtual.anexos"
+                  v-for="(item, index) in ordemServicoAtual?.anexos"
                   :key="index"
                 >
                   <td>
@@ -378,9 +378,9 @@ const handleDownloadPDF = async () => {
           </VCol>
         </VRow>
 
-        <VDivider class="mb-4" />
+        <VDivider v-if="ordemServicoAtual?.material_equipamentos?.length > 0" class="mb-4" />
 
-        <VRow class="mb-4">
+        <VRow v-if="ordemServicoAtual?.material_equipamentos?.length > 0" class="mb-4">
           <VCol
             cols="12"
             class="pb-0"
@@ -397,7 +397,7 @@ const handleDownloadPDF = async () => {
             >
               <tbody>
                 <tr
-                  v-for="(item, index) in ordemServicoAtual.material_equipamentos"
+                  v-for="(item, index) in ordemServicoAtual?.material_equipamentos"
                   :key="index"
                 >
                   <td>
