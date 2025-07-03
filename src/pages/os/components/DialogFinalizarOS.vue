@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { OS_RESULTADO_OPTIONS } from '@/enums/OSResultadoEnum'
-import { getOSStatusColor, getOSStatusLabel } from '@/enums/OSStatusEnum'
-import type { IOrdemServico } from '@/pages/inmetro/types/index'
+import { OS_RESULTADO_OPTIONS } from '@/enums/OSResultadoEnum';
+import { getOSStatusColor, getOSStatusLabel } from '@/enums/OSStatusEnum';
+import type { IOrdemServico } from '@/pages/inmetro/types/index';
 
 const props = defineProps<{
   isDialogVisible: boolean

@@ -1,12 +1,4 @@
 <script setup lang="ts">
-import AppAutocomplete from '@/@core/components/app-form-elements/AppAutocomplete.vue'
-import CDFMoreBtn from '@/components/CDF/CDFMoreBtn.vue'
-import DialogDocumentosAnexos from '@/pages/os/components/DialogDocumentosAnexos.vue'
-import DialogFinalizarOs from '@/pages/os/components/DialogFinalizarOS.vue'
-import DialogMaterialEquipamento from '@/pages/os/components/DialogMaterialEquipamento.vue'
-import DialogReprovarOs from '@/pages/os/components/DialogReprovarOS.vue'
-import { useOrdemServicoStore } from '@/pages/os/store/useOrdemServicoStore'
-import { useSnackbarStore } from '@/stores/useSnackbarStore'
 import {
   getOSResultadoColor,
   getOSResultadoLabel,
@@ -18,6 +10,14 @@ import {
 } from '../../enums/OSStatusEnum'
 import { useInmetroStore } from './store/useInmetroStore'
 import type { IOrdemServico } from './types/index'
+import AppAutocomplete from '@/@core/components/app-form-elements/AppAutocomplete.vue'
+import CDFMoreBtn from '@/components/CDF/CDFMoreBtn.vue'
+import DialogDocumentosAnexos from '@/pages/os/components/DialogDocumentosAnexos.vue'
+import DialogFinalizarOs from '@/pages/os/components/DialogFinalizarOS.vue'
+import DialogMaterialEquipamento from '@/pages/os/components/DialogMaterialEquipamento.vue'
+import DialogReprovarOs from '@/pages/os/components/DialogReprovarOS.vue'
+import { useOrdemServicoStore } from '@/pages/os/store/useOrdemServicoStore'
+import { useSnackbarStore } from '@/stores/useSnackbarStore'
 
 definePage({
   meta: {
@@ -57,6 +57,7 @@ const filtroForm = ref({
   tipo_servico_id: null,
   num_pedido_compra: '',
   certificado_associado: '',
+  codigo_os: '',
 })
 
 const isDialogAprovarVisible = ref<boolean>(false)
@@ -75,12 +76,13 @@ const limparFiltros = () => {
     cliente_id: null,
     data_inspecao_inicio: null,
     data_inspecao_fim: '',
-    responsavel_id: '',
+    responsavel_id: null,
     fornecedor: '',
     escopo_acreditacao_id: null,
     tipo_servico_id: null,
     num_pedido_compra: '',
     certificado_associado: '',
+    codigo_os: '',
   }
   store.resetFiltros()
 }
@@ -206,17 +208,17 @@ const getItemValue = (item: any, key: string) => {
           Lista de Relatórios
         </h1>
       </div>
-      <!-- 
-      <div class="d-flex gap-2">
+      <!--
+        <div class="d-flex gap-2">
         <VBtn
-          color="secondary"
-          variant="outlined"
-          prepend-icon="tabler-download"
-          @click="exportarRelatorios"
+        color="secondary"
+        variant="outlined"
+        prepend-icon="tabler-download"
+        @click="exportarRelatorios"
         >
-          Exportar CSV
+        Exportar CSV
         </VBtn>
-      </div> 
+        </div>
       -->
     </VCardText>
   </VCard>
@@ -303,7 +305,7 @@ const getItemValue = (item: any, key: string) => {
             md="3"
           >
             <AppAutocomplete
-              v-model="filtroForm.certificado_associado"
+              v-model="filtroForm.escopo_acreditacao_id"
               label="Escopo"
               :items="escopos"
               clearable
@@ -350,6 +352,18 @@ const getItemValue = (item: any, key: string) => {
               clearable
               hide-details
               placeholder="Digite o número do certificado associado"
+            />
+          </VCol>
+          <VCol
+            cols="12"
+            md="3"
+          >
+            <AppTextField
+              v-model="filtroForm.codigo_os"
+              label="Nº OS"
+              clearable
+              hide-details
+              placeholder="Digite o número da OS"
             />
           </VCol>
         </VRow>
