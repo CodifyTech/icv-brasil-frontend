@@ -6,7 +6,7 @@ definePage({
   meta: {
     navActiveLink: 'tiposervico',
     action: 'create',
-    subject: 'tiposervico',
+    subject: 'tipo-servico',
   },
 })
 
