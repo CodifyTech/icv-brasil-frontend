@@ -90,15 +90,15 @@ export default [
     subject: 'os',
   },
   {
-    title: 'TipoServico',
-    icon: { icon: 'tabler-template' },
+    title: 'Tipo Serviço',
+    icon: { icon: 'tabler-briefcase' },
     to: 'tiposervico',
     action: 'list',
     subject: 'tiposervico',
   },
   {
     title: 'Escopo',
-    icon: { icon: 'tabler-template' },
+    icon: { icon: 'tabler-target' },
     to: 'escopo',
     action: 'list',
     subject: 'escopo',
