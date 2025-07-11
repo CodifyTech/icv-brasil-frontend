@@ -92,9 +92,9 @@ export default [
   {
     title: 'Tipo Serviço',
     icon: { icon: 'tabler-briefcase' },
-    to: 'tiposervico',
+    to: 'tipo-servico',
     action: 'list',
-    subject: 'tiposervico',
+    subject: 'tipo-servico',
   },
   {
     title: 'Escopo',
