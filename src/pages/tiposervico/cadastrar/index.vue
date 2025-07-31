@@ -1,0 +1,22 @@
+<script setup lang="ts">
+import FormTipoServico from '../components/form-tiposervico.vue'
+import { useTipoServicoStore } from '../store/useTipoServicoStore'
+
+definePage({
+  meta: {
+    navActiveLink: 'tipo-servico',
+    action: 'create',
+    subject: 'tipo-servico',
+  },
+})
+
+const { resetForm } = useTipoServicoStore()
+
+onBeforeRouteLeave(() => {
+  resetForm()
+})
+</script>
+
+<template>
+  <FormTipoServico />
+</template>

@@ -4,7 +4,7 @@ import { VForm } from 'vuetify/components/VForm'
 import { usePropostaStore } from '../store/usePropostaStore'
 import LayoutForms from '@/components/CDF/LayoutForms.vue'
 import NovoServicoModal from '@/pages/proposta/components/NovoServicoModal.vue'
-import { blurHandler } from '@/utils/generals'
+import { blurHandler, formatCurrency } from '@/utils/generals'
 import * as rules from '@/validators/cdf-rules'
 
 const { isEditing } = withDefaults(defineProps<{
@@ -102,17 +102,13 @@ onMounted(() => {
     :is-actions="false"
     :actions="{
       save: {
-        method: () => save(true)
-          .then(() => {
-            resetForm()
-          }),
+        method: () => save(),
       },
       update: {
-        method: () => update(true),
+        method: () => update(),
       },
       reset: {
         method: () => resetForm(),
-
       },
     }"
     back="/proposta"
@@ -120,8 +116,8 @@ onMounted(() => {
     <template #content>
       <VCol cols="12">
         <AppAutocomplete
-          v-model="data.cliente_id"
-          v-debounce:900="fetchCliente"
+          v-model="data.filial_id"
+          v-debounce:900="fetchFilial"
           :items="filiais"
           label="Empresa"
           :return-object="false"
@@ -133,7 +129,7 @@ onMounted(() => {
           <template #clear>
             <button
               @click="() => {
-                fetchCliente()
+                fetchFilial()
                 blurHandler()
               }"
             >
@@ -144,7 +140,7 @@ onMounted(() => {
       </VCol>
 
       <VCol
-        v-if="data.cliente_id"
+        v-if="data.filial_id"
         cols="12"
       >
         <VStepper
@@ -260,14 +256,7 @@ onMounted(() => {
                 <template #append>
                   <CDFButton
                     icon="tabler-plus"
-                    @click="() => {
-                      data.servicos.push({
-                        nome: '',
-                        total_custos: 0,
-                        valor_contrato: 0,
-                        anexo: null,
-                      });
-                    }"
+                    @click="() => modal.isDialogVisible = true"
                   >
                     Novo Serviço
                   </CDFButton>
@@ -285,10 +274,13 @@ onMounted(() => {
                           Total de Custos
                         </th>
                         <th class="text-left">
-                          Valor do Contrato
+                          K Mínimo
                         </th>
                         <th class="text-left">
-                          Anexo
+                          Diária Mínima
+                        </th>
+                        <th class="text-left">
+                          Valor do Contrato
                         </th>
                         <th class="text-center">
                           *
@@ -301,38 +293,28 @@ onMounted(() => {
                         v-if="data.servicos.length > 0"
                         :key="index"
                       >
-                        <td>
-                          <AppTextField
-                            v-model="item.nome"
-                            placeholder="Digite o nome do serviço"
-                            :rules="[rules.requiredValidator]"
-                          />
-                        </td>
-                        <td>
-                          <InputDinheiro
-                            v-model="item.valor_total_custos"
-                            placeholder="Digite o valor contrato"
-                            prepend-inner-icon="tabler-currency-real"
-                            :rules="[rules.requiredValidator]"
-                          />
-                        </td>
+                        <td>{{ item?.nome }}</td>
+                        <td>{{ formatCurrency(item?.valor_total_custos) }}</td>
+                        <td>{{ formatCurrency(item?.valor_k_minimo) }}</td>
+                        <td>{{ formatCurrency(item?.valor_diaria_minimo) }}</td>
                         <td>
                           <InputDinheiro
                             v-model="item.valor_contrato"
                             placeholder="Digite o valor contrato"
                             prepend-inner-icon="tabler-currency-real"
-                            :rules="[rules.requiredValidator]"
-                          />
-                        </td>
-                        <td width="150px">
-                          <CDFFileUpload
-                            v-model="item.anexo"
-                            class="anexo-upload"
-                            placeholder="Selecione um arquivo"
-                            accept=".pdf,.doc,.docx,.xls,.xlsx,.txt"
+                            :rules="[]"
                           />
                         </td>
                         <td class="d-flex justify-center align-center gap-1">
+                          <IconBtn
+                            color="warning"
+                            @click="() => {
+                              modal.isDialogVisible = true
+                              modal.servico = item
+                            }"
+                          >
+                            <VIcon icon="fa-light fa-edit" />
+                          </IconBtn>
                           <IconBtn
                             color="error"
                             @click="() => {
@@ -357,7 +339,7 @@ onMounted(() => {
           <template #actions>
             <VDivider class="mb-1" />
             <div class="d-flex pa-2">
-              <CDFButton
+              <VBtn
                 v-if="step > 1"
                 variant="outlined"
                 @click="() => {
@@ -365,17 +347,15 @@ onMounted(() => {
                 }"
               >
                 Anterior
-              </CDFButton>
+              </VBtn>
               <VSpacer />
-              <CDFButton
-                :loading="loading.save"
-                :disabled="loading.save"
+              <VBtn
                 @click="() => {
                   step > 1 ? isEditing ? update() : save() : handleNextStep()
                 }"
               >
                 {{ step > 1 ? 'Finalizar' : 'Próximo' }}
-              </CDFButton>
+              </VBtn>
             </div>
           </template>
         </VStepper>
@@ -385,12 +365,3 @@ onMounted(() => {
     </template>
   </LayoutForms>
 </template>
-
-<style lang="scss">
-.anexo-upload {
-  .v-field__input {
-    overflow: hidden;
-    white-space: nowrap;
-  }
-}
-</style>

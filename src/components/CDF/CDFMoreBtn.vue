@@ -4,14 +4,15 @@ interface MenuList {
   click?: void | Promise<void>
   class?: string
   type?: string
+  icon?: string
+  color?: string
 }
 
-interface Props {
+const props = defineProps<{
   menuList?: MenuList[]
+  color?: string
   itemProps?: boolean
-}
-
-const props = defineProps<Props>()
+}>()
 </script>
 
 <template>
@@ -19,7 +20,7 @@ const props = defineProps<Props>()
     <template #activator="{ props }">
       <IconBtn
         density="compact"
-        color="disabled"
+        :color="color || 'primary'"
         v-bind="props"
       >
         <VIcon icon="tabler-dots-vertical" />
@@ -31,6 +32,8 @@ const props = defineProps<Props>()
         v-bind="item"
         :key="i"
         :style="item.type === 'divider' ? 'min-height: 0px !important' : null"
+        :prepend-icon="item?.icon"
+        :color="item?.color"
         @click="item.click"
       >
         <template #title>

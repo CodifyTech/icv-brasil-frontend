@@ -75,4 +75,32 @@ export default [
       { title: 'Permissões', to: 'acesso-permissoes' },
     ],
   },
+  {
+    title: 'Inmetro',
+    icon: { icon: 'fa-light fa-shield-check' },
+    to: 'inmetro',
+    action: 'list',
+    subject: 'inmetro',
+  },
+  {
+    title: 'OS',
+    icon: { icon: 'fa-light fa-file-signature' },
+    to: 'os',
+    action: 'list',
+    subject: 'os',
+  },
+  {
+    title: 'Tipo Serviço',
+    icon: { icon: 'tabler-briefcase' },
+    to: 'tipo-servico',
+    action: 'list',
+    subject: 'tipo-servico',
+  },
+  {
+    title: 'Escopo',
+    icon: { icon: 'tabler-target' },
+    to: 'escopo',
+    action: 'list',
+    subject: 'escopo',
+  },
 ]

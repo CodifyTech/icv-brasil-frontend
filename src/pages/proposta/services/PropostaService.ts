@@ -2,10 +2,10 @@ import ApiService from '@/services/ApiService'
 
 class PropostaService extends ApiService {
   // 👉 methods
-  async fetchFilial(search?: string) {
+  async fetchCliente(search?: string) {
     return await this.getOrDeleteRequest('GET', {
       search,
-    }, 'listar/filial')
+    }, 'listar/clientes')
   }
 }
 export default new PropostaService('proposta')
