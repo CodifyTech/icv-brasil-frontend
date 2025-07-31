@@ -29,8 +29,16 @@ class ApiService {
     if (!data || typeof data !== 'object')
       return false
 
-    // Verifica se algum valor do payload é um tipo File ou Blob
-    return Object.values(data).some(value => value instanceof File || value instanceof Blob)
+    // Verifica se o próprio valor é um File ou Blob
+    if (data instanceof File || data instanceof Blob)
+      return true
+
+    // Se for um array, verifica recursivamente cada elemento
+    if (Array.isArray(data))
+      return data.some(item => this.hasFiles(item))
+
+    // Se for um objeto, verifica recursivamente cada valor
+    return Object.values(data).some(value => this.hasFiles(value))
   }
 
   /**
@@ -44,6 +52,8 @@ class ApiService {
    */
   protected preprocessData(data = {}, formData?: boolean): any {
     data = cleanEmptyFieldsPayload(data)
+
+    console.log('preprocessData', this.hasFiles(data))
 
     if (this.hasFiles(data) || formData) {
       // Se há arquivos, usa FormData

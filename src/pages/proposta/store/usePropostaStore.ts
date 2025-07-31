@@ -2,8 +2,8 @@ import { defineStore } from 'pinia'
 
 import PropostaService from '../services/PropostaService'
 import type { ICusto, IDespesa, IDespesaDireta, IDespesaIndireta, IServico, ITributo } from '@/pages/proposta/types'
-import { useSuccessDialogStore } from '@/stores/useSuccessDialogStore'
 import type { IRubrica } from '@/pages/rubricas/types'
+import { useSuccessDialogStore } from '@/stores/useSuccessDialogStore'
 
 const defaultValue = {
   pessoa_contato: '',
@@ -13,7 +13,7 @@ const defaultValue = {
   area: 'OIA - O&G',
   status: '',
   servicos: [] as IServico[],
-  filial_id: null,
+  cliente_id: null,
 }
 
 export const usePropostaStore = defineStore('crud/proposta', {
@@ -103,11 +103,11 @@ export const usePropostaStore = defineStore('crud/proposta', {
     },
 
     // 👉 methods
-    async fetchFilial(search?: string) {
+    async fetchCliente(search?: string) {
       this.loading.filial = true
-      await PropostaService.fetchFilial(search)
-        .then(res => {
-          this.filiais = res.data
+      await PropostaService.fetchCliente(search)
+        .then(data => {
+          this.filiais = data
           this.loading.filial = false
         }).catch(() => {
           this.filiais = []
