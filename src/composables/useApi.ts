@@ -67,7 +67,7 @@ useApi.interceptors.response.use(response => {
     }
     else if (status >= 500) {
       snackbarStore.showSnackbar({
-        text: 'Erro no servidor. Tente novamente mais tarde.',
+        text: error.response.data.message || 'Erro no servidor. Tente novamente mais tarde.',
         color: 'error',
         timeout: 3000,
         location: 'top center',
