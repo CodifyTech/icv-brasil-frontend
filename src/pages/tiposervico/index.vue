@@ -20,7 +20,7 @@ const { t } = useI18n(i18n)
 definePage({
   meta: {
     action: 'list',
-    subject: 'tiposervico',
+    subject: 'tipo-servico',
   },
 })
 

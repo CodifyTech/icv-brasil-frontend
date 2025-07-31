@@ -4,9 +4,9 @@ import { useTipoServicoStore } from '../store/useTipoServicoStore'
 
 definePage({
   meta: {
-    navActiveLink: 'tiposervico',
+    navActiveLink: 'tipo-servico',
     action: 'create',
-    subject: 'tiposervico',
+    subject: 'tipo-servico',
   },
 })
 
