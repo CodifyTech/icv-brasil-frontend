@@ -119,6 +119,11 @@ class ApiService {
     }).then(({ data }) => {
       return data
     })
+      .catch(error => {
+        this.handleError(error as AxiosError)
+
+        throw error
+      })
   }
 
   /**
@@ -150,7 +155,7 @@ class ApiService {
       .catch(error => {
         this.handleError(error as AxiosError)
 
-        return error.data
+        throw error
       })
   }
 
