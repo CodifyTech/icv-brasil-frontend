@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { VForm } from 'vuetify/components/VForm'
-import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
 import { useAuthStore } from '@/pages/auth/login/store/useAuthStore'
 import { useGenerateImageVariant } from '@core/composable/useGenerateImageVariant'
-import vitrine from '@images/pages/vitrine.webp'
-import authV2MaskDark from '@images/pages/misc-mask-dark.png'
-import authV2MaskLight from '@images/pages/misc-mask-light.png'
 import logoDark from '@images/logo-dark.svg?raw'
 import logoLight from '@images/logo-light.svg?raw'
+import vitrine from '@images/pages/vitrine.webp'
+import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
 import { themeConfig } from '@themeConfig'
 
 definePage({
@@ -32,7 +30,6 @@ const {
 
 const isPasswordVisible = ref(false)
 
-const authThemeMask = useGenerateImageVariant(authV2MaskLight, authV2MaskDark)
 const logo = useGenerateImageVariant(logoDark, logoLight)
 </script>
 
@@ -111,12 +108,6 @@ const logo = useGenerateImageVariant(logoDark, logoLight)
                     v-model="credentials.remember"
                     label="Lembrar de mim"
                   />
-                  <a
-                    class="text-primary ms-2 mb-1"
-                    href="/auth/esqueceu-senha"
-                  >
-                    Esqueceu a senha?
-                  </a>
                 </div>
 
                 <VBtn
@@ -127,20 +118,6 @@ const logo = useGenerateImageVariant(logoDark, logoLight)
                   Entrar
                 </VBtn>
               </VCol>
-
-              <VCol
-                cols="12"
-                class="text-center text-base"
-              >
-                <span>Novo por aqui?</span>
-
-                <a
-                  class="text-primary ms-2"
-                  href="/auth/cadastrar"
-                >
-                  Crie uma conta
-                </a>
-              </VCol>
             </VRow>
           </VForm>
         </VCardText>
@@ -150,8 +127,9 @@ const logo = useGenerateImageVariant(logoDark, logoLight)
 </template>
 
 <style lang="scss">
-@use "@core/scss/template/pages/page-auth.scss";
-.logo svg{
-  height: 40px;
+@use "@core/scss/template/pages/page-auth";
+
+.logo svg {
+  block-size: 40px;
 }
 </style>

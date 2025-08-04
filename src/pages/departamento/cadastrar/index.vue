@@ -4,9 +4,9 @@ import { useDepartamentoStore } from '../store/useDepartamentoStore'
 
 definePage({
   meta: {
-    navActiveLink: 'cliente',
+    navActiveLink: 'departamento',
     action: 'create',
-    subject: 'cliente',
+    subject: 'departamento',
   },
 })
 
@@ -18,5 +18,5 @@ onBeforeRouteLeave(() => {
 </script>
 
 <template>
-  <FormDepartamento/>
+  <FormDepartamento />
 </template>
