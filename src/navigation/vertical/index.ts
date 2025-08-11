@@ -91,7 +91,7 @@ export default [
   },
   {
     title: 'Tipo Serviço',
-    icon: { icon: 'tabler-briefcase' },
+    icon: { icon: 'fa-light fa-briefcase' },
     to: 'tipo-servico',
     action: 'list',
     subject: 'tipo-servico',
