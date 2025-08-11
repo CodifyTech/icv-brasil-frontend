@@ -42,7 +42,7 @@ onBeforeRouteLeave(() => {
   <LayoutForms
     v-model:form="form"
     v-model:loading="loading.save"
-    :title="!isEditing ? 'Criar Tipo documento' : 'Editar Tipo documento'"
+    :title="!isEditing ? 'Criar Tipo Documento' : 'Editar Tipo Documento'"
     :is-editing="isEditing"
     :is-header="isHeader"
     :actions="{

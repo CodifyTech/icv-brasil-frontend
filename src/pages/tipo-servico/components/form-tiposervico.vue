@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import LayoutForms from '@/components/CDF/LayoutForms.vue';
-import { storeToRefs } from 'pinia';
-import { useTipoServicoStore } from '../store/useTipoServicoStore';
+import { storeToRefs } from 'pinia'
+import { useTipoServicoStore } from '../store/useTipoServicoStore'
+import LayoutForms from '@/components/CDF/LayoutForms.vue'
 
 const { isEditing } = withDefaults(defineProps<{
   isEditing: boolean
@@ -42,7 +42,7 @@ onBeforeRouteLeave(() => {
   <LayoutForms
     v-model:form="form"
     v-model:loading="loading.save"
-    :title="!isEditing ? 'Criar Tipo servico' : 'Editar Tipo servico'"
+    :title="!isEditing ? 'Criar Tipo Serviço' : 'Editar Tipo Serviço'"
     :is-editing="isEditing"
     :is-header="isHeader"
     :actions="{
