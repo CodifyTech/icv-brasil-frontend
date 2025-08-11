@@ -56,7 +56,7 @@ onBeforeRouteLeave(() => {
         method: () => resetForm(),
       },
     }"
-    back="/tipodocumento"
+    back="/tipo-documento"
   >
     <template #content>
       <VCol

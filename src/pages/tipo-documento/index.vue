@@ -71,7 +71,7 @@ const actions: ITableAction[] = [
       action: 'edit',
       subject: 'tipodocumento',
     },
-    to: (item: ITipoDocumento) => `/TipoDocumento/editar/${item.id}`,
+    to: (item: ITipoDocumento) => `/tipo-documento/editar/${item.id}`,
   },
   {
     icon: 'tabler-trash',

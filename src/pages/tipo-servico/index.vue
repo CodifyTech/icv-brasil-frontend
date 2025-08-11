@@ -1,12 +1,12 @@
 <script setup lang="ts">
+import LayoutTable from '@/components/CDF/LayoutTable.vue'
+import type { ITerm } from '@/components/CDF/SearchBar.vue'
+import type { IHeader, ITableAction } from '@/pages/types/layoutTable.types'
+import { getI18n } from '@/plugins/i18n'
 import { storeToRefs } from 'pinia'
 import type { ComputedRef } from 'vue'
 import { useTipoServicoStore } from './store/useTipoServicoStore'
 import type { ITipoServico } from './types'
-import LayoutTable from '@/components/CDF/LayoutTable.vue'
-import type { ITerm } from '@/components/CDF/SearchBar.vue'
-import { getI18n } from '@/plugins/i18n'
-import type { IHeader, ITableAction } from '@/pages/types/layoutTable.types'
 
 withDefaults(defineProps<{
   isHeader: boolean
@@ -71,7 +71,7 @@ const actions: ITableAction[] = [
       action: 'edit',
       subject: 'tiposervico',
     },
-    to: (item: ITipoServico) => `/TipoServico/editar/${item.id}`,
+    to: (item: ITipoServico) => `/tipo-servico/editar/${item.id}`,
   },
   {
     icon: 'tabler-trash',

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
-import { useTipoServicoStore } from '../store/useTipoServicoStore'
-import LayoutForms from '@/components/CDF/LayoutForms.vue'
+import LayoutForms from '@/components/CDF/LayoutForms.vue';
+import { storeToRefs } from 'pinia';
+import { useTipoServicoStore } from '../store/useTipoServicoStore';
 
 const { isEditing } = withDefaults(defineProps<{
   isEditing: boolean
@@ -56,7 +56,7 @@ onBeforeRouteLeave(() => {
         method: () => resetForm(),
       },
     }"
-    back="/tiposervico"
+    back="/tipo-servico"
   >
     <template #content>
       <VCol
