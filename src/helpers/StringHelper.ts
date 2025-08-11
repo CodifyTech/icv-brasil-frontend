@@ -74,3 +74,10 @@ export const toCamelCase = (title: string) => {
 
   return result + capitalized.join('')
 }
+
+export const toKebabCase = (title: string) => {
+  if (!title)
+    return
+
+  return slug(title, '-')
+}

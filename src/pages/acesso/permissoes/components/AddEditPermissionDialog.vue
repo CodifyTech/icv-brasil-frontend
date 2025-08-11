@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { toCamelCase } from "@/helpers/StringHelper"
 import { storeToRefs } from 'pinia'
 import { VForm } from 'vuetify/components/VForm'
+import { toCamelCase, toKebabCase } from '@/helpers/StringHelper'
 import { usePermissoesStore } from '@/pages/acesso/permissoes/store/usePermissoesStore'
 
 interface Props {
@@ -129,7 +129,9 @@ onMounted(() => {
                 v-model:value="data.crud"
                 label="Nome do Assunto"
                 placeholder="Insira o nome do assunto"
-                readonly
+                @update:model-value="(v) => {
+                  data.crud = toKebabCase(data.name)
+                }"
               />
             </VCol>
 
