@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import LayoutTable from '@/components/CDF/LayoutTable.vue'
-import type { ITerm } from '@/components/CDF/SearchBar.vue'
-import type { IHeader, ITableAction } from '@/pages/types/layoutTable.types'
-import { getI18n } from '@/plugins/i18n'
 import { storeToRefs } from 'pinia'
 import type { ComputedRef } from 'vue'
 import { useTipoServicoStore } from './store/useTipoServicoStore'
 import type { ITipoServico } from './types'
+import LayoutTable from '@/components/CDF/LayoutTable.vue'
+import type { ITerm } from '@/components/CDF/SearchBar.vue'
+import type { IHeader, ITableAction } from '@/pages/types/layoutTable.types'
+import { getI18n } from '@/plugins/i18n'
 
 withDefaults(defineProps<{
   isHeader: boolean
@@ -69,7 +69,7 @@ const actions: ITableAction[] = [
     color: 'primary',
     can: {
       action: 'edit',
-      subject: 'tiposervico',
+      subject: 'tipo-servico',
     },
     to: (item: ITipoServico) => `/tipo-servico/editar/${item.id}`,
   },
@@ -78,7 +78,7 @@ const actions: ITableAction[] = [
     color: 'error',
     can: {
       action: 'delete',
-      subject: 'tiposervico',
+      subject: 'tipo-servico',
     },
     onClick: (item: ITipoServico) => dialogDestroy(item.id),
   },
@@ -98,7 +98,7 @@ onBeforeRouteLeave(() => {
     v-model:is-searching="isSearching"
     :destroy="destroy"
     :is-header="isHeader"
-    title="Tipo servicos"
+    title="Tipo Serviços"
 
     new-item="/tipo-servico/cadastrar"
     :headers="headers"
