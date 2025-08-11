@@ -5,8 +5,8 @@ import { useTipoDocumentoStore } from './store/useTipoDocumentoStore'
 import type { ITipoDocumento } from './types'
 import LayoutTable from '@/components/CDF/LayoutTable.vue'
 import type { ITerm } from '@/components/CDF/SearchBar.vue'
-import { getI18n } from '@/plugins/i18n'
 import type { IHeader, ITableAction } from '@/pages/types/layoutTable.types'
+import { getI18n } from '@/plugins/i18n'
 
 withDefaults(defineProps<{
   isHeader: boolean
@@ -20,7 +20,7 @@ const { t } = useI18n(i18n)
 definePage({
   meta: {
     action: 'list',
-    subject: 'tipodocumento',
+    subject: 'tipo-documento',
   },
 })
 

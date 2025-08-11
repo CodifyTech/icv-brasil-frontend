@@ -63,17 +63,23 @@ export default [
   {
     title: 'Tipo Documentos',
     icon: { icon: 'fa-light fa-file-lines' },
-    to: 'tipodocumento',
+    to: 'tipo-documento',
     action: 'list',
-    subject: 'tipodocumento',
+    subject: 'tipo-documento',
   },
   {
-    title: 'Controle de Acesso',
-    icon: { icon: 'tabler-smart-home' },
-    children: [
-      { title: 'Perfis', to: 'acesso-perfis' },
-      { title: 'Permissões', to: 'acesso-permissoes' },
-    ],
+    title: 'Tipo Serviço',
+    icon: { icon: 'fa-light fa-briefcase' },
+    to: 'tipo-servico',
+    action: 'list',
+    subject: 'tipo-servico',
+  },
+  {
+    title: 'Escopo',
+    icon: { icon: 'tabler-target' },
+    to: 'escopo',
+    action: 'list',
+    subject: 'escopo',
   },
   {
     title: 'Inmetro',
@@ -90,17 +96,11 @@ export default [
     subject: 'os',
   },
   {
-    title: 'Tipo Serviço',
-    icon: { icon: 'fa-light fa-briefcase' },
-    to: 'tipo-servico',
-    action: 'list',
-    subject: 'tipo-servico',
-  },
-  {
-    title: 'Escopo',
-    icon: { icon: 'tabler-target' },
-    to: 'escopo',
-    action: 'list',
-    subject: 'escopo',
+    title: 'Controle de Acesso',
+    icon: { icon: 'tabler-smart-home' },
+    children: [
+      { title: 'Perfis', to: 'acesso-perfis' },
+      { title: 'Permissões', to: 'acesso-permissoes' },
+    ],
   },
 ]

@@ -4,9 +4,9 @@ import { useTipoDocumentoStore } from '../store/useTipoDocumentoStore'
 
 definePage({
   meta: {
-    navActiveLink: 'tipodocumento',
+    navActiveLink: 'tipo-documento',
     action: 'edit',
-    subject: 'tipodocumento',
+    subject: 'tipo-documento',
   },
 })
 
