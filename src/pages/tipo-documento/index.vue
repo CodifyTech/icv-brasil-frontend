@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
-import type { ComputedRef } from 'vue'
-import { useTipoDocumentoStore } from './store/useTipoDocumentoStore'
-import type { ITipoDocumento } from './types'
 import LayoutTable from '@/components/CDF/LayoutTable.vue'
 import type { ITerm } from '@/components/CDF/SearchBar.vue'
 import type { IHeader, ITableAction } from '@/pages/types/layoutTable.types'
 import { getI18n } from '@/plugins/i18n'
+import { storeToRefs } from 'pinia'
+import type { ComputedRef } from 'vue'
+import { useTipoDocumentoStore } from './store/useTipoDocumentoStore'
+import type { ITipoDocumento } from './types'
 
 withDefaults(defineProps<{
   isHeader: boolean
@@ -100,7 +100,7 @@ onBeforeRouteLeave(() => {
     :is-header="isHeader"
     title="Tipo documentos"
 
-    new-item="/tipodocumento/cadastrar"
+    new-item="/tipo-documento/cadastrar"
     :headers="headers"
     :actions="actions"
     :items-per-page="itemsPerPage"

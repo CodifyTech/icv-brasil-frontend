@@ -100,7 +100,7 @@ onBeforeRouteLeave(() => {
     :is-header="isHeader"
     title="Tipo servicos"
 
-    new-item="/tiposervico/cadastrar"
+    new-item="/tipo-servico/cadastrar"
     :headers="headers"
     :actions="actions"
     :items-per-page="itemsPerPage"
