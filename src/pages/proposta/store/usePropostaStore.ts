@@ -12,6 +12,7 @@ const defaultValue = {
   email: '',
   area: 'OIA - O&G',
   status: '',
+  anexo: null,
   servicos: [] as IServico[],
   cliente_id: null,
 }
@@ -22,7 +23,7 @@ export const usePropostaStore = defineStore('crud/proposta', {
     sortKeyDefault: 'pessoa_contato',
     defaultValue,
     data: { ...defaultValue },
-    filiais: [],
+    filiais: [] as Array<{ id: string | number; nome_fantasia: string }>,
     loading: {
       save: false,
       item: false,
@@ -77,13 +78,13 @@ export const usePropostaStore = defineStore('crud/proposta', {
         })
     },
     async update(formData?: boolean) {
-      if (this.data.id) {
+      if ((this.data as any).id) {
         this.loading.save = true
 
-        return await PropostaService.update(this.data, this.data.id, formData)
+        return await PropostaService.update(this.data, (this.data as any).id, formData)
           .then(data => {
             if (data)
-              this.data = data
+              this.data = data as any
 
             useSuccessDialogStore().showSuccessDialog({
               title: 'Informação',
@@ -107,7 +108,7 @@ export const usePropostaStore = defineStore('crud/proposta', {
       this.loading.filial = true
       await PropostaService.fetchCliente(search)
         .then(data => {
-          this.filiais = data
+          this.filiais = data as Array<{ id: string | number; nome_fantasia: string }>
           this.loading.filial = false
         }).catch(() => {
           this.filiais = []
@@ -117,9 +118,9 @@ export const usePropostaStore = defineStore('crud/proposta', {
 
     async obterRubricasFixas() {
       // Limpar os arrays existentes ou inicializá-los se forem nulos
-      this.modal.servico.tributos = this.modal.servico.tributos?.length ? [] : []
-      this.modal.servico.despesas_indiretas = this.modal.servico.despesas_indiretas?.length ? [] : []
-      this.modal.servico.despesas_diretas = this.modal.servico.despesas_diretas?.length ? [] : []
+      this.modal.servico.tributos = []
+      this.modal.servico.despesas_indiretas = []
+      this.modal.servico.despesas_diretas = []
 
       await PropostaService.fetchAll<{
         tributos: IRubrica[]

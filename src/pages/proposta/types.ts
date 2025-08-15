@@ -1,3 +1,5 @@
+import type { IFileData } from '@/types/IFileData'
+
 export interface IProposta {
   id?: string
   pessoa_contato: string
@@ -6,7 +8,8 @@ export interface IProposta {
   email: string
   area: string
   status: string
-  filial_id: string
+  cliente_id: string | null
+  anexo?: IFileData | null
 }
 
 export interface IServico {
