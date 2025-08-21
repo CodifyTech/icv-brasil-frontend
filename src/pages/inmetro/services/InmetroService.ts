@@ -23,6 +23,11 @@ class InmetroService extends ApiService {
   async buscarMateriais<T>(ordemServicoId: string) {
     return await this.fetchAll<T>(undefined, `${ordemServicoId}/materiais`)
   }
+
+  // Gerar código de ordem de serviço
+  async gerarCodigoOS(clienteId: string) {
+    return await this.post({ cliente_id: clienteId }, 'gerar-codigo')
+  }
 }
 
 export default new InmetroService('os')

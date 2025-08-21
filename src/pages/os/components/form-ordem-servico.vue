@@ -23,6 +23,10 @@ onMounted(async () => {
     inmetroStore.fetchTipoServico(),
     inmetroStore.fetchResponsavel(),
   ])
+
+  // Debug: verificar se os clientes foram carregados
+  console.log('🔍 Debug - Clientes carregados:', osStore.clientes)
+  console.log('🔍 Debug - Quantidade de clientes:', osStore.clientes.length)
 })
 
 // Watcher para reativo quando formData mudar (útil para edição)
@@ -30,6 +34,12 @@ watch(() => osStore.formData, (newFormData: any) => {
   if (newFormData && Object.keys(newFormData).length > 0)
     console.log('FormData atualizado:', newFormData)
 }, { deep: true })
+
+// Watcher específico para cliente_id para debug
+watch(() => osStore.formData.cliente_id, (newClienteId: any) => {
+  console.log('🔍 Debug - cliente_id mudou para:', newClienteId)
+  console.log('🔍 Debug - tipo do novo cliente_id:', typeof newClienteId)
+}, { immediate: true })
 
 const {
   formRef,
@@ -48,6 +58,7 @@ const {
   save,
   update,
   resetForm,
+  gerarCodigoOS,
 } = osStore
 
 onBeforeRouteLeave(() => {
@@ -90,6 +101,27 @@ const perfilResponsavelOptions = ref([])
                 cols="12"
                 md="4"
               >
+                <CDFTextField
+                  v-model="formData.codigo"
+                  label="Código"
+                  placeholder="Digite o código da OS"
+                  :rules="[rules.requiredValidator]"
+                >
+                  <template #append-inner>
+                    <CDFButton
+                      variant="outlined"
+                      color="primary"
+                      size="small"
+                      icon="tabler-wand"
+                      @click="gerarCodigoOS"
+                    />
+                  </template>
+                </CDFTextField>
+              </VCol>
+              <VCol
+                cols="12"
+                md="4"
+              >
                 <AppAutocomplete
                   v-model="formData.cliente_id"
                   label="Cliente"
@@ -98,13 +130,18 @@ const perfilResponsavelOptions = ref([])
                   item-title="razao_social"
                   item-value="id"
                   :rules="[rules.requiredValidator]"
+                  @update:model-value="(value) => {
+                    console.log('🔍 Debug - Cliente selecionado:', value)
+                    console.log('🔍 Debug - Tipo do valor:', typeof value)
+                    console.log('🔍 Debug - Cliente encontrado:', clientes.find(c => c.id === value))
+                  }"
                 />
               </VCol>
               <VCol
                 cols="12"
                 md="4"
               >
-                <AppTextField
+                <CDFTextField
                   v-model="formData.fornecedor"
                   label="Fornecedor"
                   placeholder="Digite o nome do fornecedor"

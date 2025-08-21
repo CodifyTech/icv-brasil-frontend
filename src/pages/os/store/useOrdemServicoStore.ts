@@ -1,12 +1,12 @@
+import { defineStore } from 'pinia'
 import ClienteService from '@/pages/cliente/services/ClienteService'
 import type { ICliente } from '@/pages/cliente/types'
 import type { IEscopo } from '@/pages/escopo/types'
 import type { IFuncionario } from '@/pages/funcionario/types'
 import InmetroService from '@/pages/inmetro/services/InmetroService'
 import type { IFiltrosInmetro, IMaterialEquipamento, IOrdemServico, IOrdemServicoAnexo } from '@/pages/inmetro/types'
-import type { ITipoServico } from '@/pages/tiposervico/types'
+import type { ITipoServico } from '@/pages/tipo-servico/types'
 import { useSnackbarStore } from '@/stores/useSnackbarStore'
-import { defineStore } from 'pinia'
 
 export const useOrdemServicoStore = defineStore('ordem-servico', {
   state: () => ({
@@ -64,6 +64,50 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
       }
       finally {
         this.loading.list = false
+      }
+    },
+
+    async gerarCodigoOS() {
+      try {
+        console.log('🔍 Debug - formData atual:', this.formData)
+        console.log('🔍 Debug - cliente_id:', this.formData.cliente_id)
+        console.log('🔍 Debug - tipo do cliente_id:', typeof this.formData.cliente_id)
+
+        // Verificar se há um cliente selecionado
+        if (!this.formData.cliente_id) {
+          console.log('❌ Cliente não selecionado')
+          this.snackbarStore.showSnackbar({
+            text: 'Selecione um cliente antes de gerar o código da OS',
+            color: 'warning',
+            timeout: 3000,
+          })
+
+          return
+        }
+
+        console.log('✅ Cliente selecionado, gerando código para cliente_id:', this.formData.cliente_id)
+
+        const response = await InmetroService.gerarCodigoOS(this.formData.cliente_id)
+
+        console.log('🔍 Debug - resposta da API:', response)
+
+        if (response && typeof response === 'object' && 'codigo' in response) {
+          this.formData.codigo = response.codigo as string
+          console.log('✅ Código gerado com sucesso:', response.codigo)
+          this.snackbarStore.showSnackbar({
+            text: 'Código da OS gerado com sucesso!',
+            color: 'success',
+            timeout: 2000,
+          })
+        }
+      }
+      catch (error) {
+        console.error('❌ Erro ao gerar código da OS:', error)
+        this.snackbarStore.showSnackbar({
+          text: 'Erro ao gerar código da OS. Tente novamente.',
+          color: 'error',
+          timeout: 3000,
+        })
       }
     },
 
