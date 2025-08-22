@@ -32,6 +32,7 @@ export interface IOrdemServico {
   data_reprovacao?: string | null
   anexos?: IOrdemServicoAnexo[]
   material_equipamentos?: IMaterialEquipamento[]
+  fotos?: IOrdemServicoFoto[]
 }
 
 export interface IMaterialEquipamento {
@@ -45,6 +46,15 @@ export interface IOrdemServicoAnexo {
   anexo: string | File | File[]
   inmetro_flag: boolean
   ordem_servico_id: string
+}
+
+export interface IOrdemServicoFoto {
+  id?: string
+  nome?: string
+  url: string
+  descricao?: string
+  ordem_servico_id?: string
+  file?: File
 }
 
 export interface IFiltrosInmetro {

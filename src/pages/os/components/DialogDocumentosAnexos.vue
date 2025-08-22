@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { IOrdemServico, IOrdemServicoAnexo } from '@/pages/inmetro/types/index'
 import { getOSStatusColor, getOSStatusLabel } from '@/enums/OSStatusEnum'
+import type { IOrdemServico, IOrdemServicoAnexo } from '@/pages/inmetro/types/index'
 
 const props = defineProps<{
   isDialogVisible: boolean
@@ -54,10 +54,7 @@ const headers = [
 
 // Função para download/visualização do anexo
 const visualizarAnexo = (anexo: IOrdemServicoAnexo) => {
-  // Aqui você implementaria a lógica para visualizar/baixar o anexo
-  console.log('Visualizar anexo:', anexo)
-
-  // window.open(anexo.anexo, '_blank')
+  window.open(anexo.anexo as string, '_blank')
 }
 </script>
 
@@ -67,14 +64,13 @@ const visualizarAnexo = (anexo: IOrdemServicoAnexo) => {
     max-width="900"
     scrollable
   >
-    <VCard>
-      <VCardTitle class="d-flex align-center justify-space-between">
-        <span>Documentos e Anexos</span>
+    <VCard title="Documentos e Anexos">
+      <template #append>
         <VIcon
           icon="tabler-x"
           @click="isDialogVisible = false"
         />
-      </VCardTitle>
+      </template>
 
       <VCardText>
         <div v-if="props.os">
@@ -103,7 +99,11 @@ const visualizarAnexo = (anexo: IOrdemServicoAnexo) => {
                 >
                   <p><strong>Nº Pedido:</strong> {{ props.os.num_pedido_compra || 'N/A' }}</p>
                   <p><strong>Responsável:</strong> {{ props.os.responsavel?.nome || 'N/A' }}</p>
-                  <strong>Status atual:</strong> <VChip :color="getOSStatusColor(os.status)">
+                  <strong>Status atual:</strong> <VChip
+                    size="small"
+                    density="comfortable"
+                    :color="getOSStatusColor(os.status)"
+                  >
                     {{ getOSStatusLabel(os.status) || 'N/A' }}
                   </VChip>
                 </VCol>
@@ -113,8 +113,9 @@ const visualizarAnexo = (anexo: IOrdemServicoAnexo) => {
 
           <!-- Lista de Anexos -->
           <div class="mb-4">
-            <h6 class="text-subtitle-1 mb-3">
-              Documentos Anexados
+            <h6 class="d-flex align-center text-subtitle-1 mb-3">
+              <span>Documentos Anexados</span>
+              <VSpacer />
               <VChip
                 size="small"
                 color="primary"
@@ -186,13 +187,6 @@ const visualizarAnexo = (anexo: IOrdemServicoAnexo) => {
 
                 <template #[`item.actions`]="{ item }">
                   <div class="d-flex gap-1">
-                    <VBtn
-                      size="small"
-                      color="primary"
-                      variant="text"
-                      icon="tabler-eye"
-                      @click="visualizarAnexo(item)"
-                    />
                     <VBtn
                       size="small"
                       color="secondary"

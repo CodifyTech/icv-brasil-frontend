@@ -79,6 +79,7 @@ declare module 'vue-router/auto-routes' {
     'settings-tab': RouteRecordInfo<'settings-tab', '/settings/:tab', { tab: ParamValue<true> }, { tab: ParamValue<false> }>,
     'settings-components-account-settings-connections': RouteRecordInfo<'settings-components-account-settings-connections', '/settings/components/AccountSettingsConnections', Record<never, never>, Record<never, never>>,
     'settings-components-account-settings-notification': RouteRecordInfo<'settings-components-account-settings-notification', '/settings/components/AccountSettingsNotification', Record<never, never>, Record<never, never>>,
+    'test-photo-upload': RouteRecordInfo<'test-photo-upload', '/test-photo-upload', Record<never, never>, Record<never, never>>,
     'tipo-documento': RouteRecordInfo<'tipo-documento', '/tipo-documento', Record<never, never>, Record<never, never>>,
     'tipo-documento-cadastrar': RouteRecordInfo<'tipo-documento-cadastrar', '/tipo-documento/cadastrar', Record<never, never>, Record<never, never>>,
     'tipo-documento-components-form-tipodocumento': RouteRecordInfo<'tipo-documento-components-form-tipodocumento', '/tipo-documento/components/form-tipodocumento', Record<never, never>, Record<never, never>>,

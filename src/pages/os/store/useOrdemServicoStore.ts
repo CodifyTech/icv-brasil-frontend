@@ -19,6 +19,7 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
     formData: {
       material_equipamentos: [],
       anexos: [],
+      fotos: [],
     } as Partial<IOrdemServico>,
 
     // Loading states
@@ -123,6 +124,7 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
         this.formData = {
           anexos: [],
           material_equipamentos: [],
+          fotos: [],
           ...data,
         }
 
@@ -220,22 +222,47 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
     // Exportar CSV
     async exportarCSV() {
       try {
-        const response = await InmetroService.fetchAll({ ...this.filtros }, 'exportar-csv')
+        this.loading.relatorios = true
+        
+        // Chama o método específico para exportação CSV
+        const blob = await InmetroService.exportarCSV(this.filtros)
 
         // Criar URL do blob e fazer download
-        const url = window.URL.createObjectURL(new Blob([response as BlobPart]))
+        const url = window.URL.createObjectURL(blob)
         const link = document.createElement('a')
 
+        // Gera nome do arquivo com timestamp
+        const timestamp = new Date().toISOString().split('T')[0]
+        const filename = `relatorios_inmetro_${timestamp}.csv`
+
         link.href = url
-        link.setAttribute('download', `relatorios_inmetro_${new Date().toISOString().split('T')[0]}.csv`)
+        link.setAttribute('download', filename)
         document.body.appendChild(link)
         link.click()
         link.remove()
         window.URL.revokeObjectURL(url)
+
+        // Mostra mensagem de sucesso
+        this.snackbarStore.showSnackbar({
+          text: 'CSV exportado com sucesso!',
+          color: 'success',
+          timeout: 3000,
+        })
       }
       catch (error) {
         console.error('Erro ao exportar CSV:', error)
+        
+        // Mostra mensagem de erro
+        this.snackbarStore.showSnackbar({
+          text: 'Erro ao exportar CSV. Tente novamente.',
+          color: 'error',
+          timeout: 4000,
+        })
+        
         throw error
+      }
+      finally {
+        this.loading.relatorios = false
       }
     },
 
@@ -389,6 +416,7 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
       this.formData = {
         material_equipamentos: [],
         anexos: [],
+        fotos: [],
       }
       this.formRef = null
     },

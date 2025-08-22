@@ -1,12 +1,4 @@
 <script setup lang="ts">
-import AppAutocomplete from '@/@core/components/app-form-elements/AppAutocomplete.vue'
-import CDFMoreBtn from '@/components/CDF/CDFMoreBtn.vue'
-import DialogDocumentosAnexos from '@/pages/os/components/DialogDocumentosAnexos.vue'
-import DialogFinalizarOs from '@/pages/os/components/DialogFinalizarOS.vue'
-import DialogMaterialEquipamento from '@/pages/os/components/DialogMaterialEquipamento.vue'
-import DialogReprovarOs from '@/pages/os/components/DialogReprovarOS.vue'
-import { useOrdemServicoStore } from '@/pages/os/store/useOrdemServicoStore'
-import { useSnackbarStore } from '@/stores/useSnackbarStore'
 import {
   getOSResultadoColor,
   getOSResultadoLabel,
@@ -18,6 +10,14 @@ import {
 } from '../../enums/OSStatusEnum'
 import { useInmetroStore } from './store/useInmetroStore'
 import type { IOrdemServico } from './types/index'
+import AppAutocomplete from '@/@core/components/app-form-elements/AppAutocomplete.vue'
+import CDFMoreBtn from '@/components/CDF/CDFMoreBtn.vue'
+import DialogDocumentosAnexos from '@/pages/os/components/DialogDocumentosAnexos.vue'
+import DialogFinalizarOs from '@/pages/os/components/DialogFinalizarOS.vue'
+import DialogMaterialEquipamento from '@/pages/os/components/DialogMaterialEquipamento.vue'
+import DialogReprovarOs from '@/pages/os/components/DialogReprovarOS.vue'
+import { useOrdemServicoStore } from '@/pages/os/store/useOrdemServicoStore'
+import { useSnackbarStore } from '@/stores/useSnackbarStore'
 
 definePage({
   meta: {
@@ -67,7 +67,18 @@ const isDialogDocumentosVisible = ref<boolean>(false)
 const ordemServicoSelecionada = ref<IOrdemServico | null>(null)
 
 const aplicarFiltros = async () => {
-  filtros.value = { ...filtroForm.value }
+  // Converter valores null para undefined para compatibilidade
+  const filtrosLimpos = {
+    ...filtroForm.value,
+    cliente_id: filtroForm.value.cliente_id || undefined,
+    data_inspecao_inicio: filtroForm.value.data_inspecao_inicio || undefined,
+    data_inspecao_fim: filtroForm.value.data_inspecao_fim || undefined,
+    responsavel_id: filtroForm.value.responsavel_id || undefined,
+    escopo_acreditacao_id: filtroForm.value.escopo_acreditacao_id || undefined,
+    tipo_servico_id: filtroForm.value.tipo_servico_id || undefined,
+  }
+  
+  filtros.value = filtrosLimpos
   await store.fetchOrdensServico({ filtros: filtros.value })
 }
 
@@ -89,10 +100,36 @@ const limparFiltros = () => {
 
 const exportarRelatorios = async () => {
   try {
+    // Aplicar os filtros atuais do formulário antes de exportar
+    const filtrosLimpos = {
+      ...filtroForm.value,
+      cliente_id: filtroForm.value.cliente_id || undefined,
+      data_inspecao_inicio: filtroForm.value.data_inspecao_inicio || undefined,
+      data_inspecao_fim: filtroForm.value.data_inspecao_fim || undefined,
+      responsavel_id: filtroForm.value.responsavel_id || undefined,
+      escopo_acreditacao_id: filtroForm.value.escopo_acreditacao_id || undefined,
+      tipo_servico_id: filtroForm.value.tipo_servico_id || undefined,
+    }
+    
+    filtros.value = filtrosLimpos
+    
+    // Mostrar loading
+    loading.value.relatorios = true
+    
     await store.exportarCSV()
   }
   catch (error) {
     console.error('Erro ao exportar CSV:', error)
+    
+    // Mostrar mensagem de erro se o store não mostrou
+    snackbarStore.showSnackbar({
+      text: 'Erro ao exportar CSV. Verifique os filtros e tente novamente.',
+      color: 'error',
+      timeout: 4000,
+    })
+  }
+  finally {
+    loading.value.relatorios = false
   }
 }
 
@@ -208,18 +245,19 @@ const getItemValue = (item: any, key: string) => {
           Lista de Relatórios
         </h1>
       </div>
-      <!--
-        <div class="d-flex gap-2">
+      
+      <div class="d-flex gap-2">
         <VBtn
-        color="secondary"
-        variant="outlined"
-        prepend-icon="tabler-download"
-        @click="exportarRelatorios"
+          color="secondary"
+          variant="outlined"
+          prepend-icon="tabler-download"
+          :loading="loading.relatorios"
+          :disabled="loading.relatorios"
+          @click="exportarRelatorios"
         >
-        Exportar CSV
+          {{ loading.relatorios ? 'Exportando...' : 'Exportar CSV' }}
         </VBtn>
-        </div>
-      -->
+      </div>
     </VCardText>
   </VCard>
 

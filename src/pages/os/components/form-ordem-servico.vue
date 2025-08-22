@@ -15,6 +15,8 @@ const inmetroStore = useInmetroStore()
 // Store de operações de OS (CRUD, form, etc)
 const osStore = useOrdemServicoStore()
 
+const perfilResponsavelOptions = ref([])
+
 onMounted(async () => {
   // Carregar dados de apoio sempre
   await Promise.all([
@@ -23,23 +25,7 @@ onMounted(async () => {
     inmetroStore.fetchTipoServico(),
     inmetroStore.fetchResponsavel(),
   ])
-
-  // Debug: verificar se os clientes foram carregados
-  console.log('🔍 Debug - Clientes carregados:', osStore.clientes)
-  console.log('🔍 Debug - Quantidade de clientes:', osStore.clientes.length)
 })
-
-// Watcher para reativo quando formData mudar (útil para edição)
-watch(() => osStore.formData, (newFormData: any) => {
-  if (newFormData && Object.keys(newFormData).length > 0)
-    console.log('FormData atualizado:', newFormData)
-}, { deep: true })
-
-// Watcher específico para cliente_id para debug
-watch(() => osStore.formData.cliente_id, (newClienteId: any) => {
-  console.log('🔍 Debug - cliente_id mudou para:', newClienteId)
-  console.log('🔍 Debug - tipo do novo cliente_id:', typeof newClienteId)
-}, { immediate: true })
 
 const {
   formRef,
@@ -54,6 +40,14 @@ const {
   responsaveis,
 } = storeToRefs(inmetroStore)
 
+watch(formData, () => {
+  if (isEditing) {
+    perfilResponsavelOptions.value = []
+    perfilResponsavelOptions.value = responsaveis.value
+      ?.find(item => item.id === formData.value.responsavel_id)?.honorarios ?? []
+  }
+})
+
 const {
   save,
   update,
@@ -64,8 +58,6 @@ const {
 onBeforeRouteLeave(() => {
   resetForm()
 })
-
-const perfilResponsavelOptions = ref([])
 </script>
 
 <template>
@@ -130,11 +122,6 @@ const perfilResponsavelOptions = ref([])
                   item-title="razao_social"
                   item-value="id"
                   :rules="[rules.requiredValidator]"
-                  @update:model-value="(value) => {
-                    console.log('🔍 Debug - Cliente selecionado:', value)
-                    console.log('🔍 Debug - Tipo do valor:', typeof value)
-                    console.log('🔍 Debug - Cliente encontrado:', clientes.find(c => c.id === value))
-                  }"
                 />
               </VCol>
               <VCol
@@ -313,6 +300,30 @@ const perfilResponsavelOptions = ref([])
             </VRow>
           </template>
         </CDFManager>
+      </VCol>
+
+      <!-- Seção de Fotos -->
+      <VCol cols="12">
+        <VCard
+          title="Fotos"
+          variant="outlined"
+        >
+          <VDivider />
+          <VCardText>
+            <PhotoUpload
+              v-model="formData.fotos"
+              label="Fotos da OS"
+              placeholder="Arraste fotos aqui ou clique para selecionar"
+              :max-files="20"
+              :max-file-size="10"
+              :disabled="loading.save"
+              :loading="loading.upload"
+              @upload="handlePhotoUpload"
+              @remove="handlePhotoRemove"
+              @error="handlePhotoError"
+            />
+          </VCardText>
+        </VCard>
       </VCol>
     </template>
   </LayoutForms>
