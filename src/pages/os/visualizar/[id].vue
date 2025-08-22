@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { useOrdemServicoStore } from '@/pages/os/store/useOrdemServicoStore'
+import { useSnackbarStore } from '@/stores/useSnackbarStore'
 
 definePage({
   meta: {
@@ -12,6 +13,7 @@ definePage({
 
 const route = useRoute()
 const store = useOrdemServicoStore()
+const snackbarStore = useSnackbarStore()
 
 const { ordemServicoAtual, loading } = storeToRefs(store)
 const { fetchOrdemServico, resetOrdemAtual } = store
@@ -35,7 +37,57 @@ const statusColor = computed(() => {
     finalizado: 'success',
   }
 
-  return colors[ordemServicoAtual.value.status] || 'grey'
+  return colors[ordemServicoAtual.value.status as keyof typeof colors] || 'grey'
+})
+
+// Estado para controle de loading do email
+const loadingEmail = ref(false)
+
+// Função para enviar solicitação para responsável
+const enviarSolicitacaoResponsavel = async () => {
+  if (!ordemServicoAtual.value?.id)
+    return
+
+  try {
+    loadingEmail.value = true
+
+    await store.enviarSolicitacaoResponsavel(ordemServicoAtual.value.id)
+
+    snackbarStore.showSnackbar({
+      text: 'E-mail enviado para o responsável com sucesso!',
+      color: 'success',
+    })
+
+    // Recarregar a OS para atualizar o status
+    if (route.params.id)
+      await fetchOrdemServico(route.params.id as string)
+  }
+  catch (error) {
+    console.error('Erro ao enviar e-mail:', error)
+    snackbarStore.showSnackbar({
+      text: 'Erro ao enviar e-mail para o responsável',
+      color: 'error',
+    })
+  }
+  finally {
+    loadingEmail.value = false
+  }
+}
+
+// Função para verificar se o email já foi enviado hoje
+const emailJaEnviadoHoje = computed(() => {
+  if (!ordemServicoAtual.value?.email_responsavel_enviado_em)
+    return false
+
+  const dataEnvio = new Date(ordemServicoAtual.value.email_responsavel_enviado_em)
+  const hoje = new Date()
+
+  return dataEnvio.toDateString() === hoje.toDateString()
+})
+
+// Verificar se pode enviar email
+const podeEnviarEmail = computed(() => {
+  return ordemServicoAtual.value?.responsavel && !emailJaEnviadoHoje.value
 })
 </script>
 
@@ -54,14 +106,47 @@ const statusColor = computed(() => {
             </p>
           </div>
 
-          <VBtn
-            color="primary"
-            variant="outlined"
-            prepend-icon="tabler-arrow-left"
-            to="/inmetro"
-          >
-            Voltar
-          </VBtn>
+          <div class="d-flex gap-3">
+            <!-- Botão de enviar para responsável -->
+            <VBtn
+              v-if="podeEnviarEmail"
+              color="secondary"
+              variant="outlined"
+              prepend-icon="tabler-mail"
+              :loading="loadingEmail"
+              @click="enviarSolicitacaoResponsavel"
+            >
+              Enviar para Responsável
+            </VBtn>
+
+            <!-- Indicador de email já enviado -->
+            <VTooltip
+              v-else-if="emailJaEnviadoHoje"
+              text="E-mail já enviado hoje"
+              location="top"
+            >
+              <template #activator="{ props: tooltipProps }">
+                <VBtn
+                  v-bind="tooltipProps"
+                  color="success"
+                  variant="text"
+                  prepend-icon="tabler-mail-check"
+                  disabled
+                >
+                  E-mail Enviado
+                </VBtn>
+              </template>
+            </VTooltip>
+
+            <VBtn
+              color="primary"
+              variant="outlined"
+              prepend-icon="tabler-arrow-left"
+              to="/inmetro"
+            >
+              Voltar
+            </VBtn>
+          </div>
         </div>
       </VCol>
     </VRow>

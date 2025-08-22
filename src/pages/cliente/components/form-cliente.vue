@@ -101,6 +101,43 @@ onBeforeRouteLeave(() => {
                 />
               </VCol>
 
+              <!-- Novos campos de contato -->
+              <VCol
+                cols="12"
+                md="4"
+              >
+                <CDFTextField
+                  v-model="data.email"
+                  label="E-mail"
+                  placeholder="Digite o e-mail"
+                  type="email"
+                  :rules="[]"
+                />
+              </VCol>
+              <VCol
+                cols="12"
+                md="4"
+              >
+                <CDFTextField
+                  v-model="data.telefone"
+                  v-mask="'(##) #####-####'"
+                  label="Telefone"
+                  placeholder="Digite o telefone"
+                  :rules="[]"
+                />
+              </VCol>
+              <VCol
+                cols="12"
+                md="4"
+              >
+                <CDFTextField
+                  v-model="data.contato_responsavel"
+                  label="Contato Responsável"
+                  placeholder="Nome do responsável"
+                  :rules="[]"
+                />
+              </VCol>
+
               <VDivider />
 
               <VCol cols="12">

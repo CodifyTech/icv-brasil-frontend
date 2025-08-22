@@ -463,6 +463,78 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
     loadClientes() {
       return this.fetchClientes()
     },
+
+    // Novos métodos para funcionalidade de email
+    async enviarSolicitacaoResponsavel(osId: string) {
+      this.loading.save = true
+      try {
+        const response = await InmetroService.post({}, `${osId}/enviar-solicitacao-responsavel`)
+
+        // Atualizar a OS na lista local para mostrar que foi enviado
+        const index = this.ordensServico.findIndex(os => os.id === osId)
+        if (index !== -1)
+          this.ordensServico[index].email_responsavel_enviado_em = new Date().toISOString()
+
+        this.snackbarStore.showSnackbar({
+          text: 'Solicitação enviada com sucesso para o responsável!',
+          color: 'success',
+          timeout: 3000,
+        })
+
+        return response
+      }
+      catch (error: any) {
+        this.snackbarStore.showSnackbar({
+          text: error.response?.data?.message || 'Erro ao enviar solicitação. Tente novamente.',
+          color: 'error',
+          timeout: 3000,
+        })
+        console.error('Erro ao enviar solicitação:', error)
+        throw error
+      }
+      finally {
+        this.loading.save = false
+      }
+    },
+
+    async verificarToken(token: string) {
+      try {
+        const response = await fetch(`/api/v1/os/publico/verificar-token/${token}`)
+        const data = await response.json()
+
+        if (!response.ok)
+          throw new Error(data.message || 'Token inválido')
+
+        return data
+      }
+      catch (error) {
+        console.error('Erro ao verificar token:', error)
+        throw error
+      }
+    },
+
+    async aceitarOS(token: string, observacoes?: string) {
+      try {
+        const response = await fetch(`/api/v1/os/publico/aceitar/${token}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ observacoes }),
+        })
+
+        const data = await response.json()
+
+        if (!response.ok)
+          throw new Error(data.message || 'Erro ao aceitar OS')
+
+        return data
+      }
+      catch (error) {
+        console.error('Erro ao aceitar OS:', error)
+        throw error
+      }
+    },
   },
 
   getters: {

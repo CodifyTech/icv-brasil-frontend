@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { VForm } from 'vuetify/components/VForm'
 import { toRef } from 'vue'
-import type { Actions } from '@/pages/types/global-types'
+import { VForm } from 'vuetify/components/VForm'
 import CDFButton from '@/components/CDF/CDFButton.vue'
+import type { Actions } from '@/pages/types/global-types'
 
 const props = withDefaults(defineProps<{
   title: string
@@ -68,6 +68,7 @@ const handleSubmit = async (event: Event) => {
         </VCardTitle>
         <VSpacer />
         <VCardActions class="py-0">
+          <slot name="actions" />
           <CDFButton
             icon="tabler-arrow-back"
             color="primary"
@@ -132,6 +133,9 @@ const handleSubmit = async (event: Event) => {
               >
                 {{ isEditing ? $t('Cancelar') : actions?.reset?.text ?? $t('Limpar') }}
               </CDFButton>
+
+              <!-- Slot para ações extras -->
+              <slot name="extra-actions" />
             </VCardActions>
           </VRow>
         </VCardItem>

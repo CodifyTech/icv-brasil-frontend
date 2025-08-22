@@ -4,6 +4,9 @@ export interface IOrdemServico {
   cliente_id?: string
   cliente?: {
     nome_fantasia?: string
+    email?: string
+    telefone?: string
+    contato_responsavel?: string
   }
   fornecedor?: string
   num_pedido_compra?: string
@@ -30,6 +33,12 @@ export interface IOrdemServico {
   motivo_reprovacao?: string | null
   observacoes_reprovacao?: string | null
   data_reprovacao?: string | null
+
+  // Novos campos para controle de emails
+  email_cliente_enviado_em?: string | null
+  email_responsavel_enviado_em?: string | null
+  responsavel_aceitou_em?: string | null
+  observacoes_aceite?: string | null
   anexos?: IOrdemServicoAnexo[]
   material_equipamentos?: IMaterialEquipamento[]
   fotos?: IOrdemServicoFoto[]
