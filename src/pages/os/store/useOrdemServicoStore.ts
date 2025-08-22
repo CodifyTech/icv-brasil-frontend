@@ -1,12 +1,12 @@
+import { defineStore } from 'pinia'
 import ClienteService from '@/pages/cliente/services/ClienteService'
 import type { ICliente } from '@/pages/cliente/types'
 import type { IEscopo } from '@/pages/escopo/types'
 import type { IFuncionario } from '@/pages/funcionario/types'
 import InmetroService from '@/pages/inmetro/services/InmetroService'
 import type { IFiltrosInmetro, IMaterialEquipamento, IOrdemServico, IOrdemServicoAnexo } from '@/pages/inmetro/types'
-import type { ITipoServico } from '@/pages/tiposervico/types'
+import type { ITipoServico } from '@/pages/tipo-servico/types'
 import { useSnackbarStore } from '@/stores/useSnackbarStore'
-import { defineStore } from 'pinia'
 
 export const useOrdemServicoStore = defineStore('ordem-servico', {
   state: () => ({
@@ -19,6 +19,7 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
     formData: {
       material_equipamentos: [],
       anexos: [],
+      fotos: [],
     } as Partial<IOrdemServico>,
 
     // Loading states
@@ -67,6 +68,50 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
       }
     },
 
+    async gerarCodigoOS() {
+      try {
+        console.log('🔍 Debug - formData atual:', this.formData)
+        console.log('🔍 Debug - cliente_id:', this.formData.cliente_id)
+        console.log('🔍 Debug - tipo do cliente_id:', typeof this.formData.cliente_id)
+
+        // Verificar se há um cliente selecionado
+        if (!this.formData.cliente_id) {
+          console.log('❌ Cliente não selecionado')
+          this.snackbarStore.showSnackbar({
+            text: 'Selecione um cliente antes de gerar o código da OS',
+            color: 'warning',
+            timeout: 3000,
+          })
+
+          return
+        }
+
+        console.log('✅ Cliente selecionado, gerando código para cliente_id:', this.formData.cliente_id)
+
+        const response = await InmetroService.gerarCodigoOS(this.formData.cliente_id)
+
+        console.log('🔍 Debug - resposta da API:', response)
+
+        if (response && typeof response === 'object' && 'codigo' in response) {
+          this.formData.codigo = response.codigo as string
+          console.log('✅ Código gerado com sucesso:', response.codigo)
+          this.snackbarStore.showSnackbar({
+            text: 'Código da OS gerado com sucesso!',
+            color: 'success',
+            timeout: 2000,
+          })
+        }
+      }
+      catch (error) {
+        console.error('❌ Erro ao gerar código da OS:', error)
+        this.snackbarStore.showSnackbar({
+          text: 'Erro ao gerar código da OS. Tente novamente.',
+          color: 'error',
+          timeout: 3000,
+        })
+      }
+    },
+
     // Buscar ordem de serviço específica
     async fetchOrdemServico(id: string) {
       this.loading.item = true
@@ -79,6 +124,7 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
         this.formData = {
           anexos: [],
           material_equipamentos: [],
+          fotos: [],
           ...data,
         }
 
@@ -176,22 +222,47 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
     // Exportar CSV
     async exportarCSV() {
       try {
-        const response = await InmetroService.fetchAll({ ...this.filtros }, 'exportar-csv')
+        this.loading.relatorios = true
+
+        // Chama o método específico para exportação CSV
+        const blob = await InmetroService.exportarCSV(this.filtros)
 
         // Criar URL do blob e fazer download
-        const url = window.URL.createObjectURL(new Blob([response as BlobPart]))
+        const url = window.URL.createObjectURL(blob)
         const link = document.createElement('a')
 
+        // Gera nome do arquivo com timestamp
+        const timestamp = new Date().toISOString().split('T')[0]
+        const filename = `relatorios_inmetro_${timestamp}.csv`
+
         link.href = url
-        link.setAttribute('download', `relatorios_inmetro_${new Date().toISOString().split('T')[0]}.csv`)
+        link.setAttribute('download', filename)
         document.body.appendChild(link)
         link.click()
         link.remove()
         window.URL.revokeObjectURL(url)
+
+        // Mostra mensagem de sucesso
+        this.snackbarStore.showSnackbar({
+          text: 'CSV exportado com sucesso!',
+          color: 'success',
+          timeout: 3000,
+        })
       }
       catch (error) {
         console.error('Erro ao exportar CSV:', error)
+
+        // Mostra mensagem de erro
+        this.snackbarStore.showSnackbar({
+          text: 'Erro ao exportar CSV. Tente novamente.',
+          color: 'error',
+          timeout: 4000,
+        })
+
         throw error
+      }
+      finally {
+        this.loading.relatorios = false
       }
     },
 
@@ -345,6 +416,7 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
       this.formData = {
         material_equipamentos: [],
         anexos: [],
+        fotos: [],
       }
       this.formRef = null
     },
@@ -390,6 +462,78 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
 
     loadClientes() {
       return this.fetchClientes()
+    },
+
+    // Novos métodos para funcionalidade de email
+    async enviarSolicitacaoResponsavel(osId: string) {
+      this.loading.save = true
+      try {
+        const response = await InmetroService.post({}, `${osId}/enviar-solicitacao-responsavel`)
+
+        // Atualizar a OS na lista local para mostrar que foi enviado
+        const index = this.ordensServico.findIndex(os => os.id === osId)
+        if (index !== -1)
+          this.ordensServico[index].email_responsavel_enviado_em = new Date().toISOString()
+
+        this.snackbarStore.showSnackbar({
+          text: 'Solicitação enviada com sucesso para o responsável!',
+          color: 'success',
+          timeout: 3000,
+        })
+
+        return response
+      }
+      catch (error: any) {
+        this.snackbarStore.showSnackbar({
+          text: error.response?.data?.message || 'Erro ao enviar solicitação. Tente novamente.',
+          color: 'error',
+          timeout: 3000,
+        })
+        console.error('Erro ao enviar solicitação:', error)
+        throw error
+      }
+      finally {
+        this.loading.save = false
+      }
+    },
+
+    async verificarToken(token: string) {
+      try {
+        const response = await fetch(`/api/v1/os/publico/verificar-token/${token}`)
+        const data = await response.json()
+
+        if (!response.ok)
+          throw new Error(data.message || 'Token inválido')
+
+        return data
+      }
+      catch (error) {
+        console.error('Erro ao verificar token:', error)
+        throw error
+      }
+    },
+
+    async aceitarOS(token: string, observacoes?: string) {
+      try {
+        const response = await fetch(`/api/v1/os/publico/aceitar/${token}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ observacoes }),
+        })
+
+        const data = await response.json()
+
+        if (!response.ok)
+          throw new Error(data.message || 'Erro ao aceitar OS')
+
+        return data
+      }
+      catch (error) {
+        console.error('Erro ao aceitar OS:', error)
+        throw error
+      }
     },
   },
 

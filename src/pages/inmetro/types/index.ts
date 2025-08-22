@@ -4,6 +4,9 @@ export interface IOrdemServico {
   cliente_id?: string
   cliente?: {
     nome_fantasia?: string
+    email?: string
+    telefone?: string
+    contato_responsavel?: string
   }
   fornecedor?: string
   num_pedido_compra?: string
@@ -30,8 +33,15 @@ export interface IOrdemServico {
   motivo_reprovacao?: string | null
   observacoes_reprovacao?: string | null
   data_reprovacao?: string | null
+
+  // Novos campos para controle de emails
+  email_cliente_enviado_em?: string | null
+  email_responsavel_enviado_em?: string | null
+  responsavel_aceitou_em?: string | null
+  observacoes_aceite?: string | null
   anexos?: IOrdemServicoAnexo[]
   material_equipamentos?: IMaterialEquipamento[]
+  fotos?: IOrdemServicoFoto[]
 }
 
 export interface IMaterialEquipamento {
@@ -45,6 +55,15 @@ export interface IOrdemServicoAnexo {
   anexo: string | File | File[]
   inmetro_flag: boolean
   ordem_servico_id: string
+}
+
+export interface IOrdemServicoFoto {
+  id?: string
+  nome?: string
+  url: string
+  descricao?: string
+  ordem_servico_id?: string
+  file?: File
 }
 
 export interface IFiltrosInmetro {

@@ -48,16 +48,13 @@ watch(() => props.isDialogVisible, (newValue: boolean) => {
     max-width="800"
     scrollable
   >
-    <VCard>
-      <VCardTitle class="d-flex align-center justify-space-between">
-        <span>Materiais e Equipamentos</span>
+    <VCard title="Materiais e Equipamentos">
+      <template #append>
         <VIcon
           icon="tabler-x"
           @click="isDialogVisible = false"
         />
-      </VCardTitle>
-
-      <VDivider />
+      </template>
 
       <VCardText>
         <div v-if="props.os">
@@ -86,7 +83,11 @@ watch(() => props.isDialogVisible, (newValue: boolean) => {
                 >
                   <p><strong>Nº Pedido:</strong> {{ props.os.num_pedido_compra || 'N/A' }}</p>
                   <p><strong>Responsável:</strong> {{ props.os.responsavel?.nome || 'N/A' }}</p>
-                  <strong>Status atual:</strong> <VChip :color="getOSStatusColor(os.status)">
+                  <strong>Status atual:</strong> <VChip
+                    size="small"
+                    density="comfortable"
+                    :color="getOSStatusColor(os.status)"
+                  >
                     {{ getOSStatusLabel(os.status) || 'N/A' }}
                   </VChip>
                 </VCol>
@@ -96,8 +97,9 @@ watch(() => props.isDialogVisible, (newValue: boolean) => {
 
           <!-- Lista de Materiais/Equipamentos -->
           <div class="mb-4">
-            <h6 class="text-subtitle-1 mb-3">
-              Lista de Materiais e Equipamentos
+            <h6 class="d-flex align-center text-subtitle-1 mb-3">
+              <span>Lista de Materiais e Equipamentos</span>
+              <VSpacer />
               <VChip
                 size="small"
                 color="primary"

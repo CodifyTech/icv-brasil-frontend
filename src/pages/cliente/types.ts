@@ -3,6 +3,9 @@ export interface ICliente {
   razao_social: string
   nome_fantasia: string
   cnpj: string
+  email?: string
+  telefone?: string
+  contato_responsavel?: string
   logradouro: string
   numero: string
   complemento: string

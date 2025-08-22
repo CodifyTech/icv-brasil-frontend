@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import type { IOrdemServico, IOrdemServicoAnexo } from '@/pages/inmetro/types/index'
 import { getOSStatusColor, getOSStatusLabel } from '@/enums/OSStatusEnum'
+import type { IOrdemServico, IOrdemServicoAnexo, IOrdemServicoFoto } from '@/pages/inmetro/types/index'
 
 const props = defineProps<{
   isDialogVisible: boolean
   os: IOrdemServico | null
   carregarAnexos: () => Promise<IOrdemServicoAnexo[]>
+  carregarFotos: () => Promise<IOrdemServicoFoto[]>
 }>()
 
 const emit = defineEmits<{
@@ -15,6 +16,8 @@ const emit = defineEmits<{
 // Estados para carregamento
 const loading = ref(false)
 const anexos = ref<IOrdemServicoAnexo[]>([])
+const fotos = ref<IOrdemServicoFoto[]>([])
+const tab = ref(1)
 
 // Computed que funciona como v-model
 const isDialogVisible = computed({
@@ -29,10 +32,13 @@ watch(() => props.isDialogVisible, async (newValue: boolean) => {
     loading.value = true
     try {
       const resultadoAnexos = await props.carregarAnexos()
+      const resultadoFotos = await props.carregarFotos()
 
       console.log('Anexos carregados:', resultadoAnexos)
+      console.log('Fotos carregadas:', resultadoFotos)
 
       anexos.value = resultadoAnexos || []
+      fotos.value = resultadoFotos || []
     }
     catch (error) {
       console.error('Erro ao carregar anexos:', error)
@@ -54,10 +60,7 @@ const headers = [
 
 // Função para download/visualização do anexo
 const visualizarAnexo = (anexo: IOrdemServicoAnexo) => {
-  // Aqui você implementaria a lógica para visualizar/baixar o anexo
-  console.log('Visualizar anexo:', anexo)
-
-  // window.open(anexo.anexo, '_blank')
+  window.open(anexo.anexo as string, '_blank')
 }
 </script>
 
@@ -67,14 +70,13 @@ const visualizarAnexo = (anexo: IOrdemServicoAnexo) => {
     max-width="900"
     scrollable
   >
-    <VCard>
-      <VCardTitle class="d-flex align-center justify-space-between">
-        <span>Documentos e Anexos</span>
+    <VCard title="Documentos e Anexos">
+      <template #append>
         <VIcon
           icon="tabler-x"
           @click="isDialogVisible = false"
         />
-      </VCardTitle>
+      </template>
 
       <VCardText>
         <div v-if="props.os">
@@ -103,7 +105,11 @@ const visualizarAnexo = (anexo: IOrdemServicoAnexo) => {
                 >
                   <p><strong>Nº Pedido:</strong> {{ props.os.num_pedido_compra || 'N/A' }}</p>
                   <p><strong>Responsável:</strong> {{ props.os.responsavel?.nome || 'N/A' }}</p>
-                  <strong>Status atual:</strong> <VChip :color="getOSStatusColor(os.status)">
+                  <strong>Status atual:</strong> <VChip
+                    size="small"
+                    density="comfortable"
+                    :color="getOSStatusColor(os.status)"
+                  >
                     {{ getOSStatusLabel(os.status) || 'N/A' }}
                   </VChip>
                 </VCol>
@@ -111,115 +117,234 @@ const visualizarAnexo = (anexo: IOrdemServicoAnexo) => {
             </VCard>
           </div>
 
-          <!-- Lista de Anexos -->
-          <div class="mb-4">
-            <h6 class="text-subtitle-1 mb-3">
-              Documentos Anexados
-              <VChip
-                size="small"
-                color="primary"
-                class="ms-2"
-              >
-                {{ anexos?.length }} {{ anexos?.length === 1 ? 'documento' : 'documentos' }}
-              </VChip>
-            </h6>
+          <VTabs
+            v-model="tab"
+            align-tabs="center"
+          >
+            <VTab :value="1">
+              Anexos
+            </VTab>
+            <VTab :value="2">
+              Fotos
+            </VTab>
+          </VTabs>
 
-            <div
-              v-if="loading"
-              class="text-center py-8"
-            >
-              <VProgressCircular
-                indeterminate
-                color="primary"
-                size="64"
-                class="mb-4"
-              />
-              <p class="text-body-1">
-                Carregando documentos e anexos...
-              </p>
-            </div>
-
-            <div v-else-if="anexos?.length > 0">
-              <VDataTable
-                :headers="headers"
-                :items="anexos"
-                :items-per-page="10"
-                class="elevation-1"
-                no-data-text="Nenhum documento encontrado"
-              >
-                <template #[`item.index`]="{ index }">
-                  {{ index + 1 }}
-                </template>
-
-                <template #[`item.nome`]="{ item }">
-                  <div class="d-flex align-center py-2">
-                    <VIcon
-                      icon="tabler-file"
-                      class="me-2"
-                      size="20"
-                    />
-                    <div>
-                      <p class="mb-0 font-weight-medium">
-                        {{ item.nome }}
-                      </p>
-                      <p class="text-caption text-grey mb-0">
-                        ID: {{ item.id }}
-                      </p>
-                    </div>
-                  </div>
-                </template>
-
-                <template #[`item.inmetro_flag`]="{ item }">
+          <VTabsWindow v-model="tab">
+            <VTabsWindowItem :value="1">
+              <!-- Lista de Anexos -->
+              <div>
+                <h6 class="d-flex align-center text-subtitle-1 my-3">
+                  <span>Documentos Anexados</span>
+                  <VSpacer />
                   <VChip
                     size="small"
-                    :color="item.inmetro_flag ? 'success' : 'default'"
-                    :variant="item.inmetro_flag ? 'flat' : 'outlined'"
+                    color="primary"
+                    class="ms-2"
                   >
-                    <VIcon
-                      :icon="item.inmetro_flag ? 'tabler-check' : 'tabler-x'"
-                      size="14"
-                      class="me-1"
-                    />
-                    {{ item.inmetro_flag ? 'Sim' : 'Não' }}
+                    {{ anexos?.length }} {{ anexos?.length === 1 ? 'documento' : 'documentos' }}
                   </VChip>
-                </template>
+                </h6>
 
-                <template #[`item.actions`]="{ item }">
-                  <div class="d-flex gap-1">
-                    <VBtn
-                      size="small"
-                      color="primary"
-                      variant="text"
-                      icon="tabler-eye"
-                      @click="visualizarAnexo(item)"
-                    />
-                    <VBtn
-                      size="small"
-                      color="secondary"
-                      variant="text"
-                      icon="tabler-download"
-                      @click="visualizarAnexo(item)"
-                    />
-                  </div>
-                </template>
-              </VDataTable>
-            </div>
+                <div
+                  v-if="loading"
+                  class="text-center py-8"
+                >
+                  <VProgressCircular
+                    indeterminate
+                    color="primary"
+                    size="64"
+                    class="mb-4"
+                  />
+                  <p class="text-body-1">
+                    Carregando documentos e anexos...
+                  </p>
+                </div>
 
-            <div
-              v-else
-              class="text-center py-8"
-            >
-              <VIcon
-                icon="tabler-file-off"
-                size="64"
-                color="grey-lighten-1"
-                class="mb-4"
-              />
-              <p class="text-grey-lighten-1 text-body-1">
-                Nenhum documento anexado para esta ordem de serviço.
-              </p>
-            </div>
-          </div>
+                <div v-else-if="anexos?.length > 0">
+                  <VDataTable
+                    :headers="headers"
+                    :items="anexos"
+                    :items-per-page="10"
+                    class="elevation-1"
+                    no-data-text="Nenhum documento encontrado"
+                  >
+                    <template #[`item.index`]="{ index }">
+                      {{ index + 1 }}
+                    </template>
+
+                    <template #[`item.nome`]="{ item }">
+                      <div class="d-flex align-center py-2">
+                        <VIcon
+                          icon="tabler-file"
+                          class="me-2"
+                          size="20"
+                        />
+                        <div>
+                          <p class="mb-0 font-weight-medium">
+                            {{ item.nome }}
+                          </p>
+                          <p class="text-caption text-grey mb-0">
+                            ID: {{ item.id }}
+                          </p>
+                        </div>
+                      </div>
+                    </template>
+
+                    <template #[`item.inmetro_flag`]="{ item }">
+                      <VChip
+                        size="small"
+                        :color="item.inmetro_flag ? 'success' : 'default'"
+                        :variant="item.inmetro_flag ? 'flat' : 'outlined'"
+                      >
+                        <VIcon
+                          :icon="item.inmetro_flag ? 'tabler-check' : 'tabler-x'"
+                          size="14"
+                          class="me-1"
+                        />
+                        {{ item.inmetro_flag ? 'Sim' : 'Não' }}
+                      </VChip>
+                    </template>
+
+                    <template #[`item.actions`]="{ item }">
+                      <div class="d-flex gap-1">
+                        <VBtn
+                          size="small"
+                          color="secondary"
+                          variant="text"
+                          icon="tabler-download"
+                          @click="visualizarAnexo(item)"
+                        />
+                      </div>
+                    </template>
+                  </VDataTable>
+                </div>
+
+                <div
+                  v-else
+                  class="text-center py-8"
+                >
+                  <VIcon
+                    icon="tabler-file-off"
+                    size="64"
+                    color="grey-lighten-1"
+                    class="mb-4"
+                  />
+                  <p class="text-grey-lighten-1 text-body-1">
+                    Nenhum documento anexado para esta ordem de serviço.
+                  </p>
+                </div>
+              </div>
+            </VTabsWindowItem>
+            <VTabsWindowItem :value="2">
+              <div>
+                <h6 class="d-flex align-center text-subtitle-1 my-3">
+                  <span>Fotos Anexadas</span>
+                  <VSpacer />
+                  <VChip
+                    size="small"
+                    color="primary"
+                    class="ms-2"
+                  >
+                    {{ fotos?.length }} {{ fotos?.length === 1 ? 'foto' : 'fotos' }}
+                  </VChip>
+                </h6>
+
+                <div
+                  v-if="loading"
+                  class="text-center py-8"
+                >
+                  <VProgressCircular
+                    indeterminate
+                    color="primary"
+                    size="64"
+                    class="mb-4"
+                  />
+                  <p class="text-body-1">
+                    Carregando fotos...
+                  </p>
+                </div>
+
+                <div v-else-if="fotos?.length > 0">
+                  <VDataIterator
+                    :items="fotos"
+                    :items-per-page="9"
+                  >
+                    <template #default="{ items }">
+                      <VRow>
+                        <VCol
+                          v-for="foto in items"
+                          :key="foto.raw.id"
+                          cols="12"
+                          sm="6"
+                          md="4"
+                        >
+                          <VCard>
+                            <VImg
+                              :src="foto.raw.file"
+                              :lazy-src="foto.raw.file"
+                              height="200"
+                              cover
+                              class="cursor-pointer"
+                              @click="() => window.open(foto.raw.file, '_blank')"
+                            />
+                          </VCard>
+                        </VCol>
+                      </VRow>
+                    </template>
+
+                    <template #footer="{ page, pageCount, prevPage, nextPage }">
+                      <div class="d-flex align-center justify-center pa-4">
+                        <VBtn
+                          :disabled="page === 1"
+                          icon="tabler-chevron-left"
+                          variant="text"
+                          @click="prevPage"
+                        />
+                        <div class="mx-2 text-caption">
+                          Página {{ page }} de {{ pageCount }}
+                        </div>
+                        <VBtn
+                          :disabled="page >= pageCount"
+                          icon="tabler-chevron-right"
+                          variant="text"
+                          @click="nextPage"
+                        />
+                      </div>
+                    </template>
+
+                    <template #no-data>
+                      <div class="text-center py-8">
+                        <VIcon
+                          icon="tabler-photo-off"
+                          size="64"
+                          color="grey-lighten-1"
+                          class="mb-4"
+                        />
+                        <p class="text-grey-lighten-1 text-body-1">
+                          Nenhuma foto encontrada.
+                        </p>
+                      </div>
+                    </template>
+                  </VDataIterator>
+                </div>
+
+                <div
+                  v-else
+                  class="text-center py-8"
+                >
+                  <VIcon
+                    icon="tabler-photo-off"
+                    size="64"
+                    color="grey-lighten-1"
+                    class="mb-4"
+                  />
+                  <p class="text-grey-lighten-1 text-body-1">
+                    Nenhuma foto anexada para esta ordem de serviço.
+                  </p>
+                </div>
+              </div>
+            </VTabsWindowItem>
+          </VTabsWindow>
         </div>
 
         <div
@@ -237,15 +362,6 @@ const visualizarAnexo = (anexo: IOrdemServicoAnexo) => {
           </p>
         </div>
       </VCardText>
-
-      <VCardActions class="justify-end">
-        <VBtn
-          variant="outlined"
-          @click="isDialogVisible = false"
-        >
-          Fechar
-        </VBtn>
-      </VCardActions>
     </VCard>
   </VDialog>
 </template>

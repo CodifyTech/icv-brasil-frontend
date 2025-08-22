@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { useOrdemServicoStore } from '@/pages/os/store/useOrdemServicoStore'
+import { useSnackbarStore } from '@/stores/useSnackbarStore'
 
 definePage({
   meta: {
@@ -12,6 +13,7 @@ definePage({
 
 const route = useRoute()
 const store = useOrdemServicoStore()
+const snackbarStore = useSnackbarStore()
 
 const { ordemServicoAtual, loading } = storeToRefs(store)
 const { fetchOrdemServico, resetOrdemAtual } = store
@@ -35,14 +37,64 @@ const statusColor = computed(() => {
     finalizado: 'success',
   }
 
-  return colors[ordemServicoAtual.value.status] || 'grey'
+  return colors[ordemServicoAtual.value.status as keyof typeof colors] || 'grey'
+})
+
+// Estado para controle de loading do email
+const loadingEmail = ref(false)
+
+// Função para enviar solicitação para responsável
+const enviarSolicitacaoResponsavel = async () => {
+  if (!ordemServicoAtual.value?.id)
+    return
+
+  try {
+    loadingEmail.value = true
+
+    await store.enviarSolicitacaoResponsavel(ordemServicoAtual.value.id)
+
+    snackbarStore.showSnackbar({
+      text: 'E-mail enviado para o responsável com sucesso!',
+      color: 'success',
+    })
+
+    // Recarregar a OS para atualizar o status
+    if (route.params.id)
+      await fetchOrdemServico(route.params.id as string)
+  }
+  catch (error) {
+    console.error('Erro ao enviar e-mail:', error)
+    snackbarStore.showSnackbar({
+      text: 'Erro ao enviar e-mail para o responsável',
+      color: 'error',
+    })
+  }
+  finally {
+    loadingEmail.value = false
+  }
+}
+
+// Função para verificar se o email já foi enviado hoje
+const emailJaEnviadoHoje = computed(() => {
+  if (!ordemServicoAtual.value?.email_responsavel_enviado_em)
+    return false
+
+  const dataEnvio = new Date(ordemServicoAtual.value.email_responsavel_enviado_em)
+  const hoje = new Date()
+
+  return dataEnvio.toDateString() === hoje.toDateString()
+})
+
+// Verificar se pode enviar email
+const podeEnviarEmail = computed(() => {
+  return ordemServicoAtual.value?.responsavel && !emailJaEnviadoHoje.value
 })
 </script>
 
 <template>
   <div>
     <!-- Header -->
-    <VRow class="mb-6">
+    <VRow>
       <VCol cols="12">
         <div class="d-flex align-center justify-space-between">
           <div>
@@ -54,14 +106,47 @@ const statusColor = computed(() => {
             </p>
           </div>
 
-          <VBtn
-            color="primary"
-            variant="outlined"
-            prepend-icon="tabler-arrow-left"
-            to="/inmetro"
-          >
-            Voltar
-          </VBtn>
+          <div class="d-flex gap-3">
+            <!-- Botão de enviar para responsável -->
+            <VBtn
+              v-if="podeEnviarEmail"
+              color="secondary"
+              variant="outlined"
+              prepend-icon="tabler-mail"
+              :loading="loadingEmail"
+              @click="enviarSolicitacaoResponsavel"
+            >
+              Enviar para Responsável
+            </VBtn>
+
+            <!-- Indicador de email já enviado -->
+            <VTooltip
+              v-else-if="emailJaEnviadoHoje"
+              text="E-mail já enviado hoje"
+              location="top"
+            >
+              <template #activator="{ props: tooltipProps }">
+                <VBtn
+                  v-bind="tooltipProps"
+                  color="success"
+                  variant="text"
+                  prepend-icon="tabler-mail-check"
+                  disabled
+                >
+                  E-mail Enviado
+                </VBtn>
+              </template>
+            </VTooltip>
+
+            <VBtn
+              color="primary"
+              variant="outlined"
+              prepend-icon="tabler-arrow-left"
+              to="/inmetro"
+            >
+              Voltar
+            </VBtn>
+          </div>
         </div>
       </VCol>
     </VRow>
@@ -90,7 +175,7 @@ const statusColor = computed(() => {
           <VCardText>
             <VRow>
               <VCol cols="12">
-                <h2 class="text-h5 mb-4">
+                <h2 class="text-h5">
                   Informações da Ordem de Serviço
                 </h2>
               </VCol>
@@ -98,90 +183,83 @@ const statusColor = computed(() => {
               <VCol
                 cols="12"
                 md="6"
+                class="pb-0"
               >
-                <div class="mb-4">
-                  <label class="text-body-2 text-medium-emphasis">Número da OS</label>
-                  <p class="text-body-1 font-weight-medium">
-                    {{ ordemServicoAtual.numero_os || ordemServicoAtual.codigo }}
-                  </p>
+                <label class="text-body-2 text-medium-emphasis">Número da OS</label>
+                <div class="text-body-1 font-weight-medium">
+                  {{ ordemServicoAtual.codigo }}
                 </div>
               </VCol>
 
               <VCol
                 cols="12"
                 md="6"
+                class="pb-0"
               >
-                <div class="mb-4">
-                  <label class="text-body-2 text-medium-emphasis">Cliente</label>
-                  <p class="text-body-1 font-weight-medium">
-                    {{ ordemServicoAtual.cliente?.razao_social || ordemServicoAtual.cliente_nome }}
-                  </p>
+                <label class="text-body-2 text-medium-emphasis">Cliente</label>
+                <div class="text-body-1 font-weight-medium">
+                  {{ ordemServicoAtual.cliente?.razao_social || ordemServicoAtual.cliente?.nome_fantasia }}
                 </div>
               </VCol>
 
               <VCol
                 cols="12"
                 md="6"
+                class="pb-0"
               >
-                <div class="mb-4">
-                  <label class="text-body-2 text-medium-emphasis">Data de Abertura</label>
-                  <p class="text-body-1 font-weight-medium">
-                    {{ new Date(ordemServicoAtual.created_at).toLocaleDateString('pt-BR') }}
-                  </p>
+                <label class="text-body-2 text-medium-emphasis">Data de Abertura</label>
+                <div class="text-body-1 font-weight-medium">
+                  {{ new Date(ordemServicoAtual.created_at).toLocaleDateString('pt-BR') }}
                 </div>
               </VCol>
 
               <VCol
                 cols="12"
                 md="6"
+                class="pb-0"
               >
-                <div class="mb-4">
-                  <label class="text-body-2 text-medium-emphasis">Status</label>
-                  <div>
-                    <VChip
-                      :color="statusColor"
-                      variant="tonal"
-                      size="small"
-                    >
-                      {{ ordemServicoAtual.status }}
-                    </VChip>
-                  </div>
+                <label class="text-body-2 text-medium-emphasis">Status</label>
+                <div>
+                  <VChip
+                    :color="statusColor"
+                    variant="tonal"
+                    size="small"
+                  >
+                    {{ ordemServicoAtual.status }}
+                  </VChip>
                 </div>
               </VCol>
 
               <VCol
                 cols="12"
                 md="6"
+                class="pb-0"
               >
-                <div class="mb-4">
-                  <label class="text-body-2 text-medium-emphasis">Tipo de Serviço</label>
-                  <p class="text-body-1 font-weight-medium">
-                    {{ ordemServicoAtual.tipo_servico?.nome || '-' }}
-                  </p>
+                <label class="text-body-2 text-medium-emphasis">Tipo de Serviço</label>
+                <div class="text-body-1 font-weight-medium">
+                  {{ ordemServicoAtual.tipo_servico?.nome || '-' }}
                 </div>
               </VCol>
 
               <VCol
                 cols="12"
                 md="6"
+                class="pb-0"
               >
-                <div class="mb-4">
-                  <label class="text-body-2 text-medium-emphasis">Responsável</label>
-                  <p class="text-body-1 font-weight-medium">
-                    {{ ordemServicoAtual.responsavel?.nome || '-' }}
-                  </p>
+                <label class="text-body-2 text-medium-emphasis">Responsável</label>
+                <div class="text-body-1 font-weight-medium">
+                  {{ ordemServicoAtual.responsavel?.nome || '-' }}
                 </div>
               </VCol>
 
               <VCol
                 v-if="ordemServicoAtual.descritivo"
                 cols="12"
+                class="pb-0"
               >
-                <div class="mb-4">
-                  <label class="text-body-2 text-medium-emphasis">Observações</label>
-                  <p class="text-body-1">
-                    {{ ordemServicoAtual.descritivo }}
-                  </p>
+                <label class="text-body-2 text-medium-emphasis">Observações</label>
+                <div class="text-body-1">
+                  {{ ordemServicoAtual.descritivo }}
                 </div>
               </VCol>
             </VRow>
@@ -279,6 +357,78 @@ const statusColor = computed(() => {
                 </VCard>
               </VCol>
             </VRow>
+          </VCardText>
+        </VCard>
+      </VCol>
+
+      <VCol cols="12">
+        <VCard>
+          <VCardTitle>Fotos</VCardTitle>
+          <VCardText>
+            <VDataIterator
+              :items="ordemServicoAtual.fotos"
+              :items-per-page="9"
+            >
+              <template #default="{ items }">
+                <VRow>
+                  <VCol
+                    v-for="foto in items"
+                    :key="foto.raw.id"
+                    cols="12"
+                    sm="6"
+                    md="3"
+                  >
+                    <VCard>
+                      <VImg
+                        :src="foto.raw.file"
+                        :lazy-src="foto.raw.file"
+                        height="200"
+                        cover
+                        class="cursor-pointer"
+                        @click="() => window.open(foto.raw.file, '_blank')"
+                      />
+                    </VCard>
+                  </VCol>
+                </VRow>
+              </template>
+
+              <template #footer="{ page, pageCount, prevPage, nextPage }">
+                <div
+                  v-if="ordemServicoAtual?.fotos?.length > 0"
+                  class="d-flex align-center justify-center pa-4"
+                >
+                  <VBtn
+                    :disabled="page === 1"
+                    icon="tabler-chevron-left"
+                    variant="text"
+                    @click="prevPage"
+                  />
+                  <div class="mx-2 text-caption">
+                    Página {{ page }} de {{ pageCount }}
+                  </div>
+                  <VBtn
+                    :disabled="page >= pageCount"
+                    icon="tabler-chevron-right"
+                    variant="text"
+                    @click="nextPage"
+                  />
+                </div>
+              </template>
+
+              <template #no-data>
+                <div class="text-center">
+                  <VIcon
+                    icon="tabler-photo-off"
+                    size="64"
+                    color="grey-lighten-1"
+                    class="mb-4"
+                  />
+                  <p class="text-grey-lighten-1 text-body-1">
+                    Nenhuma foto encontrada.
+                  </p>
+                </div>
+              </template>
+            </VDataIterator>
           </VCardText>
         </VCard>
       </VCol>

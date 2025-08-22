@@ -5,8 +5,8 @@ import { usePropostaStore } from './store/usePropostaStore'
 import type { IProposta } from './types'
 import LayoutTable from '@/components/CDF/LayoutTable.vue'
 import type { ITerm } from '@/components/CDF/SearchBar.vue'
-import { getI18n } from '@/plugins/i18n'
 import type { IHeader, ITableAction } from '@/pages/types/layoutTable.types'
+import { getI18n } from '@/plugins/i18n'
 
 withDefaults(defineProps<{
   isHeader: boolean
@@ -131,9 +131,11 @@ onBeforeRouteLeave(() => {
     v-model:is-searching="isSearching"
     :destroy="destroy"
     :is-header="isHeader"
-    title="Propostas"
+    title="📋 Gestão de Propostas"
+    subtitle="Gerencie e acompanhe todas as propostas comerciais"
 
     new-item="/proposta/cadastrar"
+    new-item-text="Nova Proposta"
     :headers="headers"
     :actions="actions"
     :items-per-page="itemsPerPage"

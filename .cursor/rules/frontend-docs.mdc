@@ -1,0 +1,334 @@
+# ICV Brasil Frontend - Documentação Técnica
+
+## 📋 Metadados do Projeto
+
+- **Nome**: ICV Brasil Frontend
+- **Versão**: 9.3.0
+- **Linguagem**: TypeScript 5.7.2
+- **Framework**: Vue 3.5.13 + Vite 5.4.11
+- **UI Library**: Vuetify 3.7.5 (Material Design)
+- **Package Manager**: pnpm 10.15.0
+- **Estado**: Em desenvolvimento ativo
+
+## 🏗️ Contexto Técnico Global
+
+### Arquitetura Principal
+
+- **Vue 3 Composition API**: Framework moderno com Composition API
+- **Vite**: Build tool ultra-rápido com HMR e code splitting
+- **TypeScript**: Tipagem estática rigorosa para desenvolvimento seguro
+- **Vuetify 3**: Framework UI Material Design completo
+- **Pinia**: Gerenciamento de estado (sucessor do Vuex)
+- **Vue Router**: Roteamento SPA com lazy loading
+
+### Stack de Desenvolvimento
+
+- **Auto-imports**: unplugin-auto-import para APIs Vue
+- **Componentes**: unplugin-vue-components para importação automática
+- **Roteamento**: unplugin-vue-router para file-based routing
+- **Linting**: ESLint com regras customizadas e TypeScript
+- **Estilos**: SCSS + PostCSS + Stylelint
+- **Testes**: Vitest + MSW para mocking
+
+### Dependências Críticas
+
+- **@tiptap/* (2.10.3)**: Editor de texto rico WYSIWYG
+- **ApexCharts (3.54.1)**: Gráficos interativos avançados
+- **Chart.js (4.4.7)**: Biblioteca de gráficos flexível
+- **vue-i18n (10.0.4)**: Sistema de internacionalização
+- **Maska (2.1.11)**: Máscaras de input avançadas
+- **@casl/ability (6.7.2)**: Controle de acesso baseado em roles
+
+## 📚 Guidelines de Desenvolvimento
+
+### Padrão de Importação
+
+- **unplugin-auto-import**: APIs Vue, composables e utilitários
+- **unplugin-vue-components**: Componentes globais automaticamente
+- **Aliases**: `@/` para `src/`, `@core/` para utilitários core
+- **Lazy Loading**: Componentes e rotas carregados sob demanda
+
+### Uso de Stores (Pinia)
+
+- **Composition API**: Stores usando `defineStore` com setup syntax
+- **TypeScript**: Tipagem forte para state, getters e actions
+- **Modularidade**: Um store por domínio de negócio
+- **Persistência**: Estado persistido quando necessário
+
+### Rotas Modulares
+
+- **File-based Routing**: Estrutura baseada em arquivos em `src/pages/`
+- **Lazy Loading**: Rotas carregadas sob demanda
+- **Guards**: Proteção baseada em permissões CASL
+- **Layouts**: Sistema de layouts flexível com `src/layouts/`
+
+### Estilização
+
+- **Vuetify**: Componentes base Material Design
+- **SCSS**: Pré-processador com variáveis e mixins
+- **CSS Modules**: Escopo local quando necessário
+- **Responsividade**: Mobile-first com breakpoints Vuetify
+
+### Internacionalização
+
+- **vue-i18n**: Sistema completo de i18n
+- **Lazy Loading**: Traduções carregadas sob demanda
+- **Formatação**: Datas, números e moedas localizadas
+- **Fallbacks**: Idioma padrão quando tradução não encontrada
+
+### Testes
+
+- **Vitest**: Framework de testes moderno e rápido
+- **MSW**: Mock Service Worker para APIs
+- **Coverage**: Relatórios de cobertura automáticos
+- **E2E**: Playwright para testes end-to-end
+
+## 🚀 Prompts Pré-configurados
+
+### 1. Auditoria Global
+
+```
+Analise o projeto ICV Brasil Frontend e identifique:
+- Possíveis problemas de performance
+- Dependências desatualizadas ou conflitantes
+- Oportunidades de otimização
+- Riscos de segurança
+- Sugestões de refatoração
+```
+
+### 2. Refatoração de Componentes
+
+```
+Refatore o componente [NOME] seguindo as melhores práticas:
+- Use Composition API com TypeScript
+- Implemente lazy loading quando apropriado
+- Adicione validação de props
+- Implemente error boundaries
+- Otimize re-renders
+- Adicione testes unitários
+```
+
+### 3. Documentação de Módulos
+
+```
+Crie documentação completa para o módulo [NOME]:
+- Visão geral e propósito
+- API pública (props, events, slots)
+- Exemplos de uso
+- Casos de teste
+- Dependências e compatibilidade
+- Guia de troubleshooting
+```
+
+### 4. Revisão de Segurança
+
+```
+Realize auditoria de segurança para o módulo [NOME]:
+- Validação de inputs
+- Sanitização de dados
+- Controle de acesso (CASL)
+- Proteção XSS/CSRF
+- Auditoria de dependências
+- Recomendações de segurança
+```
+
+### 5. Testes Unitários (Vitest)
+
+```
+Crie testes unitários para [COMPONENTE/SERVICE/STORE]:
+- Testes de renderização
+- Testes de interação
+- Testes de edge cases
+- Mocks apropriados
+- Cobertura de código
+- Testes de acessibilidade
+```
+
+### 6. Performance & Otimização
+
+```
+Otimize a performance do [COMPONENTE/FUNCIONALIDADE]:
+- Lazy loading e code splitting
+- Memoização e computed properties
+- Otimização de re-renders
+- Bundle size analysis
+- Lighthouse scores
+- Core Web Vitals
+```
+
+### 7. Sugestão de Arquitetura
+
+```
+Sugira melhorias na arquitetura para [DOMÍNIO]:
+- Organização de stores Pinia
+- Estrutura de rotas e layouts
+- Separação de responsabilidades
+- Padrões de comunicação
+- Estratégias de cache
+- Escalabilidade futura
+```
+
+## 🔧 Comandos Úteis
+
+```bash
+# Desenvolvimento
+pnpm dev                    # Servidor de desenvolvimento
+pnpm build                  # Build de produção
+pnpm preview                # Preview do build
+pnpm typecheck              # Verificação de tipos
+
+# Qualidade
+pnpm lint                   # Linting e correção
+pnpm format                 # Formatação de código
+pnpm build:icons            # Build de ícones
+
+# Dependências
+pnpm update                 # Atualizar dependências
+pnpm audit                  # Auditoria de segurança
+pnpm outdated               # Verificar dependências desatualizadas
+```
+
+## 📁 Estrutura de Pastas Importante
+
+```
+src/
+├── @core/           # Utilitários core (plugins, utils)
+├── @layouts/        # Layouts da aplicação
+├── components/      # Componentes reutilizáveis
+├── composables/     # Composables Vue 3
+├── pages/           # Páginas (file-based routing)
+├── stores/          # Stores Pinia
+├── services/        # Serviços de API
+├── types/           # Definições TypeScript
+├── validators/      # Validações de formulários
+└── locales/         # Traduções i18n
+```
+
+## 🎯 Padrões de Código
+
+### Vue 3 Composition API
+
+```typescript
+<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
+import { useUsersStore } from '@/stores/users'
+
+// Props com validação
+interface Props {
+  userId: string
+  readonly?: boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  readonly: false
+})
+
+// Emits tipados
+const emit = defineEmits<{
+  update: [value: string]
+  delete: [id: string]
+}>()
+
+// Composables
+const usersStore = useUsersStore()
+const loading = ref(false)
+
+// Computed properties
+const user = computed(() => usersStore.getUserById(props.userId))
+
+// Lifecycle
+onMounted(async () => {
+  loading.value = true
+  await usersStore.fetchUser(props.userId)
+  loading.value = false
+})
+</script>
+```
+
+### Stores Pinia
+
+```typescript
+import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'
+import type { User } from '@/types/user'
+
+export const useUsersStore = defineStore('users', () => {
+  // State
+  const users = ref<User[]>([])
+  const loading = ref(false)
+  const error = ref<string | null>(null)
+
+  // Getters
+  const activeUsers = computed(() => 
+    users.value.filter(user => user.active)
+  )
+
+  // Actions
+  const fetchUsers = async () => {
+    loading.value = true
+    error.value = null
+    
+    try {
+      const response = await api.get('/users')
+      users.value = response.data
+    } catch (err) {
+      error.value = 'Erro ao carregar usuários'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
+  return {
+    users,
+    loading,
+    error,
+    activeUsers,
+    fetchUsers
+  }
+})
+```
+
+### Componentes Vuetify
+
+```vue
+<template>
+  <VCard>
+    <VCardTitle class="d-flex align-center justify-space-between">
+      {{ title }}
+      <VBtn
+        :icon="mdiPlus"
+        variant="text"
+        @click="$emit('add')"
+      />
+    </VCardTitle>
+    
+    <VCardText>
+      <VDataTable
+        :headers="headers"
+        :items="items"
+        :loading="loading"
+        :search="search"
+        class="elevation-1"
+      >
+        <template #item.actions="{ item }">
+          <VBtn
+            :icon="mdiEdit"
+            variant="text"
+            size="small"
+            @click="$emit('edit', item)"
+          />
+        </template>
+      </VDataTable>
+    </VCardText>
+  </VCard>
+</template>
+```
+
+---
+
+*Documento gerado para Cursor IDE - Última atualização: Janeiro 2025*
+description:
+globs:
+alwaysApply: false
+---

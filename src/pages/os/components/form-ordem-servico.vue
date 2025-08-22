@@ -1,7 +1,14 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
+import { computed, ref, watch } from 'vue'
+import { useOrdemServicoStore } from '../store/useOrdemServicoStore'
+import CDFButton from '@/components/CDF/CDFButton.vue'
+import CDFManager from '@/components/CDF/CDFManager.vue'
+import CDFTextField from '@/components/CDF/CDFTextField.vue'
+import LayoutForms from '@/components/CDF/LayoutForms.vue'
+import PhotoUpload from '@/components/PhotoUpload.vue'
 import { useInmetroStore } from '@/pages/inmetro/store/useInmetroStore'
-import { useOrdemServicoStore } from '@/pages/os/store/useOrdemServicoStore'
+import { useSnackbarStore } from '@/stores/useSnackbarStore'
 import * as rules from '@/validators/cdf-rules'
 
 const { isEditing = false, isHeader = true } = defineProps<{
@@ -15,6 +22,11 @@ const inmetroStore = useInmetroStore()
 // Store de operações de OS (CRUD, form, etc)
 const osStore = useOrdemServicoStore()
 
+// Store de notificações
+const snackbarStore = useSnackbarStore()
+
+const perfilResponsavelOptions = ref([])
+
 onMounted(async () => {
   // Carregar dados de apoio sempre
   await Promise.all([
@@ -24,12 +36,6 @@ onMounted(async () => {
     inmetroStore.fetchResponsavel(),
   ])
 })
-
-// Watcher para reativo quando formData mudar (útil para edição)
-watch(() => osStore.formData, (newFormData: any) => {
-  if (newFormData && Object.keys(newFormData).length > 0)
-    console.log('FormData atualizado:', newFormData)
-}, { deep: true })
 
 const {
   formRef,
@@ -44,17 +50,74 @@ const {
   responsaveis,
 } = storeToRefs(inmetroStore)
 
+watch(formData, () => {
+  if (isEditing) {
+    perfilResponsavelOptions.value = []
+    perfilResponsavelOptions.value = responsaveis.value
+      ?.find(item => item.id === formData.value.responsavel_id)?.honorarios ?? []
+  }
+})
+
 const {
   save,
   update,
   resetForm,
+  gerarCodigoOS,
 } = osStore
+
+// Estado para controle de loading do email
+const loadingEmail = ref(false)
+
+// Função para enviar solicitação para responsável
+const enviarSolicitacaoResponsavel = async () => {
+  if (!formData.value?.id || !isEditing)
+    return
+
+  try {
+    loadingEmail.value = true
+
+    await osStore.enviarSolicitacaoResponsavel(formData.value.id)
+
+    snackbarStore.showSnackbar({
+      text: 'E-mail enviado para o responsável com sucesso!',
+      color: 'success',
+    })
+
+    // Recarregar a OS para atualizar o status
+    if (formData.value.id)
+      await osStore.fetchOrdemServico(formData.value.id)
+  }
+  catch (error) {
+    console.error('Erro ao enviar e-mail:', error)
+    snackbarStore.showSnackbar({
+      text: 'Erro ao enviar e-mail para o responsável',
+      color: 'error',
+    })
+  }
+  finally {
+    loadingEmail.value = false
+  }
+}
+
+// Função para verificar se o email já foi enviado hoje
+const emailJaEnviadoHoje = computed(() => {
+  if (!formData.value?.email_responsavel_enviado_em)
+    return false
+
+  const dataEnvio = new Date(formData.value.email_responsavel_enviado_em)
+  const hoje = new Date()
+
+  return dataEnvio.toDateString() === hoje.toDateString()
+})
+
+// Verificar se pode enviar email
+const podeEnviarEmail = computed(() => {
+  return isEditing && formData.value?.responsavel && !emailJaEnviadoHoje.value
+})
 
 onBeforeRouteLeave(() => {
   resetForm()
 })
-
-const perfilResponsavelOptions = ref([])
 </script>
 
 <template>
@@ -78,6 +141,32 @@ const perfilResponsavelOptions = ref([])
     }"
     back="/os"
   >
+    <template #actions>
+      <CDFButton
+        v-if="podeEnviarEmail"
+        :loading="loadingEmail"
+        icon="tabler-mail"
+        color="info"
+        variant="elevated"
+        @click="enviarSolicitacaoResponsavel"
+      >
+        Enviar para Responsável
+      </CDFButton>
+
+      <VTooltip
+        v-else-if="isEditing && formData?.responsavel && emailJaEnviadoHoje"
+        text="E-mail já enviado hoje"
+      >
+        <template #activator="{ props }">
+          <VIcon
+            v-bind="props"
+            icon="tabler-mail-check"
+            color="success"
+            size="24"
+          />
+        </template>
+      </VTooltip>
+    </template>
     <template #content>
       <VCol cols="12">
         <VCard
@@ -86,6 +175,27 @@ const perfilResponsavelOptions = ref([])
         >
           <VCardText>
             <VRow>
+              <VCol
+                cols="12"
+                md="4"
+              >
+                <CDFTextField
+                  v-model="formData.codigo"
+                  label="Código"
+                  placeholder="Digite o código da OS"
+                  :rules="[rules.requiredValidator]"
+                >
+                  <template #append-inner>
+                    <CDFButton
+                      variant="outlined"
+                      color="primary"
+                      size="small"
+                      icon="tabler-wand"
+                      @click="gerarCodigoOS"
+                    />
+                  </template>
+                </CDFTextField>
+              </VCol>
               <VCol
                 cols="12"
                 md="4"
@@ -104,7 +214,7 @@ const perfilResponsavelOptions = ref([])
                 cols="12"
                 md="4"
               >
-                <AppTextField
+                <CDFTextField
                   v-model="formData.fornecedor"
                   label="Fornecedor"
                   placeholder="Digite o nome do fornecedor"
@@ -276,6 +386,30 @@ const perfilResponsavelOptions = ref([])
             </VRow>
           </template>
         </CDFManager>
+      </VCol>
+
+      <!-- Seção de Fotos -->
+      <VCol cols="12">
+        <VCard
+          title="Fotos"
+          variant="outlined"
+        >
+          <VDivider />
+          <VCardText>
+            <PhotoUpload
+              v-model="formData.fotos"
+              label="Fotos da OS"
+              placeholder="Arraste fotos aqui ou clique para selecionar"
+              :max-files="20"
+              :max-file-size="10"
+              :disabled="loading.save"
+              :loading="loading.upload"
+              @upload="handlePhotoUpload"
+              @remove="handlePhotoRemove"
+              @error="handlePhotoError"
+            />
+          </VCardText>
+        </VCard>
       </VCol>
     </template>
   </LayoutForms>

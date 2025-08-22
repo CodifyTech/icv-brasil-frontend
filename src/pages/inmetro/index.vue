@@ -1,12 +1,4 @@
 <script setup lang="ts">
-import AppAutocomplete from '@/@core/components/app-form-elements/AppAutocomplete.vue'
-import CDFMoreBtn from '@/components/CDF/CDFMoreBtn.vue'
-import DialogDocumentosAnexos from '@/pages/os/components/DialogDocumentosAnexos.vue'
-import DialogFinalizarOs from '@/pages/os/components/DialogFinalizarOS.vue'
-import DialogMaterialEquipamento from '@/pages/os/components/DialogMaterialEquipamento.vue'
-import DialogReprovarOs from '@/pages/os/components/DialogReprovarOS.vue'
-import { useOrdemServicoStore } from '@/pages/os/store/useOrdemServicoStore'
-import { useSnackbarStore } from '@/stores/useSnackbarStore'
 import {
   getOSResultadoColor,
   getOSResultadoLabel,
@@ -18,6 +10,14 @@ import {
 } from '../../enums/OSStatusEnum'
 import { useInmetroStore } from './store/useInmetroStore'
 import type { IOrdemServico } from './types/index'
+import AppAutocomplete from '@/@core/components/app-form-elements/AppAutocomplete.vue'
+import CDFMoreBtn from '@/components/CDF/CDFMoreBtn.vue'
+import DialogDocumentosAnexos from '@/pages/os/components/DialogDocumentosAnexos.vue'
+import DialogFinalizarOs from '@/pages/os/components/DialogFinalizarOS.vue'
+import DialogMaterialEquipamento from '@/pages/os/components/DialogMaterialEquipamento.vue'
+import DialogReprovarOs from '@/pages/os/components/DialogReprovarOS.vue'
+import { useOrdemServicoStore } from '@/pages/os/store/useOrdemServicoStore'
+import { useSnackbarStore } from '@/stores/useSnackbarStore'
 
 definePage({
   meta: {
@@ -25,6 +25,9 @@ definePage({
     subject: 'inmetro',
   },
 })
+
+// Estados para controle de loading dos emails
+const loadingEmails = ref<Record<number, boolean>>({})
 
 const store = useOrdemServicoStore()
 const inmetroStore = useInmetroStore()
@@ -67,7 +70,18 @@ const isDialogDocumentosVisible = ref<boolean>(false)
 const ordemServicoSelecionada = ref<IOrdemServico | null>(null)
 
 const aplicarFiltros = async () => {
-  filtros.value = { ...filtroForm.value }
+  // Converter valores null para undefined para compatibilidade
+  const filtrosLimpos = {
+    ...filtroForm.value,
+    cliente_id: filtroForm.value.cliente_id || undefined,
+    data_inspecao_inicio: filtroForm.value.data_inspecao_inicio || undefined,
+    data_inspecao_fim: filtroForm.value.data_inspecao_fim || undefined,
+    responsavel_id: filtroForm.value.responsavel_id || undefined,
+    escopo_acreditacao_id: filtroForm.value.escopo_acreditacao_id || undefined,
+    tipo_servico_id: filtroForm.value.tipo_servico_id || undefined,
+  }
+
+  filtros.value = filtrosLimpos
   await store.fetchOrdensServico({ filtros: filtros.value })
 }
 
@@ -87,12 +101,135 @@ const limparFiltros = () => {
   store.resetFiltros()
 }
 
+// Função para enviar solicitação para responsável
+const enviarSolicitacaoResponsavel = async (ordemServico: IOrdemServico) => {
+  if (!ordemServico.id)
+    return
+
+  try {
+    loadingEmails.value[Number.parseInt(ordemServico.id)] = true
+
+    await store.enviarSolicitacaoResponsavel(ordemServico.id)
+
+    snackbarStore.showSnackbar({
+      text: 'E-mail enviado para o responsável com sucesso!',
+      color: 'success',
+    })
+
+    // Recarregar a lista para atualizar o status
+    await store.fetchOrdensServico()
+  }
+  catch (error) {
+    console.error('Erro ao enviar e-mail:', error)
+    snackbarStore.showSnackbar({
+      text: 'Erro ao enviar e-mail para o responsável',
+      color: 'error',
+    })
+  }
+  finally {
+    loadingEmails.value[Number.parseInt(ordemServico.id)] = false
+  }
+}
+
+// Função para verificar se o email já foi enviado hoje
+const emailJaEnviadoHoje = (ordemServico: IOrdemServico) => {
+  if (!ordemServico.email_responsavel_enviado_em)
+    return false
+
+  const dataEnvio = new Date(ordemServico.email_responsavel_enviado_em)
+  const hoje = new Date()
+
+  return dataEnvio.toDateString() === hoje.toDateString()
+}
+
+// Funções para os botões do menu
+const abrirDialogAprovar = (item: IOrdemServico) => {
+  ordemServicoSelecionada.value = item
+  isDialogAprovarVisible.value = true
+}
+
+const abrirDialogReprovar = (item: IOrdemServico) => {
+  ordemServicoSelecionada.value = item
+  isDialogReprovarVisible.value = true
+}
+
+// Função para criar o menu list dinamicamente
+const menuList = (item: IOrdemServico) => [
+  {
+    title: 'Aprovar',
+    icon: 'tabler-check',
+    color: 'success',
+    click: (() => abrirDialogAprovar(item)) as any,
+  },
+  {
+    title: 'Reprovar',
+    color: 'error',
+    icon: 'tabler-x',
+    click: (() => abrirDialogReprovar(item)) as any,
+  },
+]
+
+// Funções auxiliares para carregamento de dados
+const carregarMateriais = async () => {
+  if (ordemServicoSelecionada.value?.id)
+    return await store.carregarMateriais(ordemServicoSelecionada.value.id)
+
+  return []
+}
+
+const carregarAnexos = async () => {
+  if (ordemServicoSelecionada.value?.id)
+    return await store.carregarAnexos(ordemServicoSelecionada.value.id)
+
+  return []
+}
+
+const carregarFotos = async () => {
+  if (ordemServicoSelecionada.value?.id) {
+    // Implementação temporária - converter anexos para formato de fotos
+    const anexos = await store.carregarAnexos(ordemServicoSelecionada.value.id)
+
+    return anexos.map((anexo: any) => ({
+      ...anexo,
+      url: anexo.anexo || '', // Usar anexo como URL temporariamente
+    }))
+  }
+
+  return []
+}
+
 const exportarRelatorios = async () => {
   try {
+    // Aplicar os filtros atuais do formulário antes de exportar
+    const filtrosLimpos = {
+      ...filtroForm.value,
+      cliente_id: filtroForm.value.cliente_id || undefined,
+      data_inspecao_inicio: filtroForm.value.data_inspecao_inicio || undefined,
+      data_inspecao_fim: filtroForm.value.data_inspecao_fim || undefined,
+      responsavel_id: filtroForm.value.responsavel_id || undefined,
+      escopo_acreditacao_id: filtroForm.value.escopo_acreditacao_id || undefined,
+      tipo_servico_id: filtroForm.value.tipo_servico_id || undefined,
+    }
+
+    filtros.value = filtrosLimpos
+
+    // Mostrar loading
+    loading.value.relatorios = true
+
     await store.exportarCSV()
   }
   catch (error) {
     console.error('Erro ao exportar CSV:', error)
+
+    // Mostrar mensagem de erro se o store não mostrou
+    snackbarStore.showSnackbar({
+      text: 'Erro ao exportar CSV. Verifique os filtros e tente novamente.',
+      color: 'error',
+      timeout: 4000,
+    })
+  }
+  finally {
+    loading.value.relatorios = false
   }
 }
 
@@ -208,18 +345,19 @@ const getItemValue = (item: any, key: string) => {
           Lista de Relatórios
         </h1>
       </div>
-      <!--
-        <div class="d-flex gap-2">
+
+      <div class="d-flex gap-2">
         <VBtn
-        color="secondary"
-        variant="outlined"
-        prepend-icon="tabler-download"
-        @click="exportarRelatorios"
+          color="secondary"
+          variant="outlined"
+          prepend-icon="tabler-download"
+          :loading="loading.relatorios"
+          :disabled="loading.relatorios"
+          @click="exportarRelatorios"
         >
-        Exportar CSV
+          {{ loading.relatorios ? 'Exportando...' : 'Exportar CSV' }}
         </VBtn>
-        </div>
-      -->
+      </div>
     </VCardText>
   </VCard>
 
@@ -403,6 +541,7 @@ const getItemValue = (item: any, key: string) => {
           { title: 'Material/Equipamento', key: 'material_equipamento' },
           { title: 'Data', key: 'data_execucao', minWidth: '150px' },
           { title: 'Resultado', key: 'resultado' },
+          { title: 'Email Status', key: 'email_status', sortable: false, minWidth: '120px' },
           { title: 'Documentos', key: 'documentos', sortable: false },
           { title: 'Status', key: 'status' },
           { title: 'Ações', key: 'actions', sortable: false },
@@ -443,6 +582,35 @@ const getItemValue = (item: any, key: string) => {
           </VChip>
         </template>
 
+        <template #[`item.email_status`]="{ item }">
+          <div class="d-flex align-center gap-1">
+            <VIcon
+              v-if="item.email_cliente_enviado_em"
+              color="success"
+              size="16"
+              title="E-mail do cliente enviado"
+            >
+              tabler-mail-check
+            </VIcon>
+            <VIcon
+              v-if="emailJaEnviadoHoje(item)"
+              color="info"
+              size="16"
+              title="E-mail do responsável enviado hoje"
+            >
+              tabler-mail-forward
+            </VIcon>
+            <VIcon
+              v-if="item.responsavel_aceitou_em"
+              color="primary"
+              size="16"
+              title="Responsável aceitou"
+            >
+              tabler-check-circle
+            </VIcon>
+          </div>
+        </template>
+
         <template #[`item.documentos`]="{ item }">
           <VBtn
             variant="text"
@@ -480,29 +648,46 @@ const getItemValue = (item: any, key: string) => {
             >
               <VIcon>tabler-eye</VIcon>
             </VBtn>
+
+            <!-- Botão de enviar para responsável -->
+            <VBtn
+              v-if="item.responsavel && !emailJaEnviadoHoje(item)"
+              size="small"
+              color="secondary"
+              variant="outlined"
+              :loading="loadingEmails[Number.parseInt(item.id || '0')]"
+              @click="enviarSolicitacaoResponsavel(item)"
+            >
+              <VIcon size="18">
+                tabler-mail
+              </VIcon>
+            </VBtn>
+
+            <!-- Indicador de email já enviado -->
+            <VTooltip
+              v-else-if="emailJaEnviadoHoje(item)"
+              text="E-mail já enviado hoje"
+              location="top"
+            >
+              <template #activator="{ props: tooltipProps }">
+                <VBtn
+                  v-bind="tooltipProps"
+                  size="small"
+                  color="success"
+                  variant="text"
+                  disabled
+                >
+                  <VIcon size="18">
+                    tabler-mail-check
+                  </VIcon>
+                </VBtn>
+              </template>
+            </VTooltip>
+
             <CDFMoreBtn
               v-if="item.status === OsStatusEnum.EM_ANALISE || item.status === OsStatusEnum.ANDAMENTO"
               color="gray"
-              :menu-list="[
-                {
-                  title: 'Aprovar',
-                  icon: 'tabler-check',
-                  color: 'success',
-                  click: () => {
-                    ordemServicoSelecionada = item
-                    isDialogAprovarVisible = true
-                  },
-                },
-                {
-                  title: 'Reprovar',
-                  color: 'error',
-                  icon: 'tabler-x',
-                  click: () => {
-                    ordemServicoSelecionada = item
-                    isDialogReprovarVisible = true
-                  },
-                },
-              ]"
+              :menu-list="menuList(item)"
             />
           </div>
         </template>
@@ -525,12 +710,13 @@ const getItemValue = (item: any, key: string) => {
   <DialogMaterialEquipamento
     v-model:is-dialog-visible="isDialogMaterialVisible"
     :os="ordemServicoSelecionada"
-    :carregar-materiais="() => store.carregarMateriais(ordemServicoSelecionada.id)"
+    :carregar-materiais="carregarMateriais"
   />
 
   <DialogDocumentosAnexos
     v-model:is-dialog-visible="isDialogDocumentosVisible"
     :os="ordemServicoSelecionada"
-    :carregar-anexos="() => store.carregarAnexos(ordemServicoSelecionada.id)"
+    :carregar-anexos="carregarAnexos"
+    :carregar-fotos="carregarFotos"
   />
 </template>
