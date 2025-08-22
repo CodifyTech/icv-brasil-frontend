@@ -77,7 +77,7 @@ const aplicarFiltros = async () => {
     escopo_acreditacao_id: filtroForm.value.escopo_acreditacao_id || undefined,
     tipo_servico_id: filtroForm.value.tipo_servico_id || undefined,
   }
-  
+
   filtros.value = filtrosLimpos
   await store.fetchOrdensServico({ filtros: filtros.value })
 }
@@ -110,17 +110,17 @@ const exportarRelatorios = async () => {
       escopo_acreditacao_id: filtroForm.value.escopo_acreditacao_id || undefined,
       tipo_servico_id: filtroForm.value.tipo_servico_id || undefined,
     }
-    
+
     filtros.value = filtrosLimpos
-    
+
     // Mostrar loading
     loading.value.relatorios = true
-    
+
     await store.exportarCSV()
   }
   catch (error) {
     console.error('Erro ao exportar CSV:', error)
-    
+
     // Mostrar mensagem de erro se o store não mostrou
     snackbarStore.showSnackbar({
       text: 'Erro ao exportar CSV. Verifique os filtros e tente novamente.',
@@ -245,7 +245,7 @@ const getItemValue = (item: any, key: string) => {
           Lista de Relatórios
         </h1>
       </div>
-      
+
       <div class="d-flex gap-2">
         <VBtn
           color="secondary"

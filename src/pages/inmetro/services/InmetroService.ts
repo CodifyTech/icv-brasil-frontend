@@ -1,6 +1,6 @@
 import type { IOrdemServico } from '../types'
-import ApiService from '@/services/ApiService'
 import useApi from '@/composables/useApi'
+import ApiService from '@/services/ApiService'
 
 class InmetroService extends ApiService {
   // 👉 methods
@@ -38,11 +38,11 @@ class InmetroService extends ApiService {
         Object.entries(filtros).filter(([, value]) => value !== null && value !== undefined && value !== ''),
       )
       : {}
-    
+
     // Constrói a query string
     const queryString = new URLSearchParams(cleanedFiltros as any).toString()
     const url = queryString ? `os/exportar/csv?${queryString}` : 'os/exportar/csv'
-    
+
     const response = await useApi.request({
       url,
       method: 'GET',

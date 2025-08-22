@@ -223,7 +223,7 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
     async exportarCSV() {
       try {
         this.loading.relatorios = true
-        
+
         // Chama o método específico para exportação CSV
         const blob = await InmetroService.exportarCSV(this.filtros)
 
@@ -251,14 +251,14 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
       }
       catch (error) {
         console.error('Erro ao exportar CSV:', error)
-        
+
         // Mostra mensagem de erro
         this.snackbarStore.showSnackbar({
           text: 'Erro ao exportar CSV. Tente novamente.',
           color: 'error',
           timeout: 4000,
         })
-        
+
         throw error
       }
       finally {
