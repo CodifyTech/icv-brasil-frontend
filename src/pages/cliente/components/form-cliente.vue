@@ -17,7 +17,6 @@ const store = useClienteStore()
 
 onMounted(() => {
   // 👉 methods
-
 })
 
 const {

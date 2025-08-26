@@ -55,6 +55,7 @@ declare module 'vue-router/auto-routes' {
     'inmetro-relatorio-id': RouteRecordInfo<'inmetro-relatorio-id', '/inmetro/relatorio/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     'not-authorized': RouteRecordInfo<'not-authorized', '/not-authorized', Record<never, never>, Record<never, never>>,
     'os': RouteRecordInfo<'os', '/os', Record<never, never>, Record<never, never>>,
+    'os-aceitar-token': RouteRecordInfo<'os-aceitar-token', '/os/aceitar/:token', { token: ParamValue<true> }, { token: ParamValue<false> }>,
     'os-cadastrar': RouteRecordInfo<'os-cadastrar', '/os/cadastrar', Record<never, never>, Record<never, never>>,
     'os-components-dialog-documentos-anexos': RouteRecordInfo<'os-components-dialog-documentos-anexos', '/os/components/DialogDocumentosAnexos', Record<never, never>, Record<never, never>>,
     'os-components-dialog-finalizar-os': RouteRecordInfo<'os-components-dialog-finalizar-os', '/os/components/DialogFinalizarOS', Record<never, never>, Record<never, never>>,

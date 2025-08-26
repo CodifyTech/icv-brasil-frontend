@@ -499,13 +499,7 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
 
     async verificarToken(token: string) {
       try {
-        const response = await fetch(`/api/v1/os/publico/verificar-token/${token}`)
-        const data = await response.json()
-
-        if (!response.ok)
-          throw new Error(data.message || 'Token inválido')
-
-        return data
+        return await InmetroService.getOrDeleteRequest('GET', {}, `verificar-token/${token}`)
       }
       catch (error) {
         console.error('Erro ao verificar token:', error)
@@ -515,20 +509,9 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
 
     async aceitarOS(token: string, observacoes?: string) {
       try {
-        const response = await fetch(`/api/v1/os/publico/aceitar/${token}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ observacoes }),
-        })
-
-        const data = await response.json()
-
-        if (!response.ok)
-          throw new Error(data.message || 'Erro ao aceitar OS')
-
-        return data
+        return await InmetroService.postOrPutRequest('POST', {
+          observacoes,
+        }, `aceitar/${token}`)
       }
       catch (error) {
         console.error('Erro ao aceitar OS:', error)

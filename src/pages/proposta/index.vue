@@ -131,7 +131,7 @@ onBeforeRouteLeave(() => {
     v-model:is-searching="isSearching"
     :destroy="destroy"
     :is-header="isHeader"
-    title="📋 Gestão de Propostas"
+    title="Gestão de Propostas"
     subtitle="Gerencie e acompanhe todas as propostas comerciais"
 
     new-item="/proposta/cadastrar"

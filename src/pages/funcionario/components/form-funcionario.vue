@@ -131,7 +131,7 @@ watch(() => data.value, newData => {
                       </VCol>
                       <VCol
                         cols="12"
-                        md="4"
+                        md="6"
                       >
                         <CDFTextField
                           v-model="data.telefone_1"
@@ -144,7 +144,7 @@ watch(() => data.value, newData => {
                       </VCol>
                       <VCol
                         cols="12"
-                        md="4"
+                        md="6"
                       >
                         <CDFTextField
                           v-model="data.telefone_2"
@@ -157,7 +157,31 @@ watch(() => data.value, newData => {
                       </VCol>
                       <VCol
                         cols="12"
-                        md="4"
+                        md="6"
+                      >
+                        <CDFTextField
+                          v-model="data.email_1"
+                          label="E-mail"
+                          placeholder="Digite o e-mail 1"
+                          type="email"
+                          :rules="[cdfRules.requiredValidator, cdfRules.emailValidator]"
+                        />
+                      </VCol>
+                      <VCol
+                        cols="12"
+                        md="6"
+                      >
+                        <CDFTextField
+                          v-model="data.email_2"
+                          label="E-mail"
+                          placeholder="Digite o e-mail 2"
+                          type="email"
+                          :rules="[cdfRules.requiredValidator, cdfRules.emailValidator]"
+                        />
+                      </VCol>
+                      <VCol
+                        cols="12"
+                        md="6"
                       >
                         <AppAutocomplete
                           v-model="data.departamento_id"
