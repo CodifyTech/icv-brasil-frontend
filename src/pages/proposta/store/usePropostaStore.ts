@@ -7,7 +7,7 @@ import { useSuccessDialogStore } from '@/stores/useSuccessDialogStore'
 
 const defaultValue = {
   pessoa_contato: '',
-  consultor: '',
+  consultor_id: null,
   telefone: '',
   email: '',
   area: 'OIA - O&G',
@@ -23,13 +23,15 @@ export const usePropostaStore = defineStore('crud/proposta', {
     sortKeyDefault: 'pessoa_contato',
     defaultValue,
     data: { ...defaultValue },
-    filiais: [] as Array<{ id: string | number; nome_fantasia: string }>,
+    filiais: [] as Array<{ id: string; nome_fantasia: string }>,
+    funcionarios: [] as Array<{ id: string; nome: string }>,
     loading: {
       save: false,
       item: false,
       items: false,
       destroy: false,
       filial: false,
+      funcionarios: false,
     },
 
     modal: {
@@ -113,6 +115,18 @@ export const usePropostaStore = defineStore('crud/proposta', {
         }).catch(() => {
           this.filiais = []
           this.loading.filial = false
+        })
+    },
+
+    async fetchFuncionarios(search?: string) {
+      this.loading.funcionarios = true
+      await PropostaService.fetchFuncionarios(search)
+        .then(data => {
+          this.funcionarios = data as Array<{ id: string; nome: string }>
+          this.loading.funcionarios = false
+        }).catch(() => {
+          this.funcionarios = []
+          this.loading.funcionarios = false
         })
     },
 

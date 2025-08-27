@@ -2,7 +2,6 @@
 import { storeToRefs } from 'pinia'
 import { useClienteStore } from '../store/useClienteStore'
 import LayoutForms from '@/components/CDF/LayoutForms.vue'
-import type { ICliente } from '@/pages/cliente/types'
 import * as rules from '@/validators/cdf-rules'
 
 const { isEditing } = withDefaults(defineProps<{
@@ -67,7 +66,18 @@ onBeforeRouteLeave(() => {
             <VRow>
               <VCol
                 cols="12"
-                md="4"
+                md="3"
+              >
+                <CDFTextField
+                  v-model="data.codigo_cliente"
+                  label="Código do Cliente"
+                  placeholder="Ex: CLI001"
+                  :rules="[]"
+                />
+              </VCol>
+              <VCol
+                cols="12"
+                md="3"
               >
                 <CDFTextField
                   v-model="data.razao_social"
@@ -78,7 +88,7 @@ onBeforeRouteLeave(() => {
               </VCol>
               <VCol
                 cols="12"
-                md="4"
+                md="3"
               >
                 <CDFTextField
                   v-model="data.nome_fantasia"
@@ -89,7 +99,7 @@ onBeforeRouteLeave(() => {
               </VCol>
               <VCol
                 cols="12"
-                md="4"
+                md="3"
               >
                 <CDFTextField
                   v-model="data.cnpj"
@@ -148,6 +158,7 @@ onBeforeRouteLeave(() => {
                   item-label="Filial"
                   message-add="Adicionar Filial"
                   :template="{
+                    codigo_cliente: '',
                     razao_social: '',
                     nome_fantasia: '',
                     cnpj: '',
@@ -160,11 +171,22 @@ onBeforeRouteLeave(() => {
                     estado: '',
                   }"
                 >
-                  <template #content="{ item, index }: { item: ICliente, index: number }">
+                  <template #content="{ item, index }">
                     <VRow>
                       <VCol
                         cols="12"
-                        md="4"
+                        md="3"
+                      >
+                        <CDFTextField
+                          v-model="item.codigo_cliente"
+                          label="Código da Filial"
+                          placeholder="Ex: FIL001"
+                          :rules="[]"
+                        />
+                      </VCol>
+                      <VCol
+                        cols="12"
+                        md="3"
                       >
                         <CDFTextField
                           v-model="item.razao_social"
@@ -175,7 +197,7 @@ onBeforeRouteLeave(() => {
                       </VCol>
                       <VCol
                         cols="12"
-                        md="4"
+                        md="3"
                       >
                         <CDFTextField
                           v-model="item.nome_fantasia"
@@ -186,7 +208,7 @@ onBeforeRouteLeave(() => {
                       </VCol>
                       <VCol
                         cols="12"
-                        md="4"
+                        md="3"
                       >
                         <CDFTextField
                           v-model="item.cnpj"

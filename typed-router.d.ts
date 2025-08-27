@@ -74,6 +74,8 @@ declare module 'vue-router/auto-routes' {
     'proposta-components-form-proposta': RouteRecordInfo<'proposta-components-form-proposta', '/proposta/components/form-proposta', Record<never, never>, Record<never, never>>,
     'proposta-components-form-proposta-bkp': RouteRecordInfo<'proposta-components-form-proposta-bkp', '/proposta/components/form-proposta/bkp', Record<never, never>, Record<never, never>>,
     'proposta-components-novo-servico-modal': RouteRecordInfo<'proposta-components-novo-servico-modal', '/proposta/components/NovoServicoModal', Record<never, never>, Record<never, never>>,
+    'proposta-components-propostas-por-status': RouteRecordInfo<'proposta-components-propostas-por-status', '/proposta/components/PropostasPorStatus', Record<never, never>, Record<never, never>>,
+    'proposta-dashboard': RouteRecordInfo<'proposta-dashboard', '/proposta/dashboard', Record<never, never>, Record<never, never>>,
     'proposta-editar-id': RouteRecordInfo<'proposta-editar-id', '/proposta/editar/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     'rubricas': RouteRecordInfo<'rubricas', '/rubricas', Record<never, never>, Record<never, never>>,
     'second-page': RouteRecordInfo<'second-page', '/second-page', Record<never, never>, Record<never, never>>,

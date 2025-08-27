@@ -404,9 +404,6 @@ onBeforeRouteLeave(() => {
               :max-file-size="10"
               :disabled="loading.save"
               :loading="loading.upload"
-              @upload="handlePhotoUpload"
-              @remove="handlePhotoRemove"
-              @error="handlePhotoError"
             />
           </VCardText>
         </VCard>

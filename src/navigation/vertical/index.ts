@@ -32,6 +32,27 @@ export default [
     action: 'list',
     subject: 'cliente',
   },
+
+  /* {
+    title: 'Propostas',
+    icon: { icon: 'fa-light fa-percent' },
+    children: [
+      {
+        title: 'Dashboard',
+        icon: { icon: 'fa-light fa-chart-bar' },
+        to: 'proposta-dashboard',
+        action: 'list',
+        subject: 'proposta',
+      },
+      {
+        title: 'Gestão de Propostas',
+        icon: { icon: 'fa-light fa-list' },
+        to: 'proposta',
+        action: 'list',
+        subject: 'proposta',
+      },
+    ],
+  }, */
   {
     title: 'Propostas',
     icon: { icon: 'fa-light fa-percent' },

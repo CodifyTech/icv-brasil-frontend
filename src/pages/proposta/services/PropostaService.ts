@@ -7,5 +7,11 @@ class PropostaService extends ApiService {
       search,
     }, 'listar/clientes')
   }
+
+  async fetchFuncionarios(search?: string) {
+    return await this.getOrDeleteRequest('GET', {
+      search,
+    }, 'listar/funcionarios')
+  }
 }
 export default new PropostaService('proposta')

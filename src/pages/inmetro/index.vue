@@ -606,7 +606,7 @@ const getItemValue = (item: any, key: string) => {
               size="16"
               title="Responsável aceitou"
             >
-              tabler-check-circle
+              tabler-user-check
             </VIcon>
           </div>
         </template>

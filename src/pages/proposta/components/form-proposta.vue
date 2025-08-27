@@ -17,9 +17,9 @@ const { isEditing } = withDefaults(defineProps<{
 
 const store = usePropostaStore()
 
-const { data, loading, filiais, modal } = storeToRefs(store)
+const { data, loading, filiais, funcionarios, modal } = storeToRefs(store)
 
-const { save, update, resetForm, fetchCliente } = store
+const { save, update, resetForm, fetchCliente, fetchFuncionarios } = store
 
 onBeforeRouteLeave(() => {
   resetForm()
@@ -30,6 +30,7 @@ const form = ref<VForm>({} as VForm)
 onMounted(() => {
   // 👉 methods
   fetchCliente()
+  fetchFuncionarios()
 })
 </script>
 
@@ -65,12 +66,12 @@ onMounted(() => {
           color="primary"
         >
           <VCardText class="py-3">
-            <div class="d-flex align-center gap-4">
+            <div class="gap-4 d-flex align-center">
               <VChip
-                :color="data.cliente_id ? 'success' : 'primary'"
+                :color="data.cliente_id ? 'primary' : 'grey'"
                 :variant="data.cliente_id ? 'elevated' : 'outlined'"
                 size="small"
-                prepend-icon="tabler-building"
+                :prepend-icon="data.cliente_id ? 'tabler-check' : 'tabler-building'"
               >
                 1. Empresa
               </VChip>
@@ -78,14 +79,14 @@ onMounted(() => {
               <VIcon
                 icon="tabler-arrow-right"
                 size="16"
-                :color="data.cliente_id ? 'success' : 'grey'"
+                :color="data.cliente_id ? 'primary' : 'grey'"
               />
 
               <VChip
-                :color="data.consultor && data.pessoa_contato ? 'success' : data.cliente_id ? 'primary' : 'grey'"
-                :variant="data.consultor && data.pessoa_contato ? 'elevated' : 'outlined'"
+                :color="data.consultor_id && data.pessoa_contato ? 'primary' : 'grey'"
+                :variant="data.consultor_id && data.pessoa_contato ? 'elevated' : 'outlined'"
                 size="small"
-                prepend-icon="tabler-user"
+                :prepend-icon="data.consultor_id && data.pessoa_contato ? 'tabler-check' : 'tabler-user'"
               >
                 2. Dados
               </VChip>
@@ -93,14 +94,14 @@ onMounted(() => {
               <VIcon
                 icon="tabler-arrow-right"
                 size="16"
-                :color="data.servicos.length > 0 ? 'success' : 'grey'"
+                :color="data.servicos.length > 0 ? 'primary' : 'grey'"
               />
 
               <VChip
-                :color="data.servicos.length > 0 ? 'success' : 'grey'"
+                :color="data.servicos.length > 0 ? 'primary' : 'grey'"
                 :variant="data.servicos.length > 0 ? 'elevated' : 'outlined'"
                 size="small"
-                prepend-icon="tabler-tools"
+                :prepend-icon="data.servicos.length > 0 ? 'tabler-check' : 'tabler-tools'"
               >
                 3. Serviços
               </VChip>
@@ -111,18 +112,16 @@ onMounted(() => {
 
       <!-- Seção de Seleção de Empresa -->
       <VCol cols="12">
-        <VCard
-          variant="outlined"
-          :class="data.cliente_id ? 'border-success' : ''"
-        >
+        <VCard variant="outlined">
           <VCardItem>
             <template #prepend>
               <VAvatar
-                :color="data.cliente_id ? 'success' : 'primary'"
+                color="primary"
                 size="40"
+                rounded="sm"
               >
                 <VIcon
-                  :icon="data.cliente_id ? 'tabler-check' : 'tabler-building'"
+                  icon="tabler-building"
                   size="20"
                 />
               </VAvatar>
@@ -174,34 +173,22 @@ onMounted(() => {
                 />
               </template>
             </AppAutocomplete>
-
-            <VAlert
-              v-if="data.cliente_id"
-              type="success"
-              variant="tonal"
-              class="mt-3"
-              icon="tabler-check"
-            >
-              Empresa selecionada com sucesso! Continue preenchendo os dados da proposta.
-            </VAlert>
           </VCardText>
         </VCard>
       </VCol>
 
       <!-- Seção de Dados da Proposta -->
       <VCol cols="12">
-        <VCard
-          variant="outlined"
-          :class="(data.consultor && data.pessoa_contato) ? 'border-success' : ''"
-        >
+        <VCard variant="outlined">
           <VCardItem>
             <template #prepend>
               <VAvatar
-                :color="(data.consultor && data.pessoa_contato) ? 'success' : 'primary'"
+                color="primary"
                 size="40"
+                rounded="sm"
               >
                 <VIcon
-                  :icon="(data.consultor && data.pessoa_contato) ? 'tabler-check' : 'tabler-user-edit'"
+                  icon="tabler-user-edit"
                   size="20"
                 />
               </VAvatar>
@@ -223,14 +210,17 @@ onMounted(() => {
                 cols="12"
                 md="6"
               >
-                <CDFTextField
-                  v-model="data.consultor"
-                  label="Consultor Responsável"
-                  placeholder="Nome do consultor"
+                <AppAutocomplete
+                  v-model="data.consultor_id"
+                  label="Responsável Comercial"
+                  placeholder="Nome do responsável"
                   :rules="[rules.requiredValidator]"
+                  :items="funcionarios"
+                  item-value="id"
+                  item-title="nome"
                   prepend-inner-icon="tabler-user-star"
                   variant="outlined"
-                  hint="Nome do consultor que será responsável por esta proposta"
+                  hint="Nome do responsável por esta proposta"
                   persistent-hint
                 />
               </VCol>
@@ -303,19 +293,8 @@ onMounted(() => {
               </VCol>
             </VRow>
 
-            <!-- Indicador de Progresso -->
             <VAlert
-              v-if="data.consultor && data.pessoa_contato"
-              type="success"
-              variant="tonal"
-              class="mt-4"
-              icon="tabler-check"
-            >
-              Dados principais preenchidos! Agora adicione os serviços da proposta.
-            </VAlert>
-
-            <VAlert
-              v-else-if="data.consultor || data.pessoa_contato"
+              v-if="!(data.consultor_id && data.pessoa_contato)"
               type="info"
               variant="tonal"
               class="mt-4"
@@ -329,18 +308,16 @@ onMounted(() => {
 
       <!-- Seção de Serviços -->
       <VCol cols="12">
-        <VCard
-          variant="outlined"
-          :class="data.servicos.length > 0 ? 'border-success' : ''"
-        >
+        <VCard variant="outlined">
           <VCardItem>
             <template #prepend>
               <VAvatar
-                :color="data.servicos.length > 0 ? 'success' : 'primary'"
+                color="primary"
                 size="40"
+                rounded="sm"
               >
                 <VIcon
-                  :icon="data.servicos.length > 0 ? 'tabler-check' : 'tabler-tools'"
+                  icon="tabler-tools"
                   size="20"
                 />
               </VAvatar>
@@ -396,11 +373,12 @@ onMounted(() => {
           <VCardText class="pa-0">
             <!-- Estado Vazio com Ilustração -->
             <template v-if="data.servicos.length === 0">
-              <div class="text-center py-12">
+              <div class="py-12 text-center">
                 <VAvatar
                   size="80"
                   color="grey-lighten-3"
                   class="mb-4"
+                  rounded="sm"
                 >
                   <VIcon
                     icon="tabler-tools-off"
@@ -409,10 +387,10 @@ onMounted(() => {
                   />
                 </VAvatar>
 
-                <h3 class="text-h6 mb-2">
+                <h3 class="mb-2 text-h6">
                   Nenhum serviço adicionado
                 </h3>
-                <p class="text-body-2 text-medium-emphasis mb-4">
+                <p class="mb-4 text-body-2 text-medium-emphasis">
                   Comece adicionando o primeiro serviço para esta proposta.<br>
                   Você pode configurar custos, valores e detalhes específicos.
                 </p>
@@ -421,7 +399,6 @@ onMounted(() => {
                   color="primary"
                   variant="elevated"
                   prepend-icon="tabler-plus"
-                  size="large"
                   @click="() => {
                     data.servicos.push({
                       nome: '',
@@ -573,6 +550,7 @@ onMounted(() => {
               <VAvatar
                 :color="data.anexo ? 'success' : 'primary'"
                 size="40"
+                rounded="sm"
               >
                 <VIcon
                   :icon="data.anexo ? 'tabler-check' : 'tabler-paperclip'"
@@ -627,17 +605,16 @@ onMounted(() => {
 
       <!-- Resumo Final -->
       <VCol cols="12">
-        <VCard
-          variant="outlined"
-          color="primary"
-          class="text-center"
-        >
-          <VCardText class="py-6">
-            <h3 class="text-h6 mb-2">
-              <VIcon icon="tabler-target-arrow" /> Proposta Quase Pronta!
+        <VCard variant="outlined">
+          <VCardText class="py-6 text-center">
+            <h3 class="mb-2 text-h6">
+              <VIcon
+                icon="tabler-target-arrow"
+                size="40"
+              /> Proposta Quase Pronta!
             </h3>
 
-            <p class="text-body-2 text-medium-emphasis mb-4">
+            <p class="mb-4 text-body-2 text-medium-emphasis">
               Revise todas as informações antes de salvar.<br>
               Depois de salva, você poderá editar ou enviar a proposta para o cliente.
             </p>
@@ -665,8 +642,8 @@ onMounted(() => {
               <VListItem>
                 <template #prepend>
                   <VIcon
-                    :icon="(data.consultor && data.pessoa_contato) ? 'tabler-check' : 'tabler-circle'"
-                    :color="(data.consultor && data.pessoa_contato) ? 'success' : 'grey'"
+                    :icon="(data.consultor_id && data.pessoa_contato) ? 'tabler-check' : 'tabler-circle'"
+                    :color="(data.consultor_id && data.pessoa_contato) ? 'success' : 'grey'"
                   />
                 </template>
                 <VListItemTitle

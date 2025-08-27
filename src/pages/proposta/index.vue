@@ -52,11 +52,11 @@ const headers: ComputedRef<IHeader[]> = computed(() => {
     },
     {
       title: 'Consultor',
-      key: 'consultor',
+      key: 'consultor.nome',
     },
     {
       title: 'Cliente',
-      key: 'filial.nome_fantasia',
+      key: 'cliente.nome_fantasia',
     },
     {
       title: 'Área',
