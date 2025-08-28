@@ -17,9 +17,9 @@ const { isEditing } = withDefaults(defineProps<{
 
 const store = usePropostaStore()
 
-const { data, loading, filiais, funcionarios, modal } = storeToRefs(store)
+const { data, loading, filiais, funcionarios, tipoServicos, modal } = storeToRefs(store)
 
-const { save, update, resetForm, fetchCliente, fetchFuncionarios } = store
+const { save, update, resetForm, fetchCliente, fetchFuncionarios, fetchTipoServico } = store
 
 onBeforeRouteLeave(() => {
   resetForm()
@@ -31,6 +31,7 @@ onMounted(() => {
   // 👉 methods
   fetchCliente()
   fetchFuncionarios()
+  fetchTipoServico()
 })
 </script>
 
@@ -61,10 +62,7 @@ onMounted(() => {
     <template #content>
       <!-- Breadcrumb de Progresso -->
       <VCol cols="12">
-        <VCard
-          variant="outlined"
-          color="primary"
-        >
+        <VCard variant="outlined">
           <VCardText class="py-3">
             <div class="gap-4 d-flex align-center">
               <VChip
@@ -205,10 +203,27 @@ onMounted(() => {
 
           <VCardText>
             <VRow>
+              <!-- Codigo da Proposta -->
+              <VCol
+                cols="12"
+                md="4"
+              >
+                <CDFTextField
+                  v-model="data.codigo_proposta"
+                  label="Código da Proposta"
+                  placeholder="Código da proposta"
+                  prepend-inner-icon="tabler-file"
+                  variant="outlined"
+                  hint="Código identificador da proposta"
+                  persistent-hint
+                  :rules="[rules.requiredValidator]"
+                />
+              </VCol>
+
               <!-- Consultor Responsável -->
               <VCol
                 cols="12"
-                md="6"
+                md="4"
               >
                 <AppAutocomplete
                   v-model="data.consultor_id"
@@ -228,7 +243,7 @@ onMounted(() => {
               <!-- Pessoa de Contato -->
               <VCol
                 cols="12"
-                md="6"
+                md="4"
               >
                 <CDFTextField
                   v-model="data.pessoa_contato"
@@ -292,16 +307,6 @@ onMounted(() => {
                 />
               </VCol>
             </VRow>
-
-            <VAlert
-              v-if="!(data.consultor_id && data.pessoa_contato)"
-              type="info"
-              variant="tonal"
-              class="mt-4"
-              icon="tabler-info-circle"
-            >
-              Preencha pelo menos o consultor responsável e pessoa de contato para continuar.
-            </VAlert>
           </VCardText>
         </VCard>
       </VCol>
@@ -341,7 +346,8 @@ onMounted(() => {
                     prepend-icon="tabler-plus"
                     @click="() => {
                       data.servicos.push({
-                        nome: '',
+                        tipo_servico_id: null,
+                        unidade_custos: 'hh',
                         valor_total_custos: 0,
                         valor_total_despesas: 0,
                         valor_total_tributos: 0,
@@ -374,18 +380,12 @@ onMounted(() => {
             <!-- Estado Vazio com Ilustração -->
             <template v-if="data.servicos.length === 0">
               <div class="py-12 text-center">
-                <VAvatar
-                  size="80"
-                  color="grey-lighten-3"
+                <VIcon
+                  icon="tabler-tools-off"
+                  size="70"
+                  color="grey"
                   class="mb-4"
-                  rounded="sm"
-                >
-                  <VIcon
-                    icon="tabler-tools-off"
-                    size="40"
-                    color="grey"
-                  />
-                </VAvatar>
+                />
 
                 <h3 class="mb-2 text-h6">
                   Nenhum serviço adicionado
@@ -401,7 +401,8 @@ onMounted(() => {
                   prepend-icon="tabler-plus"
                   @click="() => {
                     data.servicos.push({
-                      nome: '',
+                      tipo_servico_id: null,
+                      unidade_custos: 'hh',
                       valor_total_custos: 0,
                       valor_total_despesas: 0,
                       valor_total_tributos: 0,
@@ -451,15 +452,38 @@ onMounted(() => {
                         <!-- Nome do Serviço -->
                         <VCol
                           cols="12"
-                          md="4"
+                          md="5"
                         >
-                          <CDFTextField
-                            v-model="item.nome"
-                            label="Nome do Serviço"
+                          <AppAutocomplete
+                            v-model="item.tipo_servico_id"
+                            label="Tipo de Serviço"
                             placeholder="Ex: Inspeção de equipamentos"
                             :rules="[rules.requiredValidator]"
                             prepend-inner-icon="tabler-tool"
-                            hint="Descreva o serviço a ser realizado"
+                            hint="Selecione o serviço a ser realizado"
+                            persistent-hint
+                            :items="tipoServicos"
+                            item-value="id"
+                            item-title="nome"
+                          />
+                        </VCol>
+
+                        <VCol
+                          cols="12"
+                          md="2"
+                        >
+                          <AppAutocomplete
+                            v-model="item.unidade_custos"
+                            label="Unidade de Custos"
+                            placeholder="Selecione a unidade"
+                            :rules="[rules.requiredValidator]"
+                            :items="[
+                              { value: 'hh', title: 'HH' },
+                              { value: 'hd', title: 'HD' },
+                              { value: 'mensal', title: 'Mensal' },
+                              { value: 'eventos', title: 'Eventos' },
+                            ]"
+                            variant="outlined"
                             persistent-hint
                           />
                         </VCol>
@@ -467,7 +491,7 @@ onMounted(() => {
                         <!-- Valor dos Custos -->
                         <VCol
                           cols="12"
-                          md="3"
+                          md="2"
                         >
                           <InputDinheiro
                             v-model="item.valor_total_custos"
@@ -485,7 +509,7 @@ onMounted(() => {
                         <!-- Valor do Contrato -->
                         <VCol
                           cols="12"
-                          md="3"
+                          md="2"
                         >
                           <InputDinheiro
                             v-model="item.valor_contrato"
@@ -503,8 +527,8 @@ onMounted(() => {
                         <!-- Ações -->
                         <VCol
                           cols="12"
-                          md="2"
-                          class="align-self-center text-end"
+                          md="1"
+                          class="align-self-center"
                         >
                           <VTooltip text="Remover este serviço">
                             <template #activator="{ props }">
@@ -515,16 +539,7 @@ onMounted(() => {
                                 icon="tabler-trash"
                                 size="small"
                                 @click="() => {
-                                  if (data.servicos.length === 1) {
-                                    // Se for o último serviço, confirmar com dialog customizado
-                                    const shouldRemove = globalThis.confirm?.('Tem certeza que deseja remover o último serviço?') ?? true
-                                    if (shouldRemove) {
-                                      data.servicos.splice(index, 1)
-                                    }
-                                  }
-                                  else {
-                                    data.servicos.splice(index, 1)
-                                  }
+                                  data.servicos.splice(index, 1)
                                 }"
                               />
                             </template>
@@ -599,91 +614,6 @@ onMounted(() => {
             >
               Arquivo anexado com sucesso! O documento será incluído na proposta.
             </VAlert>
-          </VCardText>
-        </VCard>
-      </VCol>
-
-      <!-- Resumo Final -->
-      <VCol cols="12">
-        <VCard variant="outlined">
-          <VCardText class="py-6 text-center">
-            <h3 class="mb-2 text-h6">
-              <VIcon
-                icon="tabler-target-arrow"
-                size="40"
-              /> Proposta Quase Pronta!
-            </h3>
-
-            <p class="mb-4 text-body-2 text-medium-emphasis">
-              Revise todas as informações antes de salvar.<br>
-              Depois de salva, você poderá editar ou enviar a proposta para o cliente.
-            </p>
-
-            <!-- Checklist de Progresso -->
-            <VList
-              density="compact"
-              class="bg-transparent"
-            >
-              <VListItem>
-                <template #prepend>
-                  <VIcon
-                    :icon="data.cliente_id ? 'tabler-check' : 'tabler-circle'"
-                    :color="data.cliente_id ? 'success' : 'grey'"
-                  />
-                </template>
-                <VListItemTitle
-                  class="text-start"
-                  style="inline-size: 300px;"
-                >
-                  Empresa selecionada
-                </VListItemTitle>
-              </VListItem>
-
-              <VListItem>
-                <template #prepend>
-                  <VIcon
-                    :icon="(data.consultor_id && data.pessoa_contato) ? 'tabler-check' : 'tabler-circle'"
-                    :color="(data.consultor_id && data.pessoa_contato) ? 'success' : 'grey'"
-                  />
-                </template>
-                <VListItemTitle
-                  class="text-start"
-                  style="inline-size: 300px;"
-                >
-                  Dados da proposta preenchidos
-                </VListItemTitle>
-              </VListItem>
-
-              <VListItem>
-                <template #prepend>
-                  <VIcon
-                    :icon="data.servicos.length > 0 ? 'tabler-check' : 'tabler-circle'"
-                    :color="data.servicos.length > 0 ? 'success' : 'grey'"
-                  />
-                </template>
-                <VListItemTitle
-                  class="text-start"
-                  style="inline-size: 300px;"
-                >
-                  Serviços adicionados ({{ data.servicos.length }})
-                </VListItemTitle>
-              </VListItem>
-
-              <VListItem>
-                <template #prepend>
-                  <VIcon
-                    :icon="data.anexo ? 'tabler-check' : 'tabler-circle'"
-                    :color="data.anexo ? 'success' : 'grey'"
-                  />
-                </template>
-                <VListItemTitle
-                  class="text-start"
-                  style="inline-size: 300px;"
-                >
-                  Anexo incluído (opcional)
-                </VListItemTitle>
-              </VListItem>
-            </VList>
           </VCardText>
         </VCard>
       </VCol>

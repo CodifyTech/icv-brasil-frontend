@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import moment from 'moment'
 import { storeToRefs } from 'pinia'
+import { getOSStatusColor, getOSStatusLabel } from '@/enums/OSStatusEnum'
 import { useOrdemServicoStore } from '@/pages/os/store/useOrdemServicoStore'
 import { useSnackbarStore } from '@/stores/useSnackbarStore'
 
@@ -25,19 +27,6 @@ onMounted(async () => {
 
 onBeforeRouteLeave(() => {
   resetOrdemAtual()
-})
-
-const statusColor = computed(() => {
-  if (!ordemServicoAtual.value?.status)
-    return 'grey'
-
-  const colors = {
-    em_analise: 'info',
-    andamento: 'warning',
-    finalizado: 'success',
-  }
-
-  return colors[ordemServicoAtual.value.status as keyof typeof colors] || 'grey'
 })
 
 // Estado para controle de loading do email
@@ -98,7 +87,7 @@ const podeEnviarEmail = computed(() => {
       <VCol cols="12">
         <div class="d-flex align-center justify-space-between">
           <div>
-            <h1 class="text-h4 font-weight-bold mb-2">
+            <h1 class="mb-2 text-h4 font-weight-bold">
               Visualizar Ordem de Serviço
             </h1>
             <p class="text-body-1 text-medium-emphasis">
@@ -106,7 +95,7 @@ const podeEnviarEmail = computed(() => {
             </p>
           </div>
 
-          <div class="d-flex gap-3">
+          <div class="gap-3 d-flex">
             <!-- Botão de enviar para responsável -->
             <VBtn
               v-if="podeEnviarEmail"
@@ -196,6 +185,17 @@ const podeEnviarEmail = computed(() => {
                 md="6"
                 class="pb-0"
               >
+                <label class="text-body-2 text-medium-emphasis">Código da Proposta</label>
+                <div class="text-body-1 font-weight-medium">
+                  {{ ordemServicoAtual?.proposta?.codigo_proposta }}
+                </div>
+              </VCol>
+
+              <VCol
+                cols="12"
+                md="6"
+                class="pb-0"
+              >
                 <label class="text-body-2 text-medium-emphasis">Cliente</label>
                 <div class="text-body-1 font-weight-medium">
                   {{ ordemServicoAtual.cliente?.razao_social || ordemServicoAtual.cliente?.nome_fantasia }}
@@ -209,7 +209,7 @@ const podeEnviarEmail = computed(() => {
               >
                 <label class="text-body-2 text-medium-emphasis">Data de Abertura</label>
                 <div class="text-body-1 font-weight-medium">
-                  {{ new Date(ordemServicoAtual.created_at).toLocaleDateString('pt-BR') }}
+                  {{ moment(ordemServicoAtual.created_at).format('DD/MM/YYYY') }}
                 </div>
               </VCol>
 
@@ -221,11 +221,11 @@ const podeEnviarEmail = computed(() => {
                 <label class="text-body-2 text-medium-emphasis">Status</label>
                 <div>
                   <VChip
-                    :color="statusColor"
+                    :color="getOSStatusColor(ordemServicoAtual.status)"
                     variant="tonal"
                     size="small"
                   >
-                    {{ ordemServicoAtual.status }}
+                    {{ getOSStatusLabel(ordemServicoAtual.status) }}
                   </VChip>
                 </div>
               </VCol>
@@ -343,7 +343,7 @@ const podeEnviarEmail = computed(() => {
                     >
                       tabler-file
                     </VIcon>
-                    <p class="text-body-2 mb-1">
+                    <p class="mb-1 text-body-2">
                       {{ anexo.nome }}
                     </p>
                     <VChip
@@ -395,7 +395,7 @@ const podeEnviarEmail = computed(() => {
               <template #footer="{ page, pageCount, prevPage, nextPage }">
                 <div
                   v-if="ordemServicoAtual?.fotos?.length > 0"
-                  class="d-flex align-center justify-center pa-4"
+                  class="justify-center d-flex align-center pa-4"
                 >
                   <VBtn
                     :disabled="page === 1"
@@ -446,10 +446,10 @@ const podeEnviarEmail = computed(() => {
         >
           tabler-file-x
         </VIcon>
-        <h2 class="text-h6 mb-2">
+        <h2 class="mb-2 text-h6">
           Ordem de serviço não encontrada
         </h2>
-        <p class="text-body-2 text-medium-emphasis mb-4">
+        <p class="mb-4 text-body-2 text-medium-emphasis">
           A ordem de serviço que você está procurando não existe ou foi removida.
         </p>
         <VBtn

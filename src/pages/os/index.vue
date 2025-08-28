@@ -16,19 +16,12 @@ definePage({
 
 const store = useOrdemServicoStore()
 
-const { ordensServico } = storeToRefs(store)
+const { ordensServico, estatisticas } = storeToRefs(store)
 
 onMounted(async () => {
   await Promise.all([
     store.fetchOrdensServico(),
   ])
-})
-
-const estatisticas = ref({
-  total: 0,
-  emAnalise: 0,
-  emAndamento: 0,
-  finalizados: 0,
 })
 </script>
 
@@ -57,7 +50,7 @@ const estatisticas = ref({
                 <h3 class="text-h5 font-weight-bold">
                   {{ estatisticas?.total }}
                 </h3>
-                <p class="text-body-2 text-medium-emphasis mb-0">
+                <p class="mb-0 text-body-2 text-medium-emphasis">
                   Total de OS
                 </p>
               </div>
@@ -85,9 +78,9 @@ const estatisticas = ref({
               </VAvatar>
               <div>
                 <h3 class="text-h5 font-weight-bold">
-                  {{ estatisticas.emAnalise }}
+                  {{ estatisticas.analise }}
                 </h3>
-                <p class="text-body-2 text-medium-emphasis mb-0">
+                <p class="mb-0 text-body-2 text-medium-emphasis">
                   Em Análise
                 </p>
               </div>
@@ -115,9 +108,9 @@ const estatisticas = ref({
               </VAvatar>
               <div>
                 <h3 class="text-h5 font-weight-bold">
-                  {{ estatisticas.emAndamento }}
+                  {{ estatisticas.andamento }}
                 </h3>
-                <p class="text-body-2 text-medium-emphasis mb-0">
+                <p class="mb-0 text-body-2 text-medium-emphasis">
                   Em Andamento
                 </p>
               </div>
@@ -145,9 +138,9 @@ const estatisticas = ref({
               </VAvatar>
               <div>
                 <h3 class="text-h5 font-weight-bold">
-                  {{ estatisticas.finalizados }}
+                  {{ estatisticas.finalizado }}
                 </h3>
-                <p class="text-body-2 text-medium-emphasis mb-0">
+                <p class="mb-0 text-body-2 text-medium-emphasis">
                   Finalizados
                 </p>
               </div>
@@ -195,11 +188,11 @@ const estatisticas = ref({
                 </template>
 
                 <VListItemTitle>
-                  {{ os.numero_os || os.codigo }}
+                  {{ os.codigo }}
                 </VListItemTitle>
 
                 <VListItemSubtitle>
-                  {{ os.cliente?.razao_social || os.cliente_nome }} • {{ moment(os.data_abertura).format('DD/MM/YYYY') }}
+                  {{ os.cliente?.razao_social || os.cliente?.nome_fantasia }} • {{ moment(os.created_at).format('DD/MM/YYYY') }}
                 </VListItemSubtitle>
 
                 <template #append>
@@ -216,7 +209,7 @@ const estatisticas = ref({
 
             <div
               v-else
-              class="text-center py-8"
+              class="py-8 text-center"
             >
               <VIcon
                 size="64"

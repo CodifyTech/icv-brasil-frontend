@@ -32,7 +32,6 @@ onMounted(async () => {
   await Promise.all([
     osStore.loadClientes(),
     inmetroStore.fetchEscopo(),
-    inmetroStore.fetchTipoServico(),
     inmetroStore.fetchResponsavel(),
   ])
 })
@@ -48,6 +47,7 @@ const {
   escopos,
   tiposServico,
   responsaveis,
+  propostas,
 } = storeToRefs(inmetroStore)
 
 watch(formData, () => {
@@ -55,6 +55,8 @@ watch(formData, () => {
     perfilResponsavelOptions.value = []
     perfilResponsavelOptions.value = responsaveis.value
       ?.find(item => item.id === formData.value.responsavel_id)?.honorarios ?? []
+    inmetroStore.fetchPropostas(formData.value.cliente_id)
+    inmetroStore.fetchTipoServico(formData.value.proposta_id)
   }
 })
 
@@ -113,6 +115,17 @@ const emailJaEnviadoHoje = computed(() => {
 // Verificar se pode enviar email
 const podeEnviarEmail = computed(() => {
   return isEditing && formData.value?.responsavel && !emailJaEnviadoHoje.value
+})
+
+watch(() => formData.value.cliente_id, () => {
+  propostas.value = []
+  formData.value.proposta_id = null
+  inmetroStore.fetchPropostas(formData.value.cliente_id)
+})
+
+watch(() => formData.value.proposta_id, () => {
+  formData.value.tipo_servico_id = null
+  inmetroStore.fetchTipoServico(formData.value.proposta_id)
 })
 
 onBeforeRouteLeave(() => {
@@ -206,6 +219,20 @@ onBeforeRouteLeave(() => {
                   placeholder="Selecione o cliente"
                   :items="clientes"
                   item-title="razao_social"
+                  item-value="id"
+                  :rules="[rules.requiredValidator]"
+                />
+              </VCol>
+              <VCol
+                cols="12"
+                md="4"
+              >
+                <AppAutocomplete
+                  v-model="formData.proposta_id"
+                  label="Proposta"
+                  placeholder="Selecione a proposta"
+                  :items="propostas"
+                  item-title="codigo_proposta"
                   item-value="id"
                   :rules="[rules.requiredValidator]"
                 />

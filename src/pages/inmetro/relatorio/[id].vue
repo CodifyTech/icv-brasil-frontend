@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useOrdemServicoStore } from '@/pages/os/store/useOrdemServicoStore'
 import { useRoute } from 'vue-router'
+import { useOrdemServicoStore } from '@/pages/os/store/useOrdemServicoStore'
 
 definePage({
   meta: {
@@ -60,7 +60,7 @@ const handleDownloadPDF = async () => {
 <template>
   <div
     v-if="loading.item"
-    class="d-flex justify-center align-center"
+    class="justify-center d-flex align-center"
     style="block-size: 400px;"
   >
     <VProgressCircular
@@ -80,10 +80,10 @@ const handleDownloadPDF = async () => {
     >
       mdi-file-document-remove
     </VIcon>
-    <h3 class="text-h5 mb-2">
+    <h3 class="mb-2 text-h5">
       Relatório não encontrado
     </h3>
-    <p class="text-body-1 mb-4">
+    <p class="mb-4 text-body-1">
       O relatório solicitado não foi encontrado ou você não tem permissão para visualizá-lo.
     </p>
     <VBtn
@@ -152,8 +152,8 @@ const handleDownloadPDF = async () => {
     >
       <VCardText class="pa-8">
         <!-- Cabeçalho do relatório -->
-        <div class="text-center mb-8">
-          <h1 class="text-h4 font-weight-bold mb-2">
+        <div class="mb-8 text-center">
+          <h1 class="mb-2 text-h4 font-weight-bold">
             RELATÓRIO
           </h1>
           <div class="text-h6 text-medium-emphasis">
@@ -267,7 +267,7 @@ const handleDownloadPDF = async () => {
                   <td class="font-weight-bold bg-grey-lighten-5">
                     Cliente:
                   </td>
-                  <td>{{ ordemServicoAtual?.cliente?.nome || '-' }}</td>
+                  <td>{{ ordemServicoAtual?.cliente?.nome_fantasia || '-' }}</td>
                 </tr>
               </tbody>
             </VTable>
@@ -330,9 +330,15 @@ const handleDownloadPDF = async () => {
           </VCol>
         </VRow>
 
-        <VDivider v-if="ordemServicoAtual?.material_equipamentos?.length > 0" class="mb-4" />
+        <VDivider
+          v-if="ordemServicoAtual?.material_equipamentos?.length > 0"
+          class="mb-4"
+        />
 
-        <VRow v-if="ordemServicoAtual?.material_equipamentos?.length > 0" class="mb-4">
+        <VRow
+          v-if="ordemServicoAtual?.material_equipamentos?.length > 0"
+          class="mb-4"
+        >
           <VCol
             cols="12"
             class="pb-0"
@@ -361,9 +367,15 @@ const handleDownloadPDF = async () => {
           </VCol>
         </VRow>
 
-        <VDivider v-if="ordemServicoAtual?.anexos?.length > 0" class="mb-4" />
+        <VDivider
+          v-if="ordemServicoAtual?.anexos?.length > 0"
+          class="mb-4"
+        />
 
-        <VRow v-if="ordemServicoAtual?.anexos?.length > 0" class="mb-4">
+        <VRow
+          v-if="ordemServicoAtual?.anexos?.length > 0"
+          class="mb-4"
+        >
           <VCol
             cols="12"
             class="pb-0"
@@ -410,7 +422,7 @@ const handleDownloadPDF = async () => {
         </VRow>
 
         <!-- Rodapé -->
-        <div class="text-center mt-8 pt-4 border-top">
+        <div class="pt-4 mt-8 text-center border-top">
           <p class="text-body-2 text-medium-emphasis">
             Este relatório foi gerado automaticamente pelo sistema ICV Brasil.
           </p>
