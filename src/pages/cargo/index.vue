@@ -3,19 +3,15 @@ import { storeToRefs } from 'pinia'
 import type { ComputedRef } from 'vue'
 import { useCargoStore } from './store/useCargoStore'
 import type { ICargo } from './types'
-import LayoutTable from '@/components/CDF/LayoutTable.vue'
-import type { ITerm } from '@/components/CDF/SearchBar.vue'
-import { getI18n } from '@/plugins/i18n'
 import type { IHeader, ITableAction } from '@/pages/types/layoutTable.types'
+import type { ITerm } from '@/components/CDF/SearchBar.vue'
+import LayoutTable from '@/components/CDF/LayoutTable.vue'
 
 withDefaults(defineProps<{
   isHeader: boolean
 }>(), {
   isHeader: true,
 })
-
-const i18n = getI18n()
-const { t } = useI18n(i18n)
 
 definePage({
   meta: {

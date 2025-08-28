@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import moment from 'moment'
 import {
   getOSResultadoColor,
   getOSResultadoLabel,
@@ -21,13 +22,10 @@ import { useSnackbarStore } from '@/stores/useSnackbarStore'
 
 definePage({
   meta: {
-    action: 'read',
+    action: 'list',
     subject: 'inmetro',
   },
 })
-
-// Estados para controle de loading dos emails
-const loadingEmails = ref<Record<number, boolean>>({})
 
 const store = useOrdemServicoStore()
 const inmetroStore = useInmetroStore()
@@ -68,6 +66,8 @@ const isDialogReprovarVisible = ref<boolean>(false)
 const isDialogMaterialVisible = ref<boolean>(false)
 const isDialogDocumentosVisible = ref<boolean>(false)
 const ordemServicoSelecionada = ref<IOrdemServico | null>(null)
+const loadingEmails = ref<Record<number, boolean>>({})
+const auth = useAuth()
 
 const aplicarFiltros = async () => {
   // Converter valores null para undefined para compatibilidade
@@ -327,13 +327,47 @@ const confirmarReprovacao = async (dados: { os: IOrdemServico | null; dadosRepro
   }
 }
 
-const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString('pt-BR')
-}
-
 const getItemValue = (item: any, key: string) => {
   return item[key]
 }
+
+const headers = computed(() => {
+  if (auth.hasRole('inmetro')) {
+    return [
+      { title: 'Nº OS', key: 'codigo', minWidth: '150px' },
+      { title: 'Nº Pedido', key: 'num_pedido_compra', minWidth: '150px' },
+      { title: 'Nº Relatório', key: 'num_relatorio', minWidth: '150px' },
+      { title: 'Cliente', key: 'cliente.nome_fantasia', minWidth: '150px' },
+      { title: 'Fornecedor', key: 'fornecedor' },
+      { title: 'Responsável', key: 'responsavel.nome' },
+      { title: 'Escopo', key: 'escopo_acreditacao.nome' },
+      { title: 'Tipo Serviço', key: 'tipo_servico.nome', minWidth: '150px' },
+      { title: 'Material/Equipamento', key: 'material_equipamento' },
+      { title: 'Data', key: 'data_execucao', minWidth: '150px' },
+      { title: 'Resultado', key: 'resultado' },
+      { title: 'Documentos', key: 'documentos', sortable: false },
+      { title: 'Status', key: 'status' },
+    ]
+  }
+
+  return [
+    { title: 'Nº OS', key: 'codigo', minWidth: '150px' },
+    { title: 'Nº Pedido', key: 'num_pedido_compra', minWidth: '150px' },
+    { title: 'Nº Relatório', key: 'num_relatorio', minWidth: '150px' },
+    { title: 'Cliente', key: 'cliente.nome_fantasia', minWidth: '150px' },
+    { title: 'Fornecedor', key: 'fornecedor' },
+    { title: 'Responsável', key: 'responsavel.nome' },
+    { title: 'Escopo', key: 'escopo_acreditacao.nome' },
+    { title: 'Tipo Serviço', key: 'tipo_servico.nome', minWidth: '150px' },
+    { title: 'Material/Equipamento', key: 'material_equipamento' },
+    { title: 'Data', key: 'data_execucao', minWidth: '150px' },
+    { title: 'Resultado', key: 'resultado' },
+    { title: 'Email Status', key: 'email_status', sortable: false, minWidth: '120px' },
+    { title: 'Documentos', key: 'documentos', sortable: false },
+    { title: 'Status', key: 'status' },
+    { title: 'Ações', key: 'actions', sortable: false },
+  ]
+})
 </script>
 
 <template>
@@ -341,12 +375,12 @@ const getItemValue = (item: any, key: string) => {
   <VCard class="mb-6">
     <VCardText class="d-flex align-center justify-space-between">
       <div>
-        <h1 class="text-h6 text-lg-h4 mb-0">
+        <h1 class="mb-0 text-h6 text-lg-h4">
           Lista de Relatórios
         </h1>
       </div>
 
-      <div class="d-flex gap-2">
+      <div class="gap-2 d-flex">
         <VBtn
           color="secondary"
           variant="outlined"
@@ -371,142 +405,92 @@ const getItemValue = (item: any, key: string) => {
     </VCardTitle>
     <VCardText>
       <VForm @submit.prevent="aplicarFiltros">
-        <VRow>
-          <VCol
-            cols="12"
-            md="3"
-          >
-            <AppAutocomplete
-              v-model="filtroForm.cliente_id"
-              label="Cliente"
-              :items="clientes"
-              item-title="razao_social"
-              item-value="id"
-              clearable
-              hide-details
-              placeholder="Selecione o cliente"
-            />
-          </VCol>
-          <VCol
-            cols="12"
-            md="3"
-          >
-            <AppTextField
-              v-model="filtroForm.data_inspecao_inicio"
-              label="Data Inspeção (Início)"
-              type="date"
-              clearable
-              hide-details
-            />
-          </VCol>
-          <VCol
-            cols="12"
-            md="3"
-          >
-            <AppTextField
-              v-model="filtroForm.data_inspecao_fim"
-              label="Data Inspeção (Fim)"
-              type="date"
-              clearable
-              hide-details
-            />
-          </VCol>
-          <VCol
-            cols="12"
-            md="3"
-          >
-            <AppAutocomplete
-              v-model="filtroForm.responsavel_id"
-              label="Responsável"
-              :items="responsaveis"
-              item-title="nome"
-              item-value="id"
-              clearable
-              hide-details
-              placeholder="Selecione o responsável"
-            />
-          </VCol>
-          <VCol
-            cols="12"
-            md="3"
-          >
-            <AppTextField
-              v-model="filtroForm.fornecedor"
-              label="Fornecedor"
-              clearable
-              hide-details
-              placeholder="Digite o nome do fornecedor"
-            />
-          </VCol>
-          <VCol
-            cols="12"
-            md="3"
-          >
-            <AppAutocomplete
-              v-model="filtroForm.escopo_acreditacao_id"
-              label="Escopo"
-              :items="escopos"
-              clearable
-              item-title="nome"
-              item-value="id"
-              hide-details
-              placeholder="Selecione o escopo"
-            />
-          </VCol>
-          <VCol
-            cols="12"
-            md="3"
-          >
-            <AppSelect
-              v-model="filtroForm.tipo_servico_id"
-              label="Tipo de Serviço"
-              :items="tiposServico"
-              item-title="nome"
-              item-value="id"
-              clearable
-              hide-details
-              placeholder="Selecione o tipo de serviço"
-            />
-          </VCol>
-          <VCol
-            cols="12"
-            md="3"
-          >
-            <AppTextField
-              v-model="filtroForm.num_pedido_compra"
-              label="Nº Pedido"
-              clearable
-              hide-details
-              placeholder="Digite o número do pedido de compra"
-            />
-          </VCol>
-          <VCol
-            cols="12"
-            md="3"
-          >
-            <AppTextField
-              v-model="filtroForm.certificado_associado"
-              label="Nº Certificado"
-              clearable
-              hide-details
-              placeholder="Digite o número do certificado associado"
-            />
-          </VCol>
-          <VCol
-            cols="12"
-            md="3"
-          >
-            <AppTextField
-              v-model="filtroForm.codigo_os"
-              label="Nº OS"
-              clearable
-              hide-details
-              placeholder="Digite o número da OS"
-            />
-          </VCol>
-        </VRow>
+        <div class="filters">
+          <AppAutocomplete
+            v-model="filtroForm.cliente_id"
+            label="Cliente"
+            :items="clientes"
+            item-title="razao_social"
+            item-value="id"
+            clearable
+            hide-details
+            placeholder="Selecione o cliente"
+          />
+          <AppTextField
+            v-model="filtroForm.data_inspecao_inicio"
+            label="Data Inspeção (Início)"
+            type="date"
+            clearable
+            hide-details
+          />
+          <AppTextField
+            v-model="filtroForm.data_inspecao_fim"
+            label="Data Inspeção (Fim)"
+            type="date"
+            clearable
+            hide-details
+          />
+          <AppAutocomplete
+            v-model="filtroForm.responsavel_id"
+            label="Responsável"
+            :items="responsaveis"
+            item-title="nome"
+            item-value="id"
+            clearable
+            hide-details
+            placeholder="Selecione o responsável"
+          />
+          <AppTextField
+            v-model="filtroForm.fornecedor"
+            label="Fornecedor"
+            clearable
+            hide-details
+            placeholder="Digite o nome do fornecedor"
+          />
+          <AppAutocomplete
+            v-model="filtroForm.escopo_acreditacao_id"
+            label="Escopo"
+            :items="escopos"
+            clearable
+            item-title="nome"
+            item-value="id"
+            hide-details
+            placeholder="Selecione o escopo"
+          />
+          <AppSelect
+            v-model="filtroForm.tipo_servico_id"
+            label="Tipo de Serviço"
+            :items="tiposServico"
+            item-title="nome"
+            item-value="id"
+            clearable
+            hide-details
+            placeholder="Selecione o tipo de serviço"
+          />
+          <AppTextField
+            v-model="filtroForm.num_pedido_compra"
+            label="Nº Pedido"
+            clearable
+            hide-details
+            placeholder="Digite o número do pedido de compra"
+          />
+          <AppTextField
+            v-model="filtroForm.certificado_associado"
+            label="Nº Certificado"
+            clearable
+            hide-details
+            placeholder="Digite o número do certificado associado"
+          />
+          <AppTextField
+            v-model="filtroForm.codigo_os"
+            label="Nº OS"
+            clearable
+            hide-details
+            placeholder="Digite o número da OS"
+          />
+        </div>
         <VRow class="mt-4">
-          <VCol class="d-flex gap-3 justify-end">
+          <VCol class="justify-end gap-3 d-flex">
             <VBtn
               type="submit"
               color="primary"
@@ -529,26 +513,9 @@ const getItemValue = (item: any, key: string) => {
   <VCard>
     <VCardText>
       <VDataTable
-        :headers="[
-          { title: 'Nº OS', key: 'codigo', minWidth: '150px' },
-          { title: 'Nº Pedido', key: 'num_pedido_compra', minWidth: '150px' },
-          { title: 'Nº Relatório', key: 'num_relatorio', minWidth: '150px' },
-          { title: 'Cliente', key: 'cliente.nome_fantasia', minWidth: '150px' },
-          { title: 'Fornecedor', key: 'fornecedor' },
-          { title: 'Responsável', key: 'responsavel.nome' },
-          { title: 'Escopo', key: 'escopo_acreditacao.nome' },
-          { title: 'Tipo Serviço', key: 'tipo_servico.nome', minWidth: '150px' },
-          { title: 'Material/Equipamento', key: 'material_equipamento' },
-          { title: 'Data', key: 'data_execucao', minWidth: '150px' },
-          { title: 'Resultado', key: 'resultado' },
-          { title: 'Email Status', key: 'email_status', sortable: false, minWidth: '120px' },
-          { title: 'Documentos', key: 'documentos', sortable: false },
-          { title: 'Status', key: 'status' },
-          { title: 'Ações', key: 'actions', sortable: false },
-        ]"
+        :headers="headers"
         :items="ordensServico"
         :loading="loading.relatorios"
-        class="elevation-1"
       >
         <template #[`item.material_equipamento`]="{ item }">
           <VBtn
@@ -569,7 +536,7 @@ const getItemValue = (item: any, key: string) => {
         </template>
 
         <template #[`item.data_inspecao`]="{ item }">
-          {{ formatDate(getItemValue(item, 'data_inspecao')) }}
+          {{ moment(getItemValue(item, 'data_inspecao')).format('DD/MM/YYYY') }}
         </template>
 
         <template #[`item.resultado`]="{ item }">
@@ -583,7 +550,7 @@ const getItemValue = (item: any, key: string) => {
         </template>
 
         <template #[`item.email_status`]="{ item }">
-          <div class="d-flex align-center gap-1">
+          <div class="gap-1 d-flex align-center">
             <VIcon
               v-if="item.email_cliente_enviado_em"
               color="success"
@@ -639,7 +606,7 @@ const getItemValue = (item: any, key: string) => {
         </template>
 
         <template #[`item.actions`]="{ item }">
-          <div class="d-flex gap-2">
+          <div class="gap-2 d-flex">
             <VBtn
               size="small"
               color="primary"
@@ -720,3 +687,11 @@ const getItemValue = (item: any, key: string) => {
     :carregar-fotos="carregarFotos"
   />
 </template>
+
+<style scoped>
+.filters {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(4, minmax(200px, 1fr));
+}
+</style>

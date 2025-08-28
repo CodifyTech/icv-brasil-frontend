@@ -10,7 +10,7 @@ import { useOrdemServicoStore } from '@/pages/os/store/useOrdemServicoStore'
 definePage({
   meta: {
     action: 'read',
-    subject: 'inmetro',
+    subject: 'os',
   },
 })
 
