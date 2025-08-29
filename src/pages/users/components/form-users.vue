@@ -2,8 +2,8 @@
 import { storeToRefs } from 'pinia'
 import LayoutForms from '@/components/CDF/LayoutForms.vue'
 import { useUsersStore } from '@/pages/users/store/useUsersStore'
-import { confirmedValidator, emailValidator, lengthValidator, requiredValidator } from '@/validators/cdf-rules'
 import type { IUser } from '@/pages/users/types'
+import { confirmedValidator, emailValidator, lengthValidator, requiredValidator } from '@/validators/cdf-rules'
 
 const {
   isEditing = false,
@@ -27,10 +27,12 @@ const {
   data,
   roles,
   loading,
+  funcionarios,
 } = storeToRefs(store)
 
 const {
   fetchPerfis,
+  fetchFuncionarios,
   save,
   update,
   resetForm,
@@ -38,6 +40,7 @@ const {
 
 onMounted(() => {
   fetchPerfis()
+  fetchFuncionarios()
 })
 
 onBeforeRouteLeave(() => {
@@ -76,7 +79,7 @@ onBeforeRouteLeave(() => {
     <template #content>
       <VCol
         cols="12"
-        class="d-flex justify-center"
+        class="justify-center d-flex"
       >
         <VSkeletonLoader
           :loading="loading.item"
@@ -127,7 +130,10 @@ onBeforeRouteLeave(() => {
         </VSkeletonLoader>
       </VCol>
 
-      <VCol cols="12">
+      <VCol
+        cols="12"
+        md="6"
+      >
         <VSkeletonLoader
           :loading="loading.item"
           type="text"
@@ -138,6 +144,27 @@ onBeforeRouteLeave(() => {
             :placeholder="$t('users.form.email.placeholder')"
             :rules="[requiredValidator, emailValidator]"
             :loading="loading.item"
+          />
+        </VSkeletonLoader>
+      </VCol>
+
+      <VCol
+        cols="12"
+        md="6"
+      >
+        <VSkeletonLoader
+          :loading="loading.item"
+          type="text"
+        >
+          <AppSelect
+            v-model="data.funcionario_id"
+            label="Funcionário"
+            placeholder="Selecione um funcionário"
+            :rules="[requiredValidator]"
+            item-title="nome"
+            item-value="id"
+            :items="funcionarios"
+            :loading="loading.funcionarios"
           />
         </VSkeletonLoader>
       </VCol>

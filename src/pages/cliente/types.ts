@@ -1,5 +1,6 @@
 export interface ICliente {
   id?: string
+  codigo_cliente?: string
   razao_social: string
   nome_fantasia: string
   cnpj: string

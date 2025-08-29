@@ -91,7 +91,7 @@ watch(() => data.value, newData => {
                     <VRow>
                       <VCol
                         cols="12"
-                        class="d-flex justify-center"
+                        class="justify-center d-flex"
                       >
                         <EnviarImagem
                           v-model="data.foto"
@@ -131,7 +131,7 @@ watch(() => data.value, newData => {
                       </VCol>
                       <VCol
                         cols="12"
-                        md="4"
+                        md="6"
                       >
                         <CDFTextField
                           v-model="data.telefone_1"
@@ -144,7 +144,7 @@ watch(() => data.value, newData => {
                       </VCol>
                       <VCol
                         cols="12"
-                        md="4"
+                        md="6"
                       >
                         <CDFTextField
                           v-model="data.telefone_2"
@@ -157,7 +157,31 @@ watch(() => data.value, newData => {
                       </VCol>
                       <VCol
                         cols="12"
-                        md="4"
+                        md="6"
+                      >
+                        <CDFTextField
+                          v-model="data.email_1"
+                          label="E-mail"
+                          placeholder="Digite o e-mail 1"
+                          type="email"
+                          :rules="[cdfRules.requiredValidator, cdfRules.emailValidator]"
+                        />
+                      </VCol>
+                      <VCol
+                        cols="12"
+                        md="6"
+                      >
+                        <CDFTextField
+                          v-model="data.email_2"
+                          label="E-mail"
+                          placeholder="Digite o e-mail 2"
+                          type="email"
+                          :rules="[cdfRules.requiredValidator, cdfRules.emailValidator]"
+                        />
+                      </VCol>
+                      <VCol
+                        cols="12"
+                        md="6"
                       >
                         <AppAutocomplete
                           v-model="data.departamento_id"
@@ -217,9 +241,6 @@ watch(() => data.value, newData => {
                   <VTab value="anexos">
                     Anexos
                   </VTab>
-                  <VTab value="dados_usuario">
-                    Usuário
-                  </VTab>
                 </VTabs>
 
                 <VTabsWindow v-model="tab">
@@ -227,7 +248,7 @@ watch(() => data.value, newData => {
                     value="qualificacoes_pofissionais"
                     class="pa-2"
                   >
-                    <div class="d-flex flex-column gap-2">
+                    <div class="gap-2 d-flex flex-column">
                       <CDFDialogManager
                         v-model:items="data.formacoes"
                         title="Formação"
@@ -241,7 +262,7 @@ watch(() => data.value, newData => {
                         }"
                       >
                         <template #header="{ item }: { item: IFormacao }">
-                          <div class="d-flex flex-column gap-2 pa-4">
+                          <div class="gap-2 d-flex flex-column pa-4">
                             <VLabel v-if="item.nome">
                               {{ item.nome }}
                             </VLabel>
@@ -297,7 +318,7 @@ watch(() => data.value, newData => {
                         }"
                       >
                         <template #header="{ item }: { item: IQualificacao }">
-                          <div class="d-flex flex-column gap-2 pa-4">
+                          <div class="gap-2 d-flex flex-column pa-4">
                             <VLabel v-if="item.nome">
                               Qualificação: {{ item.nome }}
                             </VLabel>
@@ -378,7 +399,7 @@ watch(() => data.value, newData => {
                     value="atestados_ocupacionais_epi"
                     class="pa-2"
                   >
-                    <div class="d-flex flex-column gap-2">
+                    <div class="gap-2 d-flex flex-column">
                       <CDFDialogManager
                         v-model:items="data.atestado_ocupacionals"
                         title="Atestado Ocupacional"
@@ -392,7 +413,7 @@ watch(() => data.value, newData => {
                         }"
                       >
                         <template #header="{ item }: { item: IAtestadoOcupacional }">
-                          <div class="d-flex flex-column gap-2 pa-4">
+                          <div class="gap-2 d-flex flex-column pa-4">
                             <VLabel v-if="item.nome">
                               Atestado: {{ item.nome }}
                             </VLabel>
@@ -452,7 +473,7 @@ watch(() => data.value, newData => {
                         }"
                       >
                         <template #header="{ item }: { item: IEPI }">
-                          <div class="d-flex flex-column gap-2 pa-4">
+                          <div class="gap-2 d-flex flex-column pa-4">
                             <VLabel v-if="item.nome">
                               Nome: {{ item.nome }}
                             </VLabel>
@@ -609,7 +630,7 @@ watch(() => data.value, newData => {
                     value="anexos"
                     class="pa-2"
                   >
-                    <div class="d-flex flex-column gap-2">
+                    <div class="gap-2 d-flex flex-column">
                       <CDFDialogManager
                         v-model:items="data.anexos"
                         title="Anexo"
@@ -622,7 +643,7 @@ watch(() => data.value, newData => {
                         }"
                       >
                         <template #header="{ item }: { item: IFuncionarioAnexo }">
-                          <div class="d-flex flex-column gap-2 pa-4">
+                          <div class="gap-2 d-flex flex-column pa-4">
                             <VLabel v-if="item.nome">
                               {{ item.nome }}
                             </VLabel>
@@ -683,7 +704,7 @@ watch(() => data.value, newData => {
                       }"
                     >
                       <template #header="{ item }: { item: IHonorario }">
-                        <div class="d-flex flex-column gap-2 pa-4">
+                        <div class="gap-2 d-flex flex-column pa-4">
                           <VLabel v-if="item.perfil">
                             {{ item.perfil }}
                           </VLabel>
@@ -798,40 +819,6 @@ watch(() => data.value, newData => {
                         </VRow>
                       </template>
                     </CDFDialogManager>
-                  </VTabsWindowItem>
-
-                  <VTabsWindowItem
-                    value="dados_usuario"
-                    class="pa-2"
-                  >
-                    <VCard variant="outlined">
-                      <VCardText>
-                        <VRow>
-                          <VCol
-                            cols="12"
-                            md="6"
-                          >
-                            <CDFTextField
-                              v-model="data.user.email"
-                              label="E-mail"
-                              placeholder="Digite o endereço de e-mail"
-                              :rules="[cdfRules.emailValidator]"
-                            />
-                          </VCol>
-                          <VCol
-                            cols="12"
-                            md="6"
-                          >
-                            <CDFTextField
-                              v-model="data.user.password"
-                              label="Senha"
-                              placeholder="Digite o senha"
-                              type="password"
-                            />
-                          </VCol>
-                        </VRow>
-                      </VCardText>
-                    </VCard>
                   </VTabsWindowItem>
                 </VTabsWindow>
               </VCol>

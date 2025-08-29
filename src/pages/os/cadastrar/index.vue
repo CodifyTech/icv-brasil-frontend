@@ -4,9 +4,9 @@ import { useOrdemServicoStore } from '@/pages/os/store/useOrdemServicoStore'
 
 definePage({
   meta: {
-    navActiveLink: 'inmetro',
+    navActiveLink: 'os',
     action: 'create',
-    subject: 'inmetro',
+    subject: 'os',
   },
 })
 

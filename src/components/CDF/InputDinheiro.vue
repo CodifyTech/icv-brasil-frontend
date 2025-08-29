@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { CurrencyDisplay, useCurrencyInput } from 'vue-currency-input'
 import { watch } from 'vue'
+import { CurrencyDisplay, useCurrencyInput } from 'vue-currency-input'
 
 defineOptions({ name: 'InputDinheiro', inheritAttrs: false })
 
@@ -59,6 +59,16 @@ const label = computed(() => useAttrs().label as string | undefined)
       :label="undefined"
       variant="outlined"
       :readonly="readonly"
-    />
+    >
+      <template
+        v-for="(_, slot) of $slots"
+        #[slot]="scope"
+      >
+        <slot
+          :name="slot"
+          v-bind="scope"
+        />
+      </template>
+    </VTextField>
   </div>
 </template>

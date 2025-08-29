@@ -3,6 +3,7 @@ import InmetroService from '../services/InmetroService'
 import type { ICliente } from '@/pages/cliente/types'
 import type { IEscopo } from '@/pages/escopo/types'
 import type { IFuncionario } from '@/pages/funcionario/types'
+import type { IProposta } from '@/pages/proposta/types'
 import type { ITipoServico } from '@/pages/tiposervico/types'
 
 export const useInmetroStore = defineStore('inmetro', {
@@ -12,6 +13,7 @@ export const useInmetroStore = defineStore('inmetro', {
     tiposServico: [] as ITipoServico[],
     responsaveis: [] as IFuncionario[],
     clientes: [] as ICliente[],
+    propostas: [] as IProposta[],
 
     // Loading states específicos do Inmetro
     loading: {
@@ -19,6 +21,7 @@ export const useInmetroStore = defineStore('inmetro', {
       tiposServico: false,
       responsaveis: false,
       clientes: false,
+      propostas: false,
     },
   }),
 
@@ -62,10 +65,10 @@ export const useInmetroStore = defineStore('inmetro', {
     },
 
     // Buscar tipos de serviço
-    async fetchTipoServico() {
+    async fetchTipoServico(propostaId: string) {
       this.loading.tiposServico = true
       try {
-        const data = await InmetroService.fetchAll<ITipoServico[]>({}, 'listar/tipo-servico')
+        const data = await InmetroService.fetchAll<ITipoServico[]>({ proposta_id: propostaId }, 'listar/tipo-servico')
 
         this.tiposServico = data
 
@@ -95,6 +98,24 @@ export const useInmetroStore = defineStore('inmetro', {
       }
       finally {
         this.loading.clientes = false
+      }
+    },
+
+    async fetchPropostas(clienteId: string) {
+      this.loading.propostas = true
+      try {
+        const data = await InmetroService.fetchAll<IProposta[]>({}, `listar/${clienteId}/propostas`)
+
+        this.propostas = data
+
+        return data
+      }
+      catch (error) {
+        console.error('Erro ao buscar propostas:', error)
+        throw error
+      }
+      finally {
+        this.loading.propostas = false
       }
     },
 

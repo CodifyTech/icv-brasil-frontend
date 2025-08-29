@@ -8,6 +8,7 @@ import { can } from '@layouts/plugins/casl'
 // TODO: Get type from backend
 const { logout } = useAuthStore()
 const userData = useCookie<IUser>('userData')
+const auth = useAuth()
 
 const userProfileList = [
   { type: 'divider' },
@@ -55,7 +56,6 @@ const userProfileList = [
         icon="tabler-user"
       />
 
-      <!-- SECTION Menu -->
       <VMenu
         activator="parent"
         width="240"
@@ -64,7 +64,7 @@ const userProfileList = [
       >
         <VList>
           <VListItem>
-            <div class="d-flex gap-2 align-center">
+            <div class="gap-2 d-flex align-center">
               <VListItemAction>
                 <VBadge
                   dot
@@ -97,6 +97,7 @@ const userProfileList = [
           <PerfectScrollbar :options="{ wheelPropagation: false }">
             <template
               v-for="item in userProfileList"
+              v-if="!auth.hasRole('inmetro')"
               :key="item.title"
             >
               <VListItem
@@ -133,7 +134,6 @@ const userProfileList = [
           </PerfectScrollbar>
         </VList>
       </VMenu>
-      <!-- !SECTION -->
     </VAvatar>
   </VBadge>
 </template>

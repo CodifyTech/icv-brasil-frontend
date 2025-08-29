@@ -70,10 +70,6 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
 
     async gerarCodigoOS() {
       try {
-        console.log('🔍 Debug - formData atual:', this.formData)
-        console.log('🔍 Debug - cliente_id:', this.formData.cliente_id)
-        console.log('🔍 Debug - tipo do cliente_id:', typeof this.formData.cliente_id)
-
         // Verificar se há um cliente selecionado
         if (!this.formData.cliente_id) {
           console.log('❌ Cliente não selecionado')
@@ -86,15 +82,10 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
           return
         }
 
-        console.log('✅ Cliente selecionado, gerando código para cliente_id:', this.formData.cliente_id)
-
         const response = await InmetroService.gerarCodigoOS(this.formData.cliente_id)
-
-        console.log('🔍 Debug - resposta da API:', response)
 
         if (response && typeof response === 'object' && 'codigo' in response) {
           this.formData.codigo = response.codigo as string
-          console.log('✅ Código gerado com sucesso:', response.codigo)
           this.snackbarStore.showSnackbar({
             text: 'Código da OS gerado com sucesso!',
             color: 'success',
@@ -499,13 +490,7 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
 
     async verificarToken(token: string) {
       try {
-        const response = await fetch(`/api/v1/os/publico/verificar-token/${token}`)
-        const data = await response.json()
-
-        if (!response.ok)
-          throw new Error(data.message || 'Token inválido')
-
-        return data
+        return await InmetroService.getOrDeleteRequest('GET', {}, `verificar-token/${token}`)
       }
       catch (error) {
         console.error('Erro ao verificar token:', error)
@@ -515,20 +500,9 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
 
     async aceitarOS(token: string, observacoes?: string) {
       try {
-        const response = await fetch(`/api/v1/os/publico/aceitar/${token}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ observacoes }),
-        })
-
-        const data = await response.json()
-
-        if (!response.ok)
-          throw new Error(data.message || 'Erro ao aceitar OS')
-
-        return data
+        return await InmetroService.postOrPutRequest('POST', {
+          observacoes,
+        }, `aceitar/${token}`)
       }
       catch (error) {
         console.error('Erro ao aceitar OS:', error)
@@ -543,5 +517,11 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
       { value: 'andamento', title: 'Andamento', color: 'warning' },
       { value: 'finalizado', title: 'Finalizado', color: 'success' },
     ],
+    estatisticas: state => ({
+      total: state.ordensServico.length,
+      analise: state.ordensServico.filter(os => os.status === 'em_analise').length ?? 0,
+      andamento: state.ordensServico.filter(os => os.status === 'andamento').length ?? 0,
+      finalizado: state.ordensServico.filter(os => os.status === 'finalizado').length ?? 0,
+    }),
   },
 })

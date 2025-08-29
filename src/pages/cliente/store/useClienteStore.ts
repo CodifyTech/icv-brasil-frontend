@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import type { ICliente } from '@/pages/cliente/types'
 
 const defaultValue = {
+  codigo_cliente: '',
   razao_social: '',
   nome_fantasia: '',
   cnpj: '',

@@ -9,12 +9,14 @@ export interface IProposta {
   area: string
   status: string
   cliente_id: string | null
+  observacao: string | null
   anexo?: IFileData | null
 }
 
 export interface IServico {
   id?: string
-  nome: string
+  tipo_servico_id: string | null
+  unidade_custos: string
   valor_total_custos: number
   valor_total_despesas: number
   valor_total_tributos: number

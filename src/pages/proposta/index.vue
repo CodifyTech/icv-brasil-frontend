@@ -1,20 +1,19 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import type { ComputedRef } from 'vue'
+import PropostaStatusModal from './components/PropostaStatusModal.vue'
 import { usePropostaStore } from './store/usePropostaStore'
 import type { IProposta } from './types'
-import LayoutTable from '@/components/CDF/LayoutTable.vue'
-import type { ITerm } from '@/components/CDF/SearchBar.vue'
 import type { IHeader, ITableAction } from '@/pages/types/layoutTable.types'
-import { getI18n } from '@/plugins/i18n'
+import { PropostaEnum, getPropostaStatusColor, getPropostaStatusIcon, getPropostaStatusLabel } from '@/enums/PropostaStatusEnum'
+import type { ITerm } from '@/components/CDF/SearchBar.vue'
+import LayoutTable from '@/components/CDF/LayoutTable.vue'
 
 withDefaults(defineProps<{
   isHeader: boolean
 }>(), {
   isHeader: true,
 })
-
-const i18n = getI18n()
 
 definePage({
   meta: {
@@ -44,19 +43,31 @@ const {
   dialogDestroy,
 } = store
 
+const statusModal = ref(false)
+const selectedPropostaId = ref('')
+
+const openStatusModal = (proposta: IProposta) => {
+  selectedPropostaId.value = proposta.id!
+  statusModal.value = true
+}
+
 const headers: ComputedRef<IHeader[]> = computed(() => {
   return [
     {
-      title: 'Pessoa contato',
+      title: 'Código da Proposta',
+      key: 'codigo_proposta',
+    },
+    {
+      title: 'Pessoa Contato',
       key: 'pessoa_contato',
     },
     {
       title: 'Consultor',
-      key: 'consultor',
+      key: 'consultor.nome',
     },
     {
       title: 'Cliente',
-      key: 'filial.nome_fantasia',
+      key: 'cliente.nome_fantasia',
     },
     {
       title: 'Área',
@@ -71,6 +82,10 @@ const headers: ComputedRef<IHeader[]> = computed(() => {
 
 const terms: ComputedRef<ITerm[]> = computed(() => {
   return [
+    {
+      title: 'Código da Proposta',
+      value: 'codigo_proposta',
+    },
     {
       title: 'Pessoa Contato',
       value: 'pessoa_contato',
@@ -96,26 +111,28 @@ const terms: ComputedRef<ITerm[]> = computed(() => {
   ] as ITerm[]
 })
 
-const actions: ITableAction[] = [
-  {
-    icon: 'tabler-edit',
-    color: 'primary',
-    can: {
-      action: 'edit',
-      subject: 'proposta',
+const actions: ComputedRef<ITableAction[]> = computed(() => {
+  return [
+    {
+      icon: 'tabler-edit',
+      color: 'primary',
+      can: {
+        action: 'edit',
+        subject: 'proposta',
+      },
+      to: (item: IProposta) => `/Proposta/editar/${item.id}`,
     },
-    to: (item: IProposta) => `/Proposta/editar/${item.id}`,
-  },
-  {
-    icon: 'tabler-trash',
-    color: 'error',
-    can: {
-      action: 'delete',
-      subject: 'proposta',
+    {
+      icon: 'tabler-trash',
+      color: 'error',
+      can: {
+        action: 'delete',
+        subject: 'proposta',
+      },
+      onClick: (item: IProposta) => dialogDestroy(item.id),
     },
-    onClick: (item: IProposta) => dialogDestroy(item.id),
-  },
-]
+  ] as ITableAction[]
+})
 
 onBeforeRouteLeave(() => {
   store.$reset()
@@ -131,7 +148,7 @@ onBeforeRouteLeave(() => {
     v-model:is-searching="isSearching"
     :destroy="destroy"
     :is-header="isHeader"
-    title="📋 Gestão de Propostas"
+    title="Gestão de Propostas"
     subtitle="Gerencie e acompanhe todas as propostas comerciais"
 
     new-item="/proposta/cadastrar"
@@ -147,5 +164,30 @@ onBeforeRouteLeave(() => {
     :on-search-again="onSearchAgain"
     :on-reset="resetSearch"
     :on-order-by="onOrderBy"
+  >
+    <template #actions="{ item }">
+      <CDFActionButton
+        v-if="item.status === PropostaEnum.ANDAMENTO"
+        icon="tabler-check"
+        color="success"
+        tooltip="Alterar Status"
+        @click="() => openStatusModal(item)"
+      />
+    </template>
+    <template #item.status="{ item }">
+      <VChip
+        density="comfortable"
+        size="small"
+        :text="getPropostaStatusLabel(item.status)"
+        :color="getPropostaStatusColor(item.status)"
+        :icon="getPropostaStatusIcon(item.status)"
+      />
+    </template>
+  </LayoutTable>
+
+  <PropostaStatusModal
+    v-model="statusModal"
+    :proposta-id="selectedPropostaId"
+    @status-changed="(data) => store.handleStatusChange(selectedPropostaId, data)"
   />
 </template>
