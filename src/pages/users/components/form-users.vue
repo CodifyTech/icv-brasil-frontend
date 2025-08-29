@@ -165,7 +165,6 @@ onBeforeRouteLeave(() => {
             item-value="id"
             :items="funcionarios"
             :loading="loading.funcionarios"
-            return-object
           />
         </VSkeletonLoader>
       </VCol>

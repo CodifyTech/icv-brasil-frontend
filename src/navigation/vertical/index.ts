@@ -61,25 +61,11 @@ export default [
     subject: 'proposta',
   },
   {
-    title: 'Rubricas',
-    icon: { icon: 'fa-light fa-receipt' },
-    to: 'rubricas',
-    action: 'list',
-    subject: 'rubrica',
-  },
-  {
     title: 'Departamentos',
     icon: { icon: 'fa-light fa-buildings' },
     to: 'departamento',
     action: 'list',
     subject: 'departamento',
-  },
-  {
-    title: 'Cargo',
-    icon: { icon: 'fa-light fa-suitcase' },
-    to: 'cargo',
-    action: 'list',
-    subject: 'cargo',
   },
   {
     title: 'Tipo Documentos',
