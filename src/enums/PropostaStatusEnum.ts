@@ -23,6 +23,7 @@ export const getPropostaStatusLabel = (status: PropostaEnum): string => {
   }
 }
 
+
 export const getPropostaStatusColor = (status: PropostaEnum): string => {
   switch (status) {
     case PropostaEnum.ANDAMENTO:
