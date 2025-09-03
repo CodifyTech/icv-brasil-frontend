@@ -160,7 +160,6 @@ onBeforeRouteLeave(() => {
             v-model="data.funcionario_id"
             label="Funcionário"
             placeholder="Selecione um funcionário"
-            :rules="[requiredValidator]"
             item-title="nome"
             item-value="id"
             :items="funcionarios"
