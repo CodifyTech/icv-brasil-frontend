@@ -149,6 +149,7 @@ onBeforeRouteLeave(() => {
       </VCol>
 
       <VCol
+        v-if="(!useAuth().hasRole('admin') || !useAuth().hasRole('diretor') && data.role !== 'diretor') && !isProfile"
         cols="12"
         md="6"
       >
