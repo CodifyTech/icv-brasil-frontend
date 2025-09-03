@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
 import LayoutForms from '@/components/CDF/LayoutForms.vue'
 import { useUsersStore } from '@/pages/users/store/useUsersStore'
 import type { IUser } from '@/pages/users/types'
 import { confirmedValidator, emailValidator, lengthValidator, requiredValidator } from '@/validators/cdf-rules'
-import { storeToRefs } from 'pinia'
 
 const {
   isEditing = false,
@@ -110,6 +110,7 @@ onBeforeRouteLeave(() => {
       </VCol>
 
       <VCol
+        v-if="useAuth().auth.value.role === 'admin' || useAuth().auth.value.role === 'diretor' || useAuth().auth.value.role === 'gerente'"
         cols="12"
         md="6"
       >
@@ -157,7 +158,7 @@ onBeforeRouteLeave(() => {
           :loading="loading.item"
           type="text"
         >
-          <AppSelect
+          <AppAutocomplete
             v-model="data.funcionario_id"
             label="Funcionário"
             placeholder="Selecione um funcionário"
