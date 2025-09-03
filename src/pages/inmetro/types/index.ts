@@ -1,13 +1,12 @@
+import type { OsStatusEnum } from '@/enums/OSStatusEnum'
+import type { ICliente } from '@/pages/cliente/types'
+
 export interface IOrdemServico {
   id?: string
   codigo?: string
-  cliente_id?: string
-  cliente?: {
-    nome_fantasia?: string
-    email?: string
-    telefone?: string
-    contato_responsavel?: string
-  }
+  cliente_id: string
+  proposta_id: string | null
+  cliente?: Partial<ICliente>
   fornecedor?: string
   num_pedido_compra?: string
   num_relatorio?: string
@@ -28,7 +27,7 @@ export interface IOrdemServico {
   data_execucao?: string | null
   certificado_associado?: string | null
   resultado?: string | null
-  status?: string | null
+  status?: OsStatusEnum | null
   observacoes?: string | null
   motivo_reprovacao?: string | null
   observacoes_reprovacao?: string | null
@@ -42,6 +41,8 @@ export interface IOrdemServico {
   anexos?: IOrdemServicoAnexo[]
   material_equipamentos?: IMaterialEquipamento[]
   fotos?: IOrdemServicoFoto[]
+  created_at?: string
+  updated_at?: string
 }
 
 export interface IMaterialEquipamento {

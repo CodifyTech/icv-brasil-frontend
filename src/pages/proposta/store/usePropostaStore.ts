@@ -1,13 +1,15 @@
 import { defineStore } from 'pinia'
 
 import PropostaService from '../services/PropostaService'
-import type { ICusto, IDespesa, IDespesaDireta, IDespesaIndireta, IServico, ITributo } from '@/pages/proposta/types'
+import { PropostaEnum } from '@/enums/PropostaStatusEnum'
+import type { ICusto, IDespesa, IDespesaDireta, IDespesaIndireta, IProposta, IServico, ITributo } from '@/pages/proposta/types'
 import type { IRubrica } from '@/pages/rubricas/types'
 import { useSuccessDialogStore } from '@/stores/useSuccessDialogStore'
 
 const defaultValue = {
+  codigo_proposta: '',
   pessoa_contato: '',
-  consultor: '',
+  consultor_id: null,
   telefone: '',
   email: '',
   area: 'OIA - O&G',
@@ -23,19 +25,25 @@ export const usePropostaStore = defineStore('crud/proposta', {
     sortKeyDefault: 'pessoa_contato',
     defaultValue,
     data: { ...defaultValue },
-    filiais: [] as Array<{ id: string | number; nome_fantasia: string }>,
+    filiais: [] as Array<{ id: string; nome_fantasia: string }>,
+    funcionarios: [] as Array<{ id: string; nome: string }>,
+    tipoServicos: [] as Array<{ id: string; nome: string }>,
+    rubricas: [] as IRubrica[],
     loading: {
       save: false,
       item: false,
       items: false,
       destroy: false,
       filial: false,
+      funcionarios: false,
+      tipoServico: false,
     },
 
     modal: {
       isDialogVisible: false,
       servico: {
-        nome: '',
+        tipo_servico_id: null,
+        unidade_custos: 'hh',
         valor_total_custos: 0,
         valor_total_despesas: 0,
         valor_total_tributos: 0,
@@ -51,7 +59,7 @@ export const usePropostaStore = defineStore('crud/proposta', {
         tributos: [] as ITributo[],
         despesas_indiretas: [] as IDespesaIndireta[],
         despesas_diretas: [] as IDespesaDireta[],
-      } as IServico,
+      } as Partial<IServico>,
     },
   }),
   actions: {
@@ -116,6 +124,30 @@ export const usePropostaStore = defineStore('crud/proposta', {
         })
     },
 
+    async fetchFuncionarios(search?: string) {
+      this.loading.funcionarios = true
+      await PropostaService.fetchFuncionarios(search)
+        .then(data => {
+          this.funcionarios = data as Array<{ id: string; nome: string }>
+          this.loading.funcionarios = false
+        }).catch(() => {
+          this.funcionarios = []
+          this.loading.funcionarios = false
+        })
+    },
+
+    async fetchTipoServico(search?: string) {
+      this.loading.tipoServico = true
+      await PropostaService.fetchTipoServico(search)
+        .then(data => {
+          this.tipoServicos = data as Array<{ id: string; nome: string }>
+          this.loading.tipoServico = false
+        }).catch(() => {
+          this.tipoServicos = []
+          this.loading.tipoServico = false
+        })
+    },
+
     async obterRubricasFixas() {
       // Limpar os arrays existentes ou inicializá-los se forem nulos
       this.modal.servico.tributos = []
@@ -155,6 +187,33 @@ export const usePropostaStore = defineStore('crud/proposta', {
         .catch(error => {
           console.error('Erro ao obter rubricas fixas:', error)
         })
+    },
+
+    async handleStatusChange(propostaId: string, data: { status: string; observacao?: string }) {
+      try {
+        const response = await PropostaService.updateStatus<IProposta>(propostaId, data.status, data.observacao)
+
+        const item = this.items?.find(item => item.id === propostaId)
+
+        if (item) {
+          item.status = response.status
+          item.observacao = response.observacao
+        }
+      }
+      catch (error) {
+        console.error('Erro ao atualizar status:', error)
+      }
+    },
+
+    async buscarPropostasPorCliente(clienteId: string, statuses: string[] = [PropostaEnum.APROVADA, PropostaEnum.PERDIDA]) {
+      try {
+        return await PropostaService.buscarPropostasPorCliente<IProposta[]>(clienteId, statuses)
+      }
+      catch (error) {
+        console.error('Erro ao buscar propostas por cliente:', error)
+
+        return []
+      }
     },
   },
 })

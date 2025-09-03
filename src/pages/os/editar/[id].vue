@@ -5,9 +5,9 @@ import { useSnackbarStore } from '@/stores/useSnackbarStore'
 
 definePage({
   meta: {
-    navActiveLink: 'inmetro',
+    navActiveLink: 'os',
     action: 'edit',
-    subject: 'inmetro',
+    subject: 'os',
   },
 })
 
