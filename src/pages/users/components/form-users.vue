@@ -110,7 +110,7 @@ onBeforeRouteLeave(() => {
       </VCol>
 
       <VCol
-        v-if="useAuth().hasRole('admin') || useAuth().hasRole('diretor') || useAuth().hasRole('gerente')"
+        v-if="useAuth().hasRole('admin') || useAuth().hasRole('diretor') || useAuth().hasRole('gerente') || useAuth().hasRole('rh')"
         cols="12"
         md="6"
       >
