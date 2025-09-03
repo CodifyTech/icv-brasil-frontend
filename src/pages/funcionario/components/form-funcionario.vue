@@ -161,7 +161,7 @@ watch(() => data.value, newData => {
                       >
                         <CDFTextField
                           v-model="data.email_1"
-                          label="E-mail"
+                          label="E-mail 1"
                           placeholder="Digite o e-mail 1"
                           type="email"
                           :rules="[cdfRules.requiredValidator, cdfRules.emailValidator]"
@@ -173,10 +173,10 @@ watch(() => data.value, newData => {
                       >
                         <CDFTextField
                           v-model="data.email_2"
-                          label="E-mail"
+                          label="E-mail 2"
                           placeholder="Digite o e-mail 2"
                           type="email"
-                          :rules="[cdfRules.requiredValidator, cdfRules.emailValidator]"
+                          :rules="[cdfRules.emailValidator]"
                         />
                       </VCol>
                       <VCol
