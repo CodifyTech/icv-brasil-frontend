@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import type { IRole, IRoleResponse } from '@/pages/acesso/types'
+import type { IFuncionario } from '@/pages/funcionario/types'
 import UsersService from '@/pages/users/services/UsersService'
 import type { IUser } from '@/pages/users/types'
 
@@ -9,8 +10,9 @@ const defaultValue = {
   email: '',
   password: '',
   foto: '',
-  role: '',
+  role: null,
   ativo: 1,
+  funcionario_id: null,
 } as IUser
 
 export const useUsersStore = defineStore('crud/users', {
@@ -19,6 +21,7 @@ export const useUsersStore = defineStore('crud/users', {
     sortKeyDefault: 'name',
     defaultValue,
     roles: [] as IRole[],
+    funcionarios: [] as IFuncionario[],
 
     loading: {
       roles: false,
@@ -26,6 +29,7 @@ export const useUsersStore = defineStore('crud/users', {
       item: false,
       items: false,
       destroy: false,
+      funcionarios: false,
     },
   }),
   actions: {
@@ -38,6 +42,17 @@ export const useUsersStore = defineStore('crud/users', {
         }).catch(() => {
           this.roles = []
           this.loading.roles = false
+        })
+    },
+    async fetchFuncionarios() {
+      this.loading.funcionarios = true
+      await UsersService.fetchAll<IFuncionario[]>({}, 'listar/funcionarios')
+        .then(data => {
+          this.funcionarios = data
+          this.loading.funcionarios = false
+        }).catch(() => {
+          this.funcionarios = []
+          this.loading.funcionarios = false
         })
     },
   },

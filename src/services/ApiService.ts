@@ -92,7 +92,7 @@ class ApiService {
    * @param formData
    * @return {Promise<TRequest|undefined>} - Returns a promise that resolves with the response data or undefined if an error occurs.
    */
-  protected async postOrPutRequest<TRequest>(
+  public async postOrPutRequest<TRequest>(
     httpVerb: string,
     data?: object | string,
     id?: string,
@@ -134,7 +134,7 @@ class ApiService {
    * @param {string} [id] - Optional ID to append to the endpoint URL.
    * @return {Promise<TRequest>} The response data of type TRequest or undefined if an error occurs.
    */
-  protected async getOrDeleteRequest<TRequest>(
+  public async getOrDeleteRequest<TRequest>(
     httpVerb: string,
     query?: any,
     id?: string,
