@@ -86,7 +86,7 @@ const visualizarAnexo = (anexo: IOrdemServicoAnexo) => {
               variant="outlined"
               class="pa-4"
             >
-              <VCardTitle class="text-subtitle-1 font-weight-bold mb-2 pa-0">
+              <VCardTitle class="mb-2 text-subtitle-1 font-weight-bold pa-0">
                 Informações da Ordem de Serviço
               </VCardTitle>
               <VDivider class="mb-4" />
@@ -133,7 +133,7 @@ const visualizarAnexo = (anexo: IOrdemServicoAnexo) => {
             <VTabsWindowItem :value="1">
               <!-- Lista de Anexos -->
               <div>
-                <h6 class="d-flex align-center text-subtitle-1 my-3">
+                <h6 class="my-3 d-flex align-center text-subtitle-1">
                   <span>Documentos Anexados</span>
                   <VSpacer />
                   <VChip
@@ -147,7 +147,7 @@ const visualizarAnexo = (anexo: IOrdemServicoAnexo) => {
 
                 <div
                   v-if="loading"
-                  class="text-center py-8"
+                  class="py-8 text-center"
                 >
                   <VProgressCircular
                     indeterminate
@@ -173,7 +173,7 @@ const visualizarAnexo = (anexo: IOrdemServicoAnexo) => {
                     </template>
 
                     <template #[`item.nome`]="{ item }">
-                      <div class="d-flex align-center py-2">
+                      <div class="py-2 d-flex align-center">
                         <VIcon
                           icon="tabler-file"
                           class="me-2"
@@ -183,7 +183,7 @@ const visualizarAnexo = (anexo: IOrdemServicoAnexo) => {
                           <p class="mb-0 font-weight-medium">
                             {{ item.nome }}
                           </p>
-                          <p class="text-caption text-grey mb-0">
+                          <p class="mb-0 text-caption text-grey">
                             ID: {{ item.id }}
                           </p>
                         </div>
@@ -206,7 +206,7 @@ const visualizarAnexo = (anexo: IOrdemServicoAnexo) => {
                     </template>
 
                     <template #[`item.actions`]="{ item }">
-                      <div class="d-flex gap-1">
+                      <div class="gap-1 d-flex">
                         <VBtn
                           size="small"
                           color="secondary"
@@ -221,7 +221,7 @@ const visualizarAnexo = (anexo: IOrdemServicoAnexo) => {
 
                 <div
                   v-else
-                  class="text-center py-8"
+                  class="py-8 text-center"
                 >
                   <VIcon
                     icon="tabler-file-off"
@@ -237,7 +237,7 @@ const visualizarAnexo = (anexo: IOrdemServicoAnexo) => {
             </VTabsWindowItem>
             <VTabsWindowItem :value="2">
               <div>
-                <h6 class="d-flex align-center text-subtitle-1 my-3">
+                <h6 class="my-3 d-flex align-center text-subtitle-1">
                   <span>Fotos Anexadas</span>
                   <VSpacer />
                   <VChip
@@ -251,7 +251,7 @@ const visualizarAnexo = (anexo: IOrdemServicoAnexo) => {
 
                 <div
                   v-if="loading"
-                  class="text-center py-8"
+                  class="py-8 text-center"
                 >
                   <VProgressCircular
                     indeterminate
@@ -293,7 +293,7 @@ const visualizarAnexo = (anexo: IOrdemServicoAnexo) => {
                     </template>
 
                     <template #footer="{ page, pageCount, prevPage, nextPage }">
-                      <div class="d-flex align-center justify-center pa-4">
+                      <div class="justify-center d-flex align-center pa-4">
                         <VBtn
                           :disabled="page === 1"
                           icon="tabler-chevron-left"
@@ -313,7 +313,7 @@ const visualizarAnexo = (anexo: IOrdemServicoAnexo) => {
                     </template>
 
                     <template #no-data>
-                      <div class="text-center py-8">
+                      <div class="py-8 text-center">
                         <VIcon
                           icon="tabler-photo-off"
                           size="64"
@@ -330,7 +330,7 @@ const visualizarAnexo = (anexo: IOrdemServicoAnexo) => {
 
                 <div
                   v-else
-                  class="text-center py-8"
+                  class="py-8 text-center"
                 >
                   <VIcon
                     icon="tabler-photo-off"
@@ -349,7 +349,7 @@ const visualizarAnexo = (anexo: IOrdemServicoAnexo) => {
 
         <div
           v-else
-          class="text-center py-8"
+          class="py-8 text-center"
         >
           <VIcon
             icon="tabler-alert-circle"

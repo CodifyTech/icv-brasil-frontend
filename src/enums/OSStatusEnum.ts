@@ -10,7 +10,7 @@ export const OS_STATUS_OPTIONS = [
   { value: OsStatusEnum.FINALIZADO, title: 'Finalizado' },
 ]
 
-export const getOSStatusLabel = (status: OsStatusEnum): string => {
+export const getOSStatusLabel = (status: OsStatusEnum | null): string => {
   switch (status) {
     case OsStatusEnum.EM_ANALISE:
       return 'Em Análise'
@@ -23,7 +23,7 @@ export const getOSStatusLabel = (status: OsStatusEnum): string => {
   }
 }
 
-export const getOSStatusColor = (status: OsStatusEnum): string => {
+export const getOSStatusColor = (status: OsStatusEnum | null): string => {
   switch (status) {
     case OsStatusEnum.EM_ANALISE:
       return 'info'
@@ -36,7 +36,7 @@ export const getOSStatusColor = (status: OsStatusEnum): string => {
   }
 }
 
-export const getOSStatusIcon = (status: OsStatusEnum): string => {
+export const getOSStatusIcon = (status: OsStatusEnum | null): string => {
   switch (status) {
     case OsStatusEnum.EM_ANALISE:
       return 'tabler-eye'

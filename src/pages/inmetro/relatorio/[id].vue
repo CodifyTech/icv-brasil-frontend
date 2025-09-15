@@ -46,15 +46,6 @@ const handlePrint = () => {
     printMode.value = false
   })
 }
-
-const handleDownloadPDF = async () => {
-  try {
-    await store.downloadRelatorioPDF(ordemServicoAtual.value?.id)
-  }
-  catch (error) {
-    console.error('Erro ao baixar PDF:', error)
-  }
-}
 </script>
 
 <template>
