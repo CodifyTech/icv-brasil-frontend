@@ -2,6 +2,7 @@
 import { storeToRefs } from 'pinia'
 import type { ComputedRef } from 'vue'
 import PropostaStatusModal from './components/PropostaStatusModal.vue'
+import VisualizarPropostaModal from './components/VisualizarPropostaModal.vue'
 import { usePropostaStore } from './store/usePropostaStore'
 import type { IProposta } from './types'
 import type { IHeader, ITableAction } from '@/pages/types/layoutTable.types'
@@ -31,6 +32,7 @@ const {
   loading,
   searchTerm,
   isSearching,
+  data,
 } = storeToRefs(store)
 
 const {
@@ -41,10 +43,12 @@ const {
   destroy,
   onOrderBy,
   dialogDestroy,
+  fetchItem,
 } = store
 
 const statusModal = ref(false)
 const selectedPropostaId = ref('')
+const showVisualizarModal = ref(false)
 
 const openStatusModal = (proposta: IProposta) => {
   selectedPropostaId.value = proposta.id!
@@ -114,6 +118,15 @@ const terms: ComputedRef<ITerm[]> = computed(() => {
 const actions: ComputedRef<ITableAction[]> = computed(() => {
   return [
     {
+      onClick: async (item: IProposta) => {
+        await fetchItem(item.id)
+        showVisualizarModal.value = true
+      },
+      label: 'Visualizar',
+      icon: 'tabler-eye',
+      color: 'info',
+    },
+    {
       icon: 'tabler-edit',
       color: 'primary',
       can: {
@@ -131,6 +144,7 @@ const actions: ComputedRef<ITableAction[]> = computed(() => {
       },
       onClick: (item: IProposta) => dialogDestroy(item.id),
     },
+
   ] as ITableAction[]
 })
 
@@ -189,5 +203,11 @@ onBeforeRouteLeave(() => {
     v-model="statusModal"
     :proposta-id="selectedPropostaId"
     @status-changed="(data) => store.handleStatusChange(selectedPropostaId, data)"
+  />
+
+  <!-- Modal de Visualização da Proposta -->
+  <VisualizarPropostaModal
+    v-model="showVisualizarModal"
+    :proposta="data"
   />
 </template>

@@ -71,6 +71,7 @@ declare module 'vue-router/auto-routes' {
     'proposta-components-novo-servico-modal': RouteRecordInfo<'proposta-components-novo-servico-modal', '/proposta/components/NovoServicoModal', Record<never, never>, Record<never, never>>,
     'proposta-components-propostas-por-status': RouteRecordInfo<'proposta-components-propostas-por-status', '/proposta/components/PropostasPorStatus', Record<never, never>, Record<never, never>>,
     'proposta-components-proposta-status-modal': RouteRecordInfo<'proposta-components-proposta-status-modal', '/proposta/components/PropostaStatusModal', Record<never, never>, Record<never, never>>,
+    'proposta-components-visualizar-proposta-modal': RouteRecordInfo<'proposta-components-visualizar-proposta-modal', '/proposta/components/VisualizarPropostaModal', Record<never, never>, Record<never, never>>,
     'proposta-dashboard': RouteRecordInfo<'proposta-dashboard', '/proposta/dashboard', Record<never, never>, Record<never, never>>,
     'proposta-editar-id': RouteRecordInfo<'proposta-editar-id', '/proposta/editar/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     'rubricas': RouteRecordInfo<'rubricas', '/rubricas', Record<never, never>, Record<never, never>>,

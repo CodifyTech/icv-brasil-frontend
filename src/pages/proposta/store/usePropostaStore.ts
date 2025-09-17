@@ -17,6 +17,7 @@ const defaultValue = {
   anexo: null,
   servicos: [] as IServico[],
   cliente_id: null,
+  anexos: [],
 }
 
 export const usePropostaStore = defineStore('crud/proposta', {

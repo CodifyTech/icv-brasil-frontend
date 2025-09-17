@@ -3,6 +3,7 @@ import { storeToRefs } from 'pinia'
 import { getPropostaStatusColor, getPropostaStatusLabel } from '../../../enums/PropostaStatusEnum'
 import { useClienteStore } from '../store/useClienteStore'
 import LayoutForms from '@/components/CDF/LayoutForms.vue'
+import VisualizarPropostaModal from '@/pages/proposta/components/VisualizarPropostaModal.vue'
 import { usePropostaStore } from '@/pages/proposta/store/usePropostaStore'
 import type { IProposta } from '@/pages/proposta/types'
 import * as rules from '@/validators/cdf-rules'
@@ -34,6 +35,7 @@ const tab = ref('matriz')
 const propostasCliente = ref<any[]>([])
 const loadingPropostas = ref(false)
 const search = ref('')
+const showVisualizarModal = ref(false)
 
 const headers = ref([
   { title: 'Cliente', key: 'cliente_nome', sortable: true },
@@ -202,6 +204,10 @@ onBeforeRouteLeave(() => {
                         placeholder="Nome do responsável"
                         :rules="[]"
                       />
+                    </VCol>
+
+                    <VCol cols="12">
+                      <Endereco :data="data" />
                     </VCol>
                   </VRow>
                 </VCardText>
@@ -374,8 +380,11 @@ onBeforeRouteLeave(() => {
                       variant="tonal"
                       size="small"
                       prepend-icon="tabler-eye"
-                      :to="`/proposta/editar/${item.id}`"
                       class="me-2"
+                      @click="async () => {
+                        await propostaStore.fetchItem(item.id)
+                        showVisualizarModal = true
+                      }"
                     >
                       Visualizar
                     </VBtn>
@@ -388,4 +397,10 @@ onBeforeRouteLeave(() => {
       </VCol>
     </template>
   </LayoutForms>
+
+  <!-- Modal de Visualização da Proposta -->
+  <VisualizarPropostaModal
+    v-model="showVisualizarModal"
+    v-model:proposta="propostaStore.data"
+  />
 </template>

@@ -597,23 +597,12 @@ onMounted(() => {
               </div>
             </VAlert>
 
-            <CDFFileUpload
-              v-model="data.anexo"
-              class="anexo-upload"
-              placeholder="Clique aqui para selecionar um arquivo ou arraste e solte"
-              accept=".pdf,.doc,.docx,.xls,.xlsx,.txt"
-              variant="outlined"
+            <AttachmentUpload
+              v-model:model-value="data.anexos"
+              :max-files="50"
+              :max-file-size="200"
+              :disabled="loading.save"
             />
-
-            <VAlert
-              v-if="data.anexo"
-              type="success"
-              variant="tonal"
-              class="mt-3"
-              icon="tabler-check"
-            >
-              Arquivo anexado com sucesso! O documento será incluído na proposta.
-            </VAlert>
           </VCardText>
         </VCard>
       </VCol>
