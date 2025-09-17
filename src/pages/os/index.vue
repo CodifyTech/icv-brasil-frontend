@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import moment from 'moment'
 import {
+  OsStatusEnum,
   getOSStatusColor,
   getOSStatusIcon,
   getOSStatusLabel,
 } from '../../enums/OSStatusEnum'
+import DialogFinalizarOs from '@/pages/os/components/DialogFinalizarOS.vue'
+import DialogReprovarOs from '@/pages/os/components/DialogReprovarOS.vue'
 import { useOrdemServicoStore } from '@/pages/os/store/useOrdemServicoStore'
 
 definePage({
@@ -16,7 +19,14 @@ definePage({
 
 const store = useOrdemServicoStore()
 
-const { ordensServico, estatisticas } = storeToRefs(store)
+const { ordensServico, estatisticas, isDialogAprovarVisible, isDialogReprovarVisible } = storeToRefs(store)
+
+const {
+  menuList,
+  ordemServicoAtual,
+  confirmarFinalizacao,
+  confirmarReprovacao,
+} = store
 
 onMounted(async () => {
   await Promise.all([
@@ -175,7 +185,6 @@ onMounted(async () => {
               <VListItem
                 v-for="os in ordensServico?.slice(0, 10)"
                 :key="os.id"
-                :to="`/os/visualizar/${os.id}`"
               >
                 <template #prepend>
                   <VAvatar
@@ -187,22 +196,31 @@ onMounted(async () => {
                   </VAvatar>
                 </template>
 
-                <VListItemTitle>
-                  {{ os.codigo }}
-                </VListItemTitle>
+                <RouterLink :to="`/os/visualizar/${os.id}`">
+                  <VListItemTitle>
+                    {{ os.codigo }}
+                  </VListItemTitle>
 
-                <VListItemSubtitle>
-                  {{ os.cliente?.razao_social || os.cliente?.nome_fantasia }} • {{ moment(os.created_at).format('DD/MM/YYYY') }}
-                </VListItemSubtitle>
+                  <VListItemSubtitle>
+                    {{ os.cliente?.razao_social || os.cliente?.nome_fantasia }} • {{ moment(os.created_at).format('DD/MM/YYYY') }}
+                  </VListItemSubtitle>
+                </RouterLink>
 
                 <template #append>
-                  <VChip
-                    :color="getOSStatusColor(os.status)"
-                    variant="tonal"
-                    size="small"
-                  >
-                    {{ getOSStatusLabel(os.status) }}
-                  </VChip>
+                  <div class="d-flex align-center gap-2">
+                    <VChip
+                      :color="getOSStatusColor(os.status)"
+                      variant="tonal"
+                      size="small"
+                      :text="getOSStatusLabel(os.status)"
+                    />
+
+                    <CDFMoreBtn
+                      v-if="os.status === OsStatusEnum.EM_ANALISE || os.status === OsStatusEnum.ANDAMENTO"
+                      color="gray"
+                      :menu-list="store.menuList(os)"
+                    />
+                  </div>
                 </template>
               </VListItem>
             </VList>
@@ -258,24 +276,21 @@ onMounted(async () => {
               </VIcon>
               Listar Todas as OS
             </VBtn>
-
-            <!--
-              <VBtn
-              block
-              color="info"
-              variant="outlined"
-              class="mb-3"
-              @click="store.exportarCSV"
-              >
-              <VIcon start>
-              tabler-download
-              </VIcon>
-              Exportar Relatório
-              </VBtn>
-            -->
           </VCardText>
         </VCard>
       </VCol>
     </VRow>
+
+    <DialogFinalizarOs
+      v-model:is-dialog-visible="isDialogAprovarVisible"
+      :os="ordemServicoAtual"
+      @confirm="confirmarFinalizacao"
+    />
+
+    <DialogReprovarOs
+      v-model:is-dialog-visible="isDialogReprovarVisible"
+      :os="ordemServicoAtual"
+      @confirm="confirmarReprovacao"
+    />
   </div>
 </template>

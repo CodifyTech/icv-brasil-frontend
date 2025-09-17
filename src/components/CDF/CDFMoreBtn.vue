@@ -34,7 +34,7 @@ const props = defineProps<{
         :style="item.type === 'divider' ? 'min-height: 0px !important' : null"
         :prepend-icon="item?.icon"
         :color="item?.color"
-        @click="item.click"
+        @click.stop="item.click"
       >
         <template #title>
           <span v-if="item?.type !== 'divider'">{{ item.title }}</span>

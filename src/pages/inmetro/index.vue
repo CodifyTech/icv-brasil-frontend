@@ -31,7 +31,14 @@ const store = useOrdemServicoStore()
 const inmetroStore = useInmetroStore()
 const snackbarStore = useSnackbarStore()
 
-const { ordensServico, loading, filtros } = storeToRefs(store)
+const {
+  ordensServico,
+  loading,
+  filtros,
+  ordemServicoAtual,
+  isDialogAprovarVisible,
+  isDialogReprovarVisible,
+} = storeToRefs(store)
 
 const {
   escopos,
@@ -39,6 +46,12 @@ const {
   responsaveis,
   clientes,
 } = storeToRefs(inmetroStore)
+
+const {
+  confirmarFinalizacao,
+  confirmarReprovacao,
+  menuList,
+} = store
 
 onMounted(async () => {
   await Promise.all([
@@ -61,11 +74,8 @@ const filtroForm = ref({
   codigo_os: '',
 })
 
-const isDialogAprovarVisible = ref<boolean>(false)
-const isDialogReprovarVisible = ref<boolean>(false)
 const isDialogMaterialVisible = ref<boolean>(false)
 const isDialogDocumentosVisible = ref<boolean>(false)
-const ordemServicoSelecionada = ref<IOrdemServico | null>(null)
 const loadingEmails = ref<Record<number, boolean>>({})
 const auth = useAuth()
 
@@ -142,52 +152,25 @@ const emailJaEnviadoHoje = (ordemServico: IOrdemServico) => {
   return dataEnvio.toDateString() === hoje.toDateString()
 }
 
-// Funções para os botões do menu
-const abrirDialogAprovar = (item: IOrdemServico) => {
-  ordemServicoSelecionada.value = item
-  isDialogAprovarVisible.value = true
-}
-
-const abrirDialogReprovar = (item: IOrdemServico) => {
-  ordemServicoSelecionada.value = item
-  isDialogReprovarVisible.value = true
-}
-
-// Função para criar o menu list dinamicamente
-const menuList = (item: IOrdemServico) => [
-  {
-    title: 'Aprovar',
-    icon: 'tabler-check',
-    color: 'success',
-    click: (() => abrirDialogAprovar(item)) as any,
-  },
-  {
-    title: 'Reprovar',
-    color: 'error',
-    icon: 'tabler-x',
-    click: (() => abrirDialogReprovar(item)) as any,
-  },
-]
-
 // Funções auxiliares para carregamento de dados
 const carregarMateriais = async () => {
-  if (ordemServicoSelecionada.value?.id)
-    return await store.carregarMateriais(ordemServicoSelecionada.value.id)
+  if (ordemServicoAtual.value?.id)
+    return await store.carregarMateriais(ordemServicoAtual.value.id)
 
   return []
 }
 
 const carregarAnexos = async () => {
-  if (ordemServicoSelecionada.value?.id)
-    return await store.carregarAnexos(ordemServicoSelecionada.value.id)
+  if (ordemServicoAtual.value?.id)
+    return await store.carregarAnexos(ordemServicoAtual.value.id)
 
   return []
 }
 
 const carregarFotos = async () => {
-  if (ordemServicoSelecionada.value?.id) {
+  if (ordemServicoAtual.value?.id) {
     // Implementação temporária - converter anexos para formato de fotos
-    const anexos = await store.carregarAnexos(ordemServicoSelecionada.value.id)
+    const anexos = await store.carregarAnexos(ordemServicoAtual.value.id)
 
     return anexos.map((anexo: any) => ({
       ...anexo,
@@ -230,100 +213,6 @@ const exportarRelatorios = async () => {
   }
   finally {
     loading.value.relatorios = false
-  }
-}
-
-const confirmarFinalizacao = async (dados: { os: IOrdemServico | null; dadosFinalizacao: any }) => {
-  if (!dados.os)
-    return
-
-  try {
-    console.log('Finalizando OS:', dados.os)
-    console.log('Dados de finalização:', dados.dadosFinalizacao)
-
-    // Implementação da chamada para o backend
-    const osAtualizada = {
-      ...dados.os,
-      num_relatorio: dados.dadosFinalizacao.num_relatorio,
-      data_execucao: dados.dadosFinalizacao.data_execucao,
-      certificado_associado: dados.dadosFinalizacao.certificado_associado,
-      resultado: dados.dadosFinalizacao.resultado,
-      observacoes: dados.dadosFinalizacao.observacoes,
-      status: 'FINALIZADA',
-    }
-
-    // Chamada para a API
-    await store.finalizarOS(osAtualizada)
-
-    // Atualizar a lista após finalizar
-    await store.fetchOrdensServico()
-
-    // Fechar o dialog
-    isDialogAprovarVisible.value = false
-    ordemServicoSelecionada.value = null
-
-    // Mostrar mensagem de sucesso
-    snackbarStore.showSnackbar({
-      text: 'Ordem de serviço finalizada com sucesso!',
-      color: 'success',
-      timeout: 3000,
-    })
-  }
-  catch (error) {
-    console.error('Erro ao finalizar OS:', error)
-
-    // Mostrar mensagem de erro
-    snackbarStore.showSnackbar({
-      text: 'Erro ao finalizar ordem de serviço. Tente novamente.',
-      color: 'error',
-      timeout: 4000,
-    })
-  }
-}
-
-const confirmarReprovacao = async (dados: { os: IOrdemServico | null; dadosReprovacao: any }) => {
-  if (!dados.os)
-    return
-
-  try {
-    console.log('Reprovando OS:', dados.os)
-    console.log('Dados de reprovação:', dados.dadosReprovacao)
-
-    // Implementação da chamada para o backend
-    const osAtualizada = {
-      ...dados.os,
-      motivo_reprovacao: dados.dadosReprovacao.motivo_reprovacao,
-      observacoes_reprovacao: dados.dadosReprovacao.observacoes,
-      data_reprovacao: dados.dadosReprovacao.data_reprovacao,
-      status: 'REPROVADA',
-    }
-
-    // Chamada para a API
-    await store.reprovarOS(osAtualizada)
-
-    // Atualizar a lista após reprovar
-    await store.fetchOrdensServico()
-
-    // Fechar o dialog
-    isDialogReprovarVisible.value = false
-    ordemServicoSelecionada.value = null
-
-    // Mostrar mensagem de sucesso
-    snackbarStore.showSnackbar({
-      text: 'Ordem de serviço reprovada com sucesso!',
-      color: 'warning',
-      timeout: 3000,
-    })
-  }
-  catch (error) {
-    console.error('Erro ao reprovar OS:', error)
-
-    // Mostrar mensagem de erro
-    snackbarStore.showSnackbar({
-      text: 'Erro ao reprovar ordem de serviço. Tente novamente.',
-      color: 'error',
-      timeout: 4000,
-    })
   }
 }
 
@@ -523,7 +412,7 @@ const headers = computed(() => {
             color="primary"
             size="small"
             @click="() => {
-              ordemServicoSelecionada = item
+              ordemServicoAtual = item
               isDialogMaterialVisible = true
             }"
           >
@@ -584,7 +473,7 @@ const headers = computed(() => {
             color="primary"
             size="small"
             @click="() => {
-              ordemServicoSelecionada = item
+              ordemServicoAtual = item
               isDialogDocumentosVisible = true
             }"
           >
@@ -664,25 +553,25 @@ const headers = computed(() => {
 
   <DialogFinalizarOs
     v-model:is-dialog-visible="isDialogAprovarVisible"
-    :os="ordemServicoSelecionada"
+    :os="ordemServicoAtual"
     @confirm="confirmarFinalizacao"
   />
 
   <DialogReprovarOs
     v-model:is-dialog-visible="isDialogReprovarVisible"
-    :os="ordemServicoSelecionada"
+    :os="ordemServicoAtual"
     @confirm="confirmarReprovacao"
   />
 
   <DialogMaterialEquipamento
     v-model:is-dialog-visible="isDialogMaterialVisible"
-    :os="ordemServicoSelecionada"
+    :os="ordemServicoAtual"
     :carregar-materiais="carregarMateriais"
   />
 
   <DialogDocumentosAnexos
     v-model:is-dialog-visible="isDialogDocumentosVisible"
-    :os="ordemServicoSelecionada"
+    :os="ordemServicoAtual"
     :carregar-anexos="carregarAnexos"
     :carregar-fotos="carregarFotos"
   />

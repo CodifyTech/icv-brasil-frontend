@@ -1,10 +1,10 @@
 import { defineStore } from 'pinia'
+import type { IFiltrosInmetro, IMaterialEquipamento, IOrdemServico, IOrdemServicoAnexo } from './../../inmetro/types/index'
 import ClienteService from '@/pages/cliente/services/ClienteService'
 import type { ICliente } from '@/pages/cliente/types'
 import type { IEscopo } from '@/pages/escopo/types'
 import type { IFuncionario } from '@/pages/funcionario/types'
 import InmetroService from '@/pages/inmetro/services/InmetroService'
-import type { IFiltrosInmetro, IMaterialEquipamento, IOrdemServico, IOrdemServicoAnexo } from '@/pages/inmetro/types'
 import type { ITipoServico } from '@/pages/tipo-servico/types'
 import { useSnackbarStore } from '@/stores/useSnackbarStore'
 
@@ -46,6 +46,10 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
     responsaveis: [] as IFuncionario[],
     router: useRouter(),
     snackbarStore: useSnackbarStore(),
+
+    // Dialog states
+    isDialogAprovarVisible: false,
+    isDialogReprovarVisible: false,
   }),
 
   actions: {
@@ -73,7 +77,7 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
         // Verificar se há um cliente selecionado
         if (!this.formData.cliente_id) {
           console.log('❌ Cliente não selecionado')
-          this.snackbarStore.showSnackbar({
+          useSnackbarStore().showSnackbar({
             text: 'Selecione um cliente antes de gerar o código da OS',
             color: 'warning',
             timeout: 3000,
@@ -86,7 +90,7 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
 
         if (response && typeof response === 'object' && 'codigo' in response) {
           this.formData.codigo = response.codigo as string
-          this.snackbarStore.showSnackbar({
+          useSnackbarStore().showSnackbar({
             text: 'Código da OS gerado com sucesso!',
             color: 'success',
             timeout: 2000,
@@ -95,7 +99,7 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
       }
       catch (error) {
         console.error('❌ Erro ao gerar código da OS:', error)
-        this.snackbarStore.showSnackbar({
+        useSnackbarStore().showSnackbar({
           text: 'Erro ao gerar código da OS. Tente novamente.',
           color: 'error',
           timeout: 3000,
@@ -143,7 +147,7 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
         // Limpar formData após criação
         this.resetForm()
 
-        this.snackbarStore.showSnackbar({
+        useSnackbarStore().showSnackbar({
           text: 'Ordem de serviço criada com sucesso!',
           color: 'success',
           timeout: 3000,
@@ -152,7 +156,7 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
         return data
       }
       catch (error) {
-        this.snackbarStore.showSnackbar({
+        useSnackbarStore().showSnackbar({
           text: 'Erro ao criar ordem de serviço. Tente novamente.',
           color: 'error',
           timeout: 3000,
@@ -234,7 +238,7 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
         window.URL.revokeObjectURL(url)
 
         // Mostra mensagem de sucesso
-        this.snackbarStore.showSnackbar({
+        useSnackbarStore().showSnackbar({
           text: 'CSV exportado com sucesso!',
           color: 'success',
           timeout: 3000,
@@ -244,7 +248,7 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
         console.error('Erro ao exportar CSV:', error)
 
         // Mostra mensagem de erro
-        this.snackbarStore.showSnackbar({
+        useSnackbarStore().showSnackbar({
           text: 'Erro ao exportar CSV. Tente novamente.',
           color: 'error',
           timeout: 4000,
@@ -317,6 +321,17 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
       }
     },
 
+    // Abrir dialogs
+    abrirDialogAprovar(item: IOrdemServico) {
+      this.ordemServicoAtual = item
+      this.isDialogAprovarVisible = true
+    },
+
+    abrirDialogReprovar(item: IOrdemServico) {
+      this.ordemServicoAtual = item
+      this.isDialogReprovarVisible = true
+    },
+
     // Buscar clientes
     async fetchClientes() {
       try {
@@ -361,7 +376,7 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
         // Limpar formData após criação
         this.resetForm()
 
-        this.snackbarStore.showSnackbar({
+        useSnackbarStore().showSnackbar({
           text: 'Ordem de serviço atualizada com sucesso!',
           color: 'success',
           timeout: 3000,
@@ -370,7 +385,7 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
         return data
       }
       catch (error) {
-        this.snackbarStore.showSnackbar({
+        useSnackbarStore().showSnackbar({
           text: 'Erro ao atualizar ordem de serviço. Tente novamente.',
           color: 'error',
           timeout: 3000,
@@ -466,7 +481,7 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
         if (index !== -1)
           this.ordensServico[index].email_responsavel_enviado_em = new Date().toISOString()
 
-        this.snackbarStore.showSnackbar({
+        useSnackbarStore().showSnackbar({
           text: 'Solicitação enviada com sucesso para o responsável!',
           color: 'success',
           timeout: 3000,
@@ -475,7 +490,7 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
         return response
       }
       catch (error: any) {
-        this.snackbarStore.showSnackbar({
+        useSnackbarStore().showSnackbar({
           text: error.response?.data?.message || 'Erro ao enviar solicitação. Tente novamente.',
           color: 'error',
           timeout: 3000,
@@ -507,6 +522,119 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
       catch (error) {
         console.error('Erro ao aceitar OS:', error)
         throw error
+      }
+    },
+
+    menuList(os: IOrdemServico) {
+      this.ordemServicoAtual = os
+
+      return [
+        {
+          title: 'Aprovar',
+          icon: 'tabler-check',
+          color: 'success',
+          click: (() => this.abrirDialogAprovar(this.ordemServicoAtual)) as any,
+        },
+        {
+          title: 'Reprovar',
+          color: 'error',
+          icon: 'tabler-x',
+          click: (() => this.abrirDialogReprovar(this.ordemServicoAtual)) as any,
+        },
+      ]
+    },
+
+    async confirmarFinalizacao(dados: { os: IOrdemServico | null; dadosFinalizacao: any }) {
+      if (!dados.os)
+        return
+
+      try {
+        console.log('Finalizando OS:', dados.os)
+        console.log('Dados de finalização:', dados.dadosFinalizacao)
+
+        // Implementação da chamada para o backend
+        const osAtualizada = {
+          ...dados.os,
+          num_relatorio: dados.dadosFinalizacao.num_relatorio,
+          data_execucao: dados.dadosFinalizacao.data_execucao,
+          certificado_associado: dados.dadosFinalizacao.certificado_associado,
+          resultado: dados.dadosFinalizacao.resultado,
+          observacoes: dados.dadosFinalizacao.observacoes,
+          status: 'FINALIZADA',
+        }
+
+        // Chamada para a API
+        await this.finalizarOS(osAtualizada)
+
+        // Atualizar a lista após finalizar
+        await this.fetchOrdensServico()
+
+        // Fechar o dialog
+        this.isDialogAprovarVisible = false
+        this.ordemServicoAtual = null
+
+        // Mostrar mensagem de sucesso
+        useSnackbarStore().showSnackbar({
+          text: 'Ordem de serviço finalizada com sucesso!',
+          color: 'success',
+          timeout: 3000,
+        })
+      }
+      catch (error) {
+        console.error('Erro ao finalizar OS:', error)
+
+        // Mostrar mensagem de erro
+        useSnackbarStore().showSnackbar({
+          text: 'Erro ao finalizar ordem de serviço. Tente novamente.',
+          color: 'error',
+          timeout: 4000,
+        })
+      }
+    },
+
+    async confirmarReprovacao(dados: { os: IOrdemServico | null; dadosReprovacao: any }) {
+      if (!dados.os)
+        return
+
+      try {
+        console.log('Reprovando OS:', dados.os)
+        console.log('Dados de reprovação:', dados.dadosReprovacao)
+
+        // Implementação da chamada para o backend
+        const osAtualizada = {
+          ...dados.os,
+          motivo_reprovacao: dados.dadosReprovacao.motivo_reprovacao,
+          observacoes_reprovacao: dados.dadosReprovacao.observacoes,
+          data_reprovacao: dados.dadosReprovacao.data_reprovacao,
+          status: 'REPROVADA',
+        }
+
+        // Chamada para a API
+        await this.reprovarOS(osAtualizada)
+
+        // Atualizar a lista após reprovar
+        await this.fetchOrdensServico()
+
+        // Fechar o dialog
+        this.isDialogReprovarVisible = false
+        this.ordemServicoAtual = null
+
+        // Mostrar mensagem de sucesso
+        useSnackbarStore().showSnackbar({
+          text: 'Ordem de serviço reprovada com sucesso!',
+          color: 'warning',
+          timeout: 3000,
+        })
+      }
+      catch (error) {
+        console.error('Erro ao reprovar OS:', error)
+
+        // Mostrar mensagem de erro
+        useSnackbarStore().showSnackbar({
+          text: 'Erro ao reprovar ordem de serviço. Tente novamente.',
+          color: 'error',
+          timeout: 4000,
+        })
       }
     },
   },
