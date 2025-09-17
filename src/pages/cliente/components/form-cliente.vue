@@ -66,6 +66,9 @@ const fetchPropostasCliente = async () => {
 watch(() => data.value, (data: IProposta) => {
   if (data.id && isEditing)
     fetchPropostasCliente()
+
+  if (!data.filiais)
+    data.filiais = []
 })
 
 onBeforeRouteLeave(() => {
