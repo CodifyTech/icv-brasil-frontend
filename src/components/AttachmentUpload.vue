@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 
-interface PhotoItem {
+export interface AnexoItem {
   id?: string | null
   file?: File
   url?: string
@@ -11,7 +11,7 @@ interface PhotoItem {
 }
 
 interface Props {
-  modelValue?: PhotoItem[]
+  modelValue?: AnexoItem[]
   label?: string
   placeholder?: string
   multiple?: boolean

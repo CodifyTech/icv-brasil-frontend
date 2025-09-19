@@ -1,7 +1,10 @@
 import { defineStore } from 'pinia'
+import type { IRole } from './../../acesso/types'
+import type { ICargo } from './../../cargo/types'
 import type { IDepartamento } from '@/pages/departamento/types'
 import FuncionarioService from '@/pages/funcionario/services/FuncionarioService'
 import type { IAtestadoOcupacional, IEPI, IFormacao, IFuncionarioAnexo, IHonorario, IQualificacao, ITipoDocumento } from '@/pages/funcionario/types'
+import UsersService from '@/pages/users/services/UsersService'
 import type { IUser } from '@/pages/users/types'
 
 const defaultValue = {
@@ -31,6 +34,7 @@ const defaultValue = {
   user: {
     email: '',
     password: '',
+    role: null,
   } as IUser,
   formacoes: [] as IFormacao[],
   atestado_ocupacionals: [] as IAtestadoOcupacional[],
@@ -48,6 +52,8 @@ export const useFuncionarioStore = defineStore('crud/funcionario', {
     useres: [],
     departamentos: [] as IDepartamento[],
     tipoDocumentos: [] as ITipoDocumento[],
+    cargos: [] as ICargo[],
+    roles: [] as IRole[],
     loading: {
       save: false,
       item: false,
@@ -56,6 +62,8 @@ export const useFuncionarioStore = defineStore('crud/funcionario', {
       user: false,
       departamentos: false,
       tipoDocumentos: false,
+      cargos: false,
+      roles: false,
     },
   }),
   actions: {
@@ -84,6 +92,29 @@ export const useFuncionarioStore = defineStore('crud/funcionario', {
         }).catch(() => {
           this.tipoDocumentos = []
           this.loading.tipoDocumentos = false
+        })
+    },
+    async fetchCargos(search?: string) {
+      this.loading.cargos = true
+      await FuncionarioService.fetchAll<ICargo[]>({
+        search,
+      }, 'listar/cargos')
+        .then(data => {
+          this.cargos = data
+        })
+        .finally(() => {
+          this.loading.cargos = false
+        })
+    },
+    async fetchPerfis() {
+      this.loading.roles = true
+      await UsersService.fetchRolesList<IRole>()
+        .then(data => {
+          this.roles = data
+          this.loading.roles = false
+        }).catch(() => {
+          this.roles = []
+          this.loading.roles = false
         })
     },
   },

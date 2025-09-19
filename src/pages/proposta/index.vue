@@ -74,8 +74,8 @@ const headers: ComputedRef<IHeader[]> = computed(() => {
       key: 'cliente.nome_fantasia',
     },
     {
-      title: 'Área',
-      key: 'area',
+      title: 'Departamentos',
+      key: 'departamentos',
     },
     {
       title: 'Status',
@@ -105,8 +105,8 @@ const terms: ComputedRef<ITerm[]> = computed(() => {
       relationship: 'filial',
     },
     {
-      title: 'Área',
-      value: 'area',
+      title: 'Departamentos',
+      value: 'departamentos',
     },
     {
       title: 'Status',
@@ -187,6 +187,18 @@ onBeforeRouteLeave(() => {
         tooltip="Alterar Status"
         @click="() => openStatusModal(item)"
       />
+    </template>
+    <template #item.departamentos="{ item }">
+      <div class="gap-2">
+        <VChip
+          v-for="departamento in item.departamentos"
+          :key="departamento.id"
+          density="comfortable"
+          size="small"
+          :text="departamento?.departamento?.nome"
+          class="mr-1"
+        />
+      </div>
     </template>
     <template #item.status="{ item }">
       <VChip

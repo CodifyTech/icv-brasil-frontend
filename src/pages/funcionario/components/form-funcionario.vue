@@ -24,6 +24,8 @@ const {
   loading,
   departamentos,
   tipoDocumentos,
+  cargos,
+  roles,
 } = storeToRefs(store)
 
 const tab = ref('dados_pessoais')
@@ -34,12 +36,16 @@ const {
   resetForm,
   fetchDepartamentos,
   fetchTipoDocumentos,
+  fetchCargos,
+  fetchPerfis,
 } = store
 
 onMounted(() => {
   // 👉 methods
   fetchDepartamentos()
   fetchTipoDocumentos()
+  fetchCargos()
+  fetchPerfis()
 })
 
 onBeforeRouteLeave(() => {
@@ -52,6 +58,7 @@ watch(() => data.value, newData => {
     newData.user = {
       email: '',
       password: '',
+      role: null,
     }
   }
 }, { immediate: true, deep: true })
@@ -191,6 +198,83 @@ watch(() => data.value, newData => {
                           :rules="[cdfRules.requiredValidator]"
                           item-title="nome"
                           item-value="id"
+                        />
+                      </VCol>
+                      <VCol
+                        cols="12"
+                        md="6"
+                      >
+                        <AppAutocomplete
+                          v-model="data.cargo_id"
+                          label="Cargo"
+                          :items="cargos"
+                          placeholder="Selecione o cargo"
+                          :rules="[cdfRules.requiredValidator]"
+                          item-title="nome"
+                          item-value="id"
+                        />
+                      </VCol>
+                    </VRow>
+                  </VCardText>
+                </VCard>
+              </VCol>
+              <VDivider />
+              <VCol cols="12">
+                <VCard
+                  title="Dados de Acesso"
+                  flat
+                >
+                  <VCardText class="pt-0 pb-2">
+                    <VRow>
+                      <VCol
+                        cols="12"
+                        md="6"
+                      >
+                        <CDFTextField
+                          v-model="data.user.email"
+                          label="E-mail"
+                          placeholder="Digite o e-mail"
+                          :rules="[cdfRules.requiredValidator, cdfRules.emailValidator]"
+                        />
+                      </VCol>
+                      <VCol
+                        cols="12"
+                        md="6"
+                      >
+                        <AppSelect
+                          v-model="data.user.role"
+                          label="Perfil"
+                          placeholder="Selecione o perfil"
+                          :rules="[cdfRules.requiredValidator]"
+                          item-title="name"
+                          item-value="slug"
+                          :items="roles"
+                          :loading="loading.roles"
+                          :disabled="useAuth().hasRole('admin') && useAuth().hasRole('rh')"
+                        />
+                      </VCol>
+                      <VCol
+                        cols="12"
+                        md="6"
+                      >
+                        <CDFTextField
+                          v-model="data.user.password"
+                          label="Senha"
+                          placeholder="Digite a senha"
+                          type="password"
+                          :rules="isEditing ? [cdfRules.lengthValidator(data?.user?.password, 8)] : [cdfRules.requiredValidator, cdfRules.lengthValidator(data?.user?.password, 8)]"
+                        />
+                      </VCol>
+                      <VCol
+                        cols="12"
+                        md="6"
+                      >
+                        <CDFTextField
+                          v-model="data.user.password_confirmation"
+                          label="Confirmar Senha"
+                          placeholder="Digite a senha"
+                          type="password"
+                          :rules="isEditing ? [cdfRules.confirmedValidator(data?.user?.password, data?.user?.password_confirmation)] : [cdfRules.requiredValidator, cdfRules.confirmedValidator(data?.user?.password, data?.user?.password_confirmation)]"
                         />
                       </VCol>
                     </VRow>

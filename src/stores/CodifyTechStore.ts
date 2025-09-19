@@ -1,10 +1,10 @@
 import type { PiniaPluginContext } from 'pinia'
 import type { StateHandler } from 'v3-infinite-loading/lib/types'
 import type { VForm } from 'vuetify/components/VForm'
-import { useConfirmDialogStore } from '@/stores/useConfirmDialogStore'
-import { useSuccessDialogStore } from '@/stores/useSuccessDialogStore'
 import type { ISearch } from '@/components/CDF/SearchBar.vue'
 import type { IOrderBy } from '@/pages/types/layoutTable.types'
+import { useConfirmDialogStore } from '@/stores/useConfirmDialogStore'
+import { useSuccessDialogStore } from '@/stores/useSuccessDialogStore'
 
 const loadedServices = {}
 
@@ -220,25 +220,30 @@ export async function CodifyTechStorePlugin({ store }: PiniaPluginContext) {
       async save(formData?: boolean) {
         store.loading.save = true
 
-        return await service.create(store.data, null, formData)
-          .then(data => {
-            store.resetForm()
-            store.formKey = Math.random()
+        try {
+          const response = await service.create(store.data, null, formData)
 
-            successDialog.showSuccessDialog({
-              title: 'Informação',
-              message: 'Foi criado com sucesso!',
-              confirmText: 'OK',
-            })
+          console.log('Passou aqui 1', response)
 
-            return data
+          store.resetForm()
+          store.formKey = Math.random()
+
+          successDialog.showSuccessDialog({
+            title: 'Informação',
+            message: 'Foi criado com sucesso!',
+            confirmText: 'OK',
           })
-          .catch(err => {
-            return err.response.data
-          })
-          .finally(() => {
-            store.loading.save = false
-          })
+
+          return data
+        }
+        catch (error) {
+          console.log('Passou aqui 2')
+
+          // return (error as AxiosError).response?.data
+        }
+        finally {
+          store.loading.save = false
+        }
       },
       async update(formData?: boolean) {
         if (store.data.id) {

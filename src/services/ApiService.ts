@@ -117,6 +117,8 @@ class ApiService {
       data: payload,
       headers: payload instanceof FormData ? { 'Content-Type': 'multipart/form-data', 'public': this._isPublic } : { public: this._isPublic },
     }).then(({ data }) => {
+      console.log('Passou aqui 3', data)
+
       return data
     })
       .catch(error => {

@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 
 import PropostaService from '../services/PropostaService'
+import type { AnexoItem } from '@/components/AttachmentUpload.vue'
 import { PropostaEnum } from '@/enums/PropostaStatusEnum'
 import type { ICusto, IDespesa, IDespesaDireta, IDespesaIndireta, IProposta, IServico, ITributo } from '@/pages/proposta/types'
 import type { IRubrica } from '@/pages/rubricas/types'
@@ -12,13 +13,12 @@ const defaultValue = {
   consultor_id: null,
   telefone: '',
   email: '',
-  area: 'OIA - O&G',
   status: '',
-  anexo: null,
   servicos: [] as IServico[],
   cliente_id: null,
-  anexos: [],
-}
+  departamentos: [] as Array<{ id: string; nome: string }>,
+  anexos: [] as AnexoItem[],
+} as Partial<IProposta>
 
 export const usePropostaStore = defineStore('crud/proposta', {
   state: () => ({
@@ -29,6 +29,7 @@ export const usePropostaStore = defineStore('crud/proposta', {
     filiais: [] as Array<{ id: string; nome_fantasia: string }>,
     funcionarios: [] as Array<{ id: string; nome: string }>,
     tipoServicos: [] as Array<{ id: string; nome: string }>,
+    departamentos: [] as Array<{ id: string; nome: string }>,
     rubricas: [] as IRubrica[],
     loading: {
       save: false,
@@ -38,6 +39,7 @@ export const usePropostaStore = defineStore('crud/proposta', {
       filial: false,
       funcionarios: false,
       tipoServico: false,
+      departamento: false,
     },
 
     modal: {
@@ -146,6 +148,19 @@ export const usePropostaStore = defineStore('crud/proposta', {
         }).catch(() => {
           this.tipoServicos = []
           this.loading.tipoServico = false
+        })
+    },
+
+    async fetchDepartamentos(search?: string) {
+      this.loading.departamento = true
+      await PropostaService.fetchAll(search, 'listar/departamentos')
+        .then(data => {
+          this.departamentos = data as Array<{ id: string; nome: string }>
+        }).catch(() => {
+          this.departamentos = []
+        })
+        .finally(() => {
+          this.loading.departamento = false
         })
     },
 

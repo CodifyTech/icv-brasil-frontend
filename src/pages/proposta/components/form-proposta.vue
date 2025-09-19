@@ -17,9 +17,9 @@ const { isEditing } = withDefaults(defineProps<{
 
 const store = usePropostaStore()
 
-const { data, loading, filiais, funcionarios, tipoServicos, modal } = storeToRefs(store)
+const { data, loading, filiais, funcionarios, tipoServicos, modal, departamentos } = storeToRefs(store)
 
-const { save, update, resetForm, fetchCliente, fetchFuncionarios, fetchTipoServico } = store
+const { save, update, resetForm, fetchCliente, fetchFuncionarios, fetchTipoServico, fetchDepartamentos } = store
 
 onBeforeRouteLeave(() => {
   resetForm()
@@ -32,7 +32,12 @@ onMounted(() => {
   fetchCliente()
   fetchFuncionarios()
   fetchTipoServico()
+  fetchDepartamentos()
 })
+
+const getDepartamentoName = (departamentoId: string) => {
+  return departamentos.value.find(departamento => departamento.departamento_id === departamentoId)?.nome
+}
 </script>
 
 <template>
@@ -45,10 +50,7 @@ onMounted(() => {
     is-actions
     :actions="{
       save: {
-        method: () => save(true)
-          .then(() => {
-            resetForm()
-          }),
+        method: () => save(true),
       },
       update: {
         method: () => update(true),
@@ -81,10 +83,10 @@ onMounted(() => {
               />
 
               <VChip
-                :color="data.consultor_id && data.pessoa_contato ? 'primary' : 'grey'"
-                :variant="data.consultor_id && data.pessoa_contato ? 'elevated' : 'outlined'"
+                :color="data.codigo_proposta && data.consultor_id && data.departamentos?.length > 0 ? 'primary' : 'grey'"
+                :variant="data.codigo_proposta && data.consultor_id && data.departamentos?.length > 0 ? 'elevated' : 'outlined'"
                 size="small"
-                :prepend-icon="data.consultor_id && data.pessoa_contato ? 'tabler-check' : 'tabler-user'"
+                :prepend-icon="data.codigo_proposta && data.consultor_id && data.departamentos?.length > 0 ? 'tabler-check' : 'tabler-user'"
               >
                 2. Dados
               </VChip>
@@ -296,15 +298,30 @@ onMounted(() => {
                 cols="12"
                 md="4"
               >
-                <CDFTextField
-                  v-model="data.area"
-                  label="Área de Atuação"
+                <AppSelect
+                  v-model="data.departamentos"
+                  label="Departamentos"
                   placeholder="Ex: OIA - O&G"
                   prepend-inner-icon="tabler-building-warehouse"
                   variant="outlined"
-                  hint="Área técnica de atuação da proposta"
+                  hint="Departamentos envolvidos na proposta"
                   persistent-hint
-                />
+                  :items="departamentos"
+                  item-title="nome"
+                  item-value="departamento_id"
+                  multiple
+                  return-object
+                  :rules="[rules.requiredValidator]"
+                >
+                  <template #selection="{ props, item }">
+                    <VChip
+                      v-bind="props"
+                      :text="getDepartamentoName(item.raw.departamento_id)"
+                      density="comfortable"
+                      size="small"
+                    />
+                  </template>
+                </AppSelect>
               </VCol>
             </VRow>
           </VCardText>

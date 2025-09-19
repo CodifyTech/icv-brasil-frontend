@@ -1,16 +1,19 @@
-import type { IFileData } from '@/types/IFileData'
+import type { AnexoItem } from '@/components/AttachmentUpload.vue'
 
 export interface IProposta {
   id?: string
+  codigo_proposta: string
   pessoa_contato: string
   consultor: string
   telefone: string
   email: string
-  area: string
   status: string
   cliente_id: string | null
   observacao: string | null
-  anexo?: IFileData | null
+  departamentos: Array<{ id: string; nome: string }>
+  funcionarios: Array<{ id: string; nome: string }>
+  tipoServicos: Array<{ id: string; nome: string }>
+  anexos: AnexoItem[]
 }
 
 export interface IServico {

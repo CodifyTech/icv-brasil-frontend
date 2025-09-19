@@ -8,10 +8,10 @@ import type { IHeader, ITableAction } from '@/pages/types/layoutTable.types'
 import type { IDepartamento } from '@/pages/departamento/types'
 
 withDefaults(defineProps<{
-    isHeader: boolean
-  }>(), {
-    isHeader: true,
-  })
+  isHeader: boolean
+}>(), {
+  isHeader: true,
+})
 
 definePage({
   meta: {
