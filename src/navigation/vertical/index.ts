@@ -68,6 +68,13 @@ export default [
     subject: 'departamento',
   },
   {
+    title: 'Cargo',
+    icon: { icon: 'fa-light fa-suitcase' },
+    to: 'cargo',
+    action: 'list',
+    subject: 'cargo',
+  },
+  {
     title: 'Tipo Documentos',
     icon: { icon: 'fa-light fa-file-lines' },
     to: 'tipo-documento',
