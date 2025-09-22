@@ -28,7 +28,7 @@ class PropostaService extends ApiService {
     }, `${id}/status`)
   }
 
-  async buscarPropostasPorCliente<T>(clienteId: string, statuses: string[] = [PropostaEnum.APROVADA, PropostaEnum.PERDIDA]) {
+  async buscarPropostasPorCliente<T>(clienteId: string, statuses: string[] = [PropostaEnum.APROVADA, PropostaEnum.REPROVADA, PropostaEnum.DECLINADA]) {
     return await this.getOrDeleteRequest<T>('GET', {
       statuses,
     }, `cliente/${clienteId}/propostas`)

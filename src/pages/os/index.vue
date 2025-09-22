@@ -160,7 +160,7 @@ onMounted(async () => {
       </VCol>
     </VRow>
 
-    <!-- Ordens de Serviço Recentes -->
+    <!-- Ordens de Serviço -->
     <VRow>
       <VCol
         cols="12"
@@ -168,7 +168,7 @@ onMounted(async () => {
       >
         <VCard>
           <VCardTitle class="d-flex align-center justify-space-between">
-            <span>Ordens de Serviço Recentes</span>
+            <span>Ordens de Serviço</span>
             <VBtn
               variant="text"
               size="small"
@@ -262,19 +262,6 @@ onMounted(async () => {
                 tabler-plus
               </VIcon>
               Nova Ordem de Serviço
-            </VBtn>
-
-            <VBtn
-              block
-              color="secondary"
-              variant="outlined"
-              class="mb-3"
-              to="/inmetro"
-            >
-              <VIcon start>
-                tabler-list
-              </VIcon>
-              Listar Todas as OS
             </VBtn>
           </VCardText>
         </VCard>

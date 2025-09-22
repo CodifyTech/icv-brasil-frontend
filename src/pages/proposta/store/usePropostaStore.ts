@@ -221,7 +221,7 @@ export const usePropostaStore = defineStore('crud/proposta', {
       }
     },
 
-    async buscarPropostasPorCliente(clienteId: string, statuses: string[] = [PropostaEnum.APROVADA, PropostaEnum.PERDIDA]) {
+    async buscarPropostasPorCliente(clienteId: string, statuses: string[] = [PropostaEnum.APROVADA, PropostaEnum.REPROVADA, PropostaEnum.DECLINADA]) {
       try {
         return await PropostaService.buscarPropostasPorCliente<IProposta[]>(clienteId, statuses)
       }
