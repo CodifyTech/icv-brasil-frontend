@@ -600,6 +600,19 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
             click: (() => this.abrirDialogAprovar(this.ordemServicoAtual)) as any,
           },
           {
+            title: 'Certificado Pendente',
+            icon: 'tabler-certificate',
+            color: 'success',
+            click: async () => {
+              await InmetroService.update({}, `${os.id}/certificado-pendente`)
+              useSnackbarStore().showSnackbar({
+                text: 'Certificado pendente enviado com sucesso!',
+                color: 'success',
+                timeout: 3000,
+              })
+            },
+          },
+          {
             title: 'Reprovar',
             color: 'error',
             icon: 'tabler-x',

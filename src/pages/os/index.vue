@@ -348,6 +348,22 @@ onMounted(async () => {
               </VBtn>
 
               <VBtn
+                :variant="filtros?.status === OsStatusEnum.CERTIFICADO_PENDENTE ? 'flat' : 'outlined'"
+                :color="filtros?.status === OsStatusEnum.CERTIFICADO_PENDENTE ? 'deep-orange' : 'default'"
+                size="small"
+                class="justify-start"
+                @click="aplicarFiltroStatus(OsStatusEnum.CERTIFICADO_PENDENTE)"
+              >
+                <VIcon
+                  start
+                  size="16"
+                >
+                  tabler-certificate
+                </VIcon>
+                Certificado Pendente
+              </VBtn>
+
+              <VBtn
                 :variant="filtros?.status === OsStatusEnum.FINALIZADO ? 'flat' : 'outlined'"
                 :color="filtros?.status === OsStatusEnum.FINALIZADO ? 'success' : 'default'"
                 size="small"
