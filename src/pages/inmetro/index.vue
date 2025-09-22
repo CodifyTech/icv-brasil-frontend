@@ -38,6 +38,9 @@ const {
   ordemServicoAtual,
   isDialogAprovarVisible,
   isDialogReprovarVisible,
+  page,
+  itemsPerPage,
+  total,
 } = storeToRefs(store)
 
 const {
@@ -51,6 +54,7 @@ const {
   confirmarFinalizacao,
   confirmarReprovacao,
   menuList,
+  loadMore,
 } = store
 
 onMounted(async () => {
@@ -181,7 +185,7 @@ const carregarFotos = async () => {
   return []
 }
 
-const exportarRelatorios = async () => {
+const exportarRelatorios = async (option: 'CSV' | 'EXCEL') => {
   try {
     // Aplicar os filtros atuais do formulário antes de exportar
     const filtrosLimpos = {
@@ -199,7 +203,10 @@ const exportarRelatorios = async () => {
     // Mostrar loading
     loading.value.relatorios = true
 
-    await store.exportarCSV()
+    if (option === 'CSV')
+      await store.exportarCSV()
+    else if (option === 'EXCEL')
+      await store.exportarExcel()
   }
   catch (error) {
     console.error('Erro ao exportar CSV:', error)
@@ -273,12 +280,22 @@ const headers = computed(() => {
         <VBtn
           color="secondary"
           variant="outlined"
-          prepend-icon="tabler-download"
+          prepend-icon="tabler-file-type-csv"
           :loading="loading.relatorios"
           :disabled="loading.relatorios"
-          @click="exportarRelatorios"
+          @click="exportarRelatorios('CSV')"
         >
-          {{ loading.relatorios ? 'Exportando...' : 'Exportar CSV' }}
+          {{ loading.relatorios ? 'Exportando...' : 'CSV' }}
+        </VBtn>
+        <VBtn
+          color="secondary"
+          variant="outlined"
+          prepend-icon="tabler-file-type-xls"
+          :loading="loading.relatorios"
+          :disabled="loading.relatorios"
+          @click="exportarRelatorios('EXCEL')"
+        >
+          {{ loading.relatorios ? 'Exportando...' : 'Excel' }}
         </VBtn>
       </div>
     </VCardText>
@@ -401,10 +418,16 @@ const headers = computed(() => {
   <!-- Tabela de Relatórios -->
   <VCard>
     <VCardText>
-      <VDataTable
+      <VDataTableServer
+        v-model:items-per-page="itemsPerPage"
+        v-model:items-length="total"
         :headers="headers"
         :items="ordensServico"
         :loading="loading.relatorios"
+        @update:page="(value) => {
+          page = value
+          loadMore()
+        }"
       >
         <template #[`item.material_equipamento`]="{ item }">
           <VBtn
@@ -547,7 +570,7 @@ const headers = computed(() => {
             />
           </div>
         </template>
-      </VDataTable>
+      </VDataTableServer>
     </VCardText>
   </VCard>
 

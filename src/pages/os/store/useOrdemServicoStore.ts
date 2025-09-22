@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import type { IFiltrosInmetro, IMaterialEquipamento, IOrdemServico, IOrdemServicoAnexo } from './../../inmetro/types/index'
+import { OsStatusEnum } from '@/enums/OSStatusEnum'
 import ClienteService from '@/pages/cliente/services/ClienteService'
 import type { ICliente } from '@/pages/cliente/types'
 import type { IEscopo } from '@/pages/escopo/types'
@@ -34,6 +35,7 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
 
     // Filtros e busca
     filtros: {} as IFiltrosInmetro,
+    total: 0,
     page: 1,
     itemsPerPage: 10,
     searchTerm: '',
@@ -57,11 +59,16 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
     async fetchOrdensServico(options = {}) {
       this.loading.list = true
       try {
-        const { data } = await InmetroService.fetchAll<{ data: IOrdemServico[] }>({ ...this.filtros, ...options }, undefined)
+        const response = await InmetroService.fetchAll<{ data: IOrdemServico[]; total: number }>({
+          ...this.filtros,
+          ...options,
+          per_page: this.itemsPerPage,
+        }, undefined)
 
-        this.ordensServico = data
+        this.ordensServico = response.data
+        this.total = response.total || 0
 
-        return data
+        return response.data
       }
       catch (error) {
         console.error('Erro ao buscar ordens de serviço:', error)
@@ -261,6 +268,53 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
       }
     },
 
+    // Exportar Excel
+    async exportarExcel() {
+      try {
+        this.loading.relatorios = true
+
+        // Chama o método específico para exportação Excel
+        const blob = await InmetroService.exportarExcel(this.filtros)
+
+        // Criar URL do blob e fazer download
+        const url = window.URL.createObjectURL(blob)
+        const link = document.createElement('a')
+
+        // Gera nome do arquivo com timestamp
+        const timestamp = new Date().toISOString().split('T')[0]
+        const filename = `relatorios_inmetro_${timestamp}.xlsx`
+
+        link.href = url
+        link.setAttribute('download', filename)
+        document.body.appendChild(link)
+        link.click()
+        link.remove()
+        window.URL.revokeObjectURL(url)
+
+        // Mostra mensagem de sucesso
+        useSnackbarStore().showSnackbar({
+          text: 'Excel exportado com sucesso!',
+          color: 'success',
+          timeout: 3000,
+        })
+      }
+      catch (error) {
+        console.error('Erro ao exportar Excel:', error)
+
+        // Mostra mensagem de erro
+        useSnackbarStore().showSnackbar({
+          text: 'Erro ao exportar Excel. Tente novamente.',
+          color: 'error',
+          timeout: 4000,
+        })
+
+        throw error
+      }
+      finally {
+        this.loading.relatorios = false
+      }
+    },
+
     // Download relatório PDF
     async downloadRelatorioPDF(id?: string) {
       if (!id)
@@ -400,8 +454,6 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
 
     // Métodos para tabela
     async loadMore() {
-      this.page++
-
       return await this.fetchOrdensServico({ page: this.page })
     },
 
@@ -527,21 +579,36 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
 
     menuList(os: IOrdemServico) {
       this.ordemServicoAtual = os
-
-      return [
+      let menu = [
         {
-          title: 'Aprovar',
-          icon: 'tabler-check',
-          color: 'success',
-          click: (() => this.abrirDialogAprovar(this.ordemServicoAtual)) as any,
-        },
-        {
-          title: 'Reprovar',
-          color: 'error',
-          icon: 'tabler-x',
-          click: (() => this.abrirDialogReprovar(this.ordemServicoAtual)) as any,
+          title: 'Duplicar',
+          icon: 'tabler-copy',
+          color: 'info',
+          click: () => {
+            this.router.push(`/os/cadastrar?duplicar=${os.id}`)
+          },
         },
       ]
+
+      if (os.status === OsStatusEnum.EM_ANALISE || os.status === OsStatusEnum.ANDAMENTO) {
+        menu = [
+          ...menu,
+          {
+            title: 'Aprovar',
+            icon: 'tabler-check',
+            color: 'success',
+            click: (() => this.abrirDialogAprovar(this.ordemServicoAtual)) as any,
+          },
+          {
+            title: 'Reprovar',
+            color: 'error',
+            icon: 'tabler-x',
+            click: (() => this.abrirDialogReprovar(this.ordemServicoAtual)) as any,
+          },
+        ]
+      }
+
+      return menu
     },
 
     async confirmarFinalizacao(dados: { os: IOrdemServico | null; dadosFinalizacao: any }) {
@@ -636,6 +703,30 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
           timeout: 4000,
         })
       }
+    },
+
+    // Pagination actions
+    setPage(page: number) {
+      this.page = page
+    },
+
+    nextPage() {
+      if (this.page < Math.ceil(this.total / this.itemsPerPage)) {
+        this.page++
+        this.loadMore()
+      }
+    },
+
+    previousPage() {
+      if (this.page > 1) {
+        this.page--
+        this.loadMore()
+      }
+    },
+
+    setItemsPerPage(itemsPerPage: number) {
+      this.itemsPerPage = itemsPerPage
+      this.page = 1 // Reset to first page when changing items per page
     },
   },
 
