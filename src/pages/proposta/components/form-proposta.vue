@@ -17,7 +17,7 @@ const { isEditing } = withDefaults(defineProps<{
 
 const store = usePropostaStore()
 
-const { data, loading, filiais, funcionarios, tipoServicos, modal, departamentos } = storeToRefs(store)
+const { data, loading, filiais, funcionarios, tipoServicos, departamentos, modal } = storeToRefs(store)
 
 const { save, update, resetForm, fetchCliente, fetchFuncionarios, fetchTipoServico, fetchDepartamentos } = store
 
@@ -35,8 +35,8 @@ onMounted(() => {
   fetchDepartamentos()
 })
 
-const getDepartamentoName = (departamentoId: string) => {
-  return departamentos.value.find(departamento => departamento.departamento_id === departamentoId)?.nome
+const getDepartamentos = (departamento_id: string) => {
+  return departamentos.value.find(departamento => departamento.departamento_id === departamento_id)
 }
 </script>
 
@@ -50,7 +50,10 @@ const getDepartamentoName = (departamentoId: string) => {
     is-actions
     :actions="{
       save: {
-        method: () => save(true),
+        method: () => save(true)
+          .then(() => {
+            resetForm()
+          }),
       },
       update: {
         method: () => update(true),
@@ -83,10 +86,10 @@ const getDepartamentoName = (departamentoId: string) => {
               />
 
               <VChip
-                :color="data.codigo_proposta && data.consultor_id && data.departamentos?.length > 0 ? 'primary' : 'grey'"
-                :variant="data.codigo_proposta && data.consultor_id && data.departamentos?.length > 0 ? 'elevated' : 'outlined'"
+                :color="data.consultor_id && data.pessoa_contato ? 'primary' : 'grey'"
+                :variant="data.consultor_id && data.pessoa_contato ? 'elevated' : 'outlined'"
                 size="small"
-                :prepend-icon="data.codigo_proposta && data.consultor_id && data.departamentos?.length > 0 ? 'tabler-check' : 'tabler-user'"
+                :prepend-icon="data.consultor_id && data.pessoa_contato ? 'tabler-check' : 'tabler-user'"
               >
                 2. Dados
               </VChip>
@@ -298,30 +301,31 @@ const getDepartamentoName = (departamentoId: string) => {
                 cols="12"
                 md="4"
               >
-                <AppSelect
+                <AppAutocomplete
                   v-model="data.departamentos"
-                  label="Departamentos"
-                  placeholder="Ex: OIA - O&G"
-                  prepend-inner-icon="tabler-building-warehouse"
-                  variant="outlined"
-                  hint="Departamentos envolvidos na proposta"
-                  persistent-hint
+                  label="Departamento"
+                  placeholder="Ex: OIA OG"
+                  :rules="[rules.requiredValidator]"
                   :items="departamentos"
                   item-title="nome"
                   item-value="departamento_id"
+                  prepend-inner-icon="tabler-building-skyscraper"
+                  variant="outlined"
+                  persistent-hint
                   multiple
                   return-object
-                  :rules="[rules.requiredValidator]"
                 >
-                  <template #selection="{ props, item }">
+                  <template #selection="{ item }">
                     <VChip
-                      v-bind="props"
-                      :text="getDepartamentoName(item.raw.departamento_id)"
-                      density="comfortable"
-                      size="small"
-                    />
+                      :key="item.id"
+                      color="primary"
+                      variant="outlined"
+                      size="x-small"
+                    >
+                      {{ getDepartamentos(item.raw?.departamento_id)?.nome }}
+                    </VChip>
                   </template>
-                </AppSelect>
+                </AppAutocomplete>
               </VCol>
             </VRow>
           </VCardText>

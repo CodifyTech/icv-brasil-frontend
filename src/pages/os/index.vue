@@ -19,14 +19,37 @@ definePage({
 
 const store = useOrdemServicoStore()
 
-const { ordensServico, estatisticas, isDialogAprovarVisible, isDialogReprovarVisible } = storeToRefs(store)
+const {
+  page, total, filtros, itemsPerPage,
+  ordensServico, estatisticas, isDialogAprovarVisible, isDialogReprovarVisible,
+} = storeToRefs(store)
 
 const {
   menuList,
   ordemServicoAtual,
   confirmarFinalizacao,
   confirmarReprovacao,
+  nextPage,
+  previousPage,
 } = store
+
+// Método para aplicar filtro
+const aplicarFiltroStatus = async (status: string) => {
+  page.value = 1
+  total.value = 0
+  filtros.value = {
+    status,
+  }
+  await store.fetchOrdensServico()
+}
+
+// Método para limpar filtros
+const limparFiltros = async () => {
+  page.value = 1
+  total.value = 0
+  filtros.value = {}
+  await store.fetchOrdensServico()
+}
 
 onMounted(async () => {
   await Promise.all([
@@ -160,7 +183,7 @@ onMounted(async () => {
       </VCol>
     </VRow>
 
-    <!-- Ordens de Serviço Recentes -->
+    <!-- Ordens de Serviço -->
     <VRow>
       <VCol
         cols="12"
@@ -168,14 +191,7 @@ onMounted(async () => {
       >
         <VCard>
           <VCardTitle class="d-flex align-center justify-space-between">
-            <span>Ordens de Serviço Recentes</span>
-            <VBtn
-              variant="text"
-              size="small"
-              to="/inmetro"
-            >
-              Ver todas
-            </VBtn>
+            <span>Ordens de Serviço</span>
           </VCardTitle>
 
           <VDivider />
@@ -183,7 +199,7 @@ onMounted(async () => {
           <VCardText class="pa-0">
             <VList v-if="ordensServico?.length > 0">
               <VListItem
-                v-for="os in ordensServico?.slice(0, 10)"
+                v-for="os in ordensServico"
                 :key="os.id"
               >
                 <template #prepend>
@@ -216,28 +232,35 @@ onMounted(async () => {
                     />
 
                     <CDFMoreBtn
-                      v-if="os.status === OsStatusEnum.EM_ANALISE || os.status === OsStatusEnum.ANDAMENTO"
                       color="gray"
-                      :menu-list="store.menuList(os)"
+                      :menu-list="menuList(os)"
                     />
                   </div>
                 </template>
               </VListItem>
             </VList>
 
-            <div
-              v-else
-              class="py-8 text-center"
-            >
-              <VIcon
-                size="64"
-                class="mb-4 text-medium-emphasis"
+            <VDivider class="py-2" />
+
+            <div class="d-flex gap-2 pt-0 pa-6">
+              <CDFButton
+                icon="tabler-arrow-left"
+                icon-direction="left"
+                :disabled="page === 1"
+                variant="outlined"
+                @click="previousPage"
               >
-                tabler-file-x
-              </VIcon>
-              <p class="text-body-1 text-medium-emphasis">
-                Nenhuma ordem de serviço encontrada
-              </p>
+                Anterior
+              </CDFButton>
+              <VSpacer />
+              <CDFButton
+                icon="tabler-arrow-right"
+                icon-direction="right"
+                variant="outlined"
+                @click="nextPage"
+              >
+                Próximo
+              </CDFButton>
             </div>
           </VCardText>
         </VCard>
@@ -264,18 +287,98 @@ onMounted(async () => {
               Nova Ordem de Serviço
             </VBtn>
 
-            <VBtn
-              block
-              color="secondary"
-              variant="outlined"
-              class="mb-3"
-              to="/inmetro"
-            >
-              <VIcon start>
-                tabler-list
-              </VIcon>
-              Listar Todas as OS
-            </VBtn>
+            <!-- Filtros por Status -->
+            <VDivider class="mb-4" />
+
+            <div class="mb-3">
+              <h6 class="text-subtitle-2 font-weight-medium mb-2">
+                Filtrar por Status
+              </h6>
+
+              <!-- Botão para mostrar todas -->
+              <VBtn
+                :variant="!filtros?.status ? 'flat' : 'outlined'"
+                :color="!filtros?.status ? 'primary' : 'default'"
+                size="small"
+                class="mb-2 me-2"
+                @click="limparFiltros"
+              >
+                <VIcon
+                  start
+                  size="16"
+                >
+                  tabler-list
+                </VIcon>
+                Todas
+              </VBtn>
+            </div>
+
+            <!-- Filtros por status específico -->
+            <div class="d-flex flex-column gap-2">
+              <VBtn
+                :variant="filtros?.status === OsStatusEnum.EM_ANALISE ? 'flat' : 'outlined'"
+                :color="filtros?.status === OsStatusEnum.EM_ANALISE ? 'info' : 'default'"
+                size="small"
+                class="justify-start"
+                @click="aplicarFiltroStatus(OsStatusEnum.EM_ANALISE)"
+              >
+                <VIcon
+                  start
+                  size="16"
+                >
+                  tabler-eye
+                </VIcon>
+                Em Análise
+              </VBtn>
+
+              <VBtn
+                :variant="filtros?.status === OsStatusEnum.ANDAMENTO ? 'flat' : 'outlined'"
+                :color="filtros?.status === OsStatusEnum.ANDAMENTO ? 'warning' : 'default'"
+                size="small"
+                class="justify-start"
+                @click="aplicarFiltroStatus(OsStatusEnum.ANDAMENTO)"
+              >
+                <VIcon
+                  start
+                  size="16"
+                >
+                  tabler-progress
+                </VIcon>
+                Em Andamento
+              </VBtn>
+
+              <VBtn
+                :variant="filtros?.status === OsStatusEnum.CERTIFICADO_PENDENTE ? 'flat' : 'outlined'"
+                :color="filtros?.status === OsStatusEnum.CERTIFICADO_PENDENTE ? 'deep-orange' : 'default'"
+                size="small"
+                class="justify-start"
+                @click="aplicarFiltroStatus(OsStatusEnum.CERTIFICADO_PENDENTE)"
+              >
+                <VIcon
+                  start
+                  size="16"
+                >
+                  tabler-certificate
+                </VIcon>
+                Certificado Pendente
+              </VBtn>
+
+              <VBtn
+                :variant="filtros?.status === OsStatusEnum.FINALIZADO ? 'flat' : 'outlined'"
+                :color="filtros?.status === OsStatusEnum.FINALIZADO ? 'success' : 'default'"
+                size="small"
+                class="justify-start"
+                @click="aplicarFiltroStatus(OsStatusEnum.FINALIZADO)"
+              >
+                <VIcon
+                  start
+                  size="16"
+                >
+                  tabler-check
+                </VIcon>
+                Finalizados
+              </VBtn>
+            </div>
           </VCardText>
         </VCard>
       </VCol>

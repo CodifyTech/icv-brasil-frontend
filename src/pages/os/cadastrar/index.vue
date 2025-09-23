@@ -10,7 +10,24 @@ definePage({
   },
 })
 
-const { resetForm } = useOrdemServicoStore()
+const store = useOrdemServicoStore()
+
+const { resetForm, fetchOrdemServico } = store
+
+const {
+  formData,
+} = storeToRefs(store)
+
+const route = useRoute()
+
+onMounted(async () => {
+  if (route.query.duplicar) {
+    await fetchOrdemServico(route.query.duplicar as string)
+
+    formData.value.anexos = []
+    formData.value.fotos = []
+  }
+})
 
 onBeforeRouteLeave(() => {
   resetForm()

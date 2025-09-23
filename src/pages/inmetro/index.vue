@@ -17,6 +17,7 @@ import DialogDocumentosAnexos from '@/pages/os/components/DialogDocumentosAnexos
 import DialogFinalizarOs from '@/pages/os/components/DialogFinalizarOS.vue'
 import DialogMaterialEquipamento from '@/pages/os/components/DialogMaterialEquipamento.vue'
 import DialogReprovarOs from '@/pages/os/components/DialogReprovarOS.vue'
+import DialogVisualizarEmail from '@/pages/os/components/DialogVisualizarEmail.vue'
 import { useOrdemServicoStore } from '@/pages/os/store/useOrdemServicoStore'
 import { useSnackbarStore } from '@/stores/useSnackbarStore'
 
@@ -38,6 +39,9 @@ const {
   ordemServicoAtual,
   isDialogAprovarVisible,
   isDialogReprovarVisible,
+  page,
+  itemsPerPage,
+  total,
 } = storeToRefs(store)
 
 const {
@@ -51,6 +55,7 @@ const {
   confirmarFinalizacao,
   confirmarReprovacao,
   menuList,
+  loadMore,
 } = store
 
 onMounted(async () => {
@@ -76,6 +81,7 @@ const filtroForm = ref({
 
 const isDialogMaterialVisible = ref<boolean>(false)
 const isDialogDocumentosVisible = ref<boolean>(false)
+const isDialogEmailVisible = ref<boolean>(false)
 const loadingEmails = ref<Record<number, boolean>>({})
 const auth = useAuth()
 
@@ -181,7 +187,7 @@ const carregarFotos = async () => {
   return []
 }
 
-const exportarRelatorios = async () => {
+const exportarRelatorios = async (option: 'CSV' | 'EXCEL') => {
   try {
     // Aplicar os filtros atuais do formulário antes de exportar
     const filtrosLimpos = {
@@ -199,7 +205,10 @@ const exportarRelatorios = async () => {
     // Mostrar loading
     loading.value.relatorios = true
 
-    await store.exportarCSV()
+    if (option === 'CSV')
+      await store.exportarCSV()
+    else if (option === 'EXCEL')
+      await store.exportarExcel()
   }
   catch (error) {
     console.error('Erro ao exportar CSV:', error)
@@ -273,12 +282,22 @@ const headers = computed(() => {
         <VBtn
           color="secondary"
           variant="outlined"
-          prepend-icon="tabler-download"
+          prepend-icon="tabler-file-type-csv"
           :loading="loading.relatorios"
           :disabled="loading.relatorios"
-          @click="exportarRelatorios"
+          @click="exportarRelatorios('CSV')"
         >
-          {{ loading.relatorios ? 'Exportando...' : 'Exportar CSV' }}
+          {{ loading.relatorios ? 'Exportando...' : 'CSV' }}
+        </VBtn>
+        <VBtn
+          color="secondary"
+          variant="outlined"
+          prepend-icon="tabler-file-type-xls"
+          :loading="loading.relatorios"
+          :disabled="loading.relatorios"
+          @click="exportarRelatorios('EXCEL')"
+        >
+          {{ loading.relatorios ? 'Exportando...' : 'Excel' }}
         </VBtn>
       </div>
     </VCardText>
@@ -401,10 +420,16 @@ const headers = computed(() => {
   <!-- Tabela de Relatórios -->
   <VCard>
     <VCardText>
-      <VDataTable
+      <VDataTableServer
+        v-model:items-per-page="itemsPerPage"
+        v-model:items-length="total"
         :headers="headers"
         :items="ordensServico"
         :loading="loading.relatorios"
+        @update:page="(value) => {
+          page = value
+          loadMore()
+        }"
       >
         <template #[`item.material_equipamento`]="{ item }">
           <VBtn
@@ -505,6 +530,22 @@ const headers = computed(() => {
               <VIcon>tabler-eye</VIcon>
             </VBtn>
 
+            <!-- Botão para visualizar email -->
+            <VBtn
+              v-if="item.email_cliente_enviado_em"
+              size="small"
+              color="info"
+              variant="outlined"
+              @click="() => {
+                ordemServicoAtual = item
+                isDialogEmailVisible = true
+              }"
+            >
+              <VIcon size="18">
+                tabler-mail-opened
+              </VIcon>
+            </VBtn>
+
             <!-- Botão de enviar para responsável -->
             <VBtn
               v-if="item.responsavel && !emailJaEnviadoHoje(item)"
@@ -547,7 +588,7 @@ const headers = computed(() => {
             />
           </div>
         </template>
-      </VDataTable>
+      </VDataTableServer>
     </VCardText>
   </VCard>
 
@@ -574,6 +615,11 @@ const headers = computed(() => {
     :os="ordemServicoAtual"
     :carregar-anexos="carregarAnexos"
     :carregar-fotos="carregarFotos"
+  />
+
+  <DialogVisualizarEmail
+    v-model:is-dialog-visible="isDialogEmailVisible"
+    :os="ordemServicoAtual"
   />
 </template>
 

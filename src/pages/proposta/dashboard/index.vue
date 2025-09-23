@@ -21,7 +21,8 @@ const statusCounts: ComputedRef<Record<string, number>> = computed(() => {
   if (!store.items) {
     return {
       aprovada: 0,
-      perdida: 0,
+      reprovada: 0,
+      declinada: 0,
       rascunho: 0,
       enviada: 0,
     }
@@ -29,7 +30,8 @@ const statusCounts: ComputedRef<Record<string, number>> = computed(() => {
 
   return {
     aprovada: store.items.filter((item: any) => item.status?.toLowerCase() === 'aprovada').length,
-    perdida: store.items.filter((item: any) => item.status?.toLowerCase() === 'perdida').length,
+    reprovada: store.items.filter((item: any) => item.status?.toLowerCase() === 'reprovada').length,
+    declinada: store.items.filter((item: any) => item.status?.toLowerCase() === 'declinada').length,
     rascunho: store.items.filter((item: any) => item.status?.toLowerCase() === 'rascunho').length,
     enviada: store.items.filter((item: any) => item.status?.toLowerCase() === 'enviada').length,
   }
@@ -44,8 +46,8 @@ const tabs = [
     color: 'success',
   },
   {
-    key: 'perdida',
-    title: 'Propostas Perdidas',
+    key: 'reprovada',
+    title: 'Propostas Reprovadas',
     icon: 'tabler-x',
     color: 'error',
   },

@@ -214,7 +214,10 @@ onBeforeRouteLeave(() => {
   <PropostaStatusModal
     v-model="statusModal"
     :proposta-id="selectedPropostaId"
-    @status-changed="(data) => store.handleStatusChange(selectedPropostaId, data)"
+    @status-changed="(data) => {
+      console.log(data)
+      store.handleStatusChange(selectedPropostaId, data)
+    }"
   />
 
   <!-- Modal de Visualização da Proposta -->

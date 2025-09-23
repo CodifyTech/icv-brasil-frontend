@@ -47,6 +47,8 @@ declare module 'vue' {
     CDFManager: typeof import('./src/components/CDF/CDFManager.vue')['default']
     CDFMoreBtn: typeof import('./src/components/CDF/CDFMoreBtn.vue')['default']
     CDFNumberInput: typeof import('./src/components/CDF/CDFNumberInput.vue')['default']
+    CDFPagination: typeof import('./src/components/CDF/CDFPagination.vue')['default']
+    CDFPaginationExample: typeof import('./src/components/CDF/CDFPaginationExample.vue')['default']
     CDFSwitch: typeof import('./src/components/CDF/CDFSwitch.vue')['default']
     CDFText: typeof import('./src/components/CDF/CDFText.vue')['default']
     CDFTextField: typeof import('./src/components/CDF/CDFTextField.vue')['default']

@@ -54,6 +54,31 @@ class InmetroService extends ApiService {
 
     return response.data
   }
+
+  // Exportar Excel - método específico para download de arquivo
+  async exportarExcel(filtros?: any): Promise<Blob> {
+    // Limpa campos vazios do filtro
+    const cleanedFiltros = filtros
+      ? Object.fromEntries(
+        Object.entries(filtros).filter(([, value]) => value !== null && value !== undefined && value !== ''),
+      )
+      : {}
+
+    // Constrói a query string
+    const queryString = new URLSearchParams(cleanedFiltros as any).toString()
+    const url = queryString ? `os/exportar/excel?${queryString}` : 'os/exportar/excel'
+
+    const response = await useApi.request({
+      url,
+      method: 'GET',
+      responseType: 'blob',
+      headers: {
+        Accept: 'application/vnd.ms-excel',
+      },
+    })
+
+    return response.data
+  }
 }
 
 export default new InmetroService('os')

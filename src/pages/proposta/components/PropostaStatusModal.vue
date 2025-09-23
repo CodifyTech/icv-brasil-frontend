@@ -43,7 +43,7 @@ const handleSubmit = async () => {
   if (valid) {
     emit('statusChanged', {
       status: selectedStatus.value,
-      observacao: selectedStatus.value === PropostaEnum.PERDIDA ? observacao.value : undefined,
+      observacao: selectedStatus.value === PropostaEnum.REPROVADA || selectedStatus.value === PropostaEnum.DECLINADA ? observacao.value : undefined,
     })
     handleCancel()
   }
@@ -73,18 +73,23 @@ const handleSubmit = async () => {
               color="success"
             />
             <VRadio
-              label="Marcar como Perdida"
-              :value="PropostaEnum.PERDIDA"
+              label="Marcar como Reprovada"
+              :value="PropostaEnum.REPROVADA"
+              color="error"
+            />
+            <VRadio
+              label="Marcar como Declinada"
+              :value="PropostaEnum.DECLINADA"
               color="error"
             />
           </VRadioGroup>
 
           <AppTextarea
-            v-if="selectedStatus === PropostaEnum.PERDIDA"
+            v-if="selectedStatus === PropostaEnum.REPROVADA || selectedStatus === PropostaEnum.DECLINADA"
             v-model="observacao"
             label="Observação *"
-            placeholder="Informe o motivo da perda..."
-            :rules="selectedStatus === PropostaEnum.PERDIDA ? [v => !!v || 'Observação é obrigatória'] : []"
+            placeholder="Informe o motivo da reprovação ou declinação..."
+            :rules="selectedStatus === PropostaEnum.REPROVADA || selectedStatus === PropostaEnum.DECLINADA ? [v => !!v || 'Observação é obrigatória'] : []"
             rows="3"
             class="mt-4"
           />
@@ -105,7 +110,7 @@ const handleSubmit = async () => {
           variant="flat"
           @click="handleSubmit"
         >
-          {{ selectedStatus === PropostaEnum.APROVADA ? 'Aprovar' : 'Marcar como Perdida' }}
+          {{ selectedStatus === PropostaEnum.APROVADA ? 'Aprovar' : selectedStatus === PropostaEnum.REPROVADA ? 'Marcar como Reprovada' : 'Marcar como Declinada' }}
         </VBtn>
       </VCardActions>
     </VCard>
