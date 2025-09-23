@@ -17,6 +17,7 @@ import DialogDocumentosAnexos from '@/pages/os/components/DialogDocumentosAnexos
 import DialogFinalizarOs from '@/pages/os/components/DialogFinalizarOS.vue'
 import DialogMaterialEquipamento from '@/pages/os/components/DialogMaterialEquipamento.vue'
 import DialogReprovarOs from '@/pages/os/components/DialogReprovarOS.vue'
+import DialogVisualizarEmail from '@/pages/os/components/DialogVisualizarEmail.vue'
 import { useOrdemServicoStore } from '@/pages/os/store/useOrdemServicoStore'
 import { useSnackbarStore } from '@/stores/useSnackbarStore'
 
@@ -80,6 +81,7 @@ const filtroForm = ref({
 
 const isDialogMaterialVisible = ref<boolean>(false)
 const isDialogDocumentosVisible = ref<boolean>(false)
+const isDialogEmailVisible = ref<boolean>(false)
 const loadingEmails = ref<Record<number, boolean>>({})
 const auth = useAuth()
 
@@ -528,6 +530,22 @@ const headers = computed(() => {
               <VIcon>tabler-eye</VIcon>
             </VBtn>
 
+            <!-- Botão para visualizar email -->
+            <VBtn
+              v-if="item.email_cliente_enviado_em"
+              size="small"
+              color="info"
+              variant="outlined"
+              @click="() => {
+                ordemServicoAtual = item
+                isDialogEmailVisible = true
+              }"
+            >
+              <VIcon size="18">
+                tabler-mail-opened
+              </VIcon>
+            </VBtn>
+
             <!-- Botão de enviar para responsável -->
             <VBtn
               v-if="item.responsavel && !emailJaEnviadoHoje(item)"
@@ -597,6 +615,11 @@ const headers = computed(() => {
     :os="ordemServicoAtual"
     :carregar-anexos="carregarAnexos"
     :carregar-fotos="carregarFotos"
+  />
+
+  <DialogVisualizarEmail
+    v-model:is-dialog-visible="isDialogEmailVisible"
+    :os="ordemServicoAtual"
   />
 </template>
 

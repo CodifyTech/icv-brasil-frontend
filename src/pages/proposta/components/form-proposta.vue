@@ -17,9 +17,9 @@ const { isEditing } = withDefaults(defineProps<{
 
 const store = usePropostaStore()
 
-const { data, loading, filiais, funcionarios, tipoServicos, modal } = storeToRefs(store)
+const { data, loading, filiais, funcionarios, tipoServicos, departamentos, modal } = storeToRefs(store)
 
-const { save, update, resetForm, fetchCliente, fetchFuncionarios, fetchTipoServico } = store
+const { save, update, resetForm, fetchCliente, fetchFuncionarios, fetchTipoServico, fetchDepartamentos } = store
 
 onBeforeRouteLeave(() => {
   resetForm()
@@ -32,7 +32,12 @@ onMounted(() => {
   fetchCliente()
   fetchFuncionarios()
   fetchTipoServico()
+  fetchDepartamentos()
 })
+
+const getDepartamentos = (departamento_id: string) => {
+  return departamentos.value.find(departamento => departamento.departamento_id === departamento_id)
+}
 </script>
 
 <template>
@@ -296,15 +301,31 @@ onMounted(() => {
                 cols="12"
                 md="4"
               >
-                <CDFTextField
-                  v-model="data.area"
-                  label="Área de Atuação"
-                  placeholder="Ex: OIA - O&G"
-                  prepend-inner-icon="tabler-building-warehouse"
+                <AppAutocomplete
+                  v-model="data.departamentos"
+                  label="Departamento"
+                  placeholder="Ex: OIA OG"
+                  :rules="[rules.requiredValidator]"
+                  :items="departamentos"
+                  item-title="nome"
+                  item-value="departamento_id"
+                  prepend-inner-icon="tabler-building-skyscraper"
                   variant="outlined"
-                  hint="Área técnica de atuação da proposta"
                   persistent-hint
-                />
+                  multiple
+                  return-object
+                >
+                  <template #selection="{ item }">
+                    <VChip
+                      :key="item.id"
+                      color="primary"
+                      variant="outlined"
+                      size="x-small"
+                    >
+                      {{ getDepartamentos(item.raw?.departamento_id)?.nome }}
+                    </VChip>
+                  </template>
+                </AppAutocomplete>
               </VCol>
             </VRow>
           </VCardText>

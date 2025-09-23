@@ -61,6 +61,7 @@ declare module 'vue-router/auto-routes' {
     'os-components-dialog-finalizar-os': RouteRecordInfo<'os-components-dialog-finalizar-os', '/os/components/DialogFinalizarOS', Record<never, never>, Record<never, never>>,
     'os-components-dialog-material-equipamento': RouteRecordInfo<'os-components-dialog-material-equipamento', '/os/components/DialogMaterialEquipamento', Record<never, never>, Record<never, never>>,
     'os-components-dialog-reprovar-os': RouteRecordInfo<'os-components-dialog-reprovar-os', '/os/components/DialogReprovarOS', Record<never, never>, Record<never, never>>,
+    'os-components-dialog-visualizar-email': RouteRecordInfo<'os-components-dialog-visualizar-email', '/os/components/DialogVisualizarEmail', Record<never, never>, Record<never, never>>,
     'os-components-form-ordem-servico': RouteRecordInfo<'os-components-form-ordem-servico', '/os/components/form-ordem-servico', Record<never, never>, Record<never, never>>,
     'os-editar-id': RouteRecordInfo<'os-editar-id', '/os/editar/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     'os-visualizar-id': RouteRecordInfo<'os-visualizar-id', '/os/visualizar/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
