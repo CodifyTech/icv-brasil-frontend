@@ -221,10 +221,7 @@ export async function CodifyTechStorePlugin({ store }: PiniaPluginContext) {
         store.loading.save = true
 
         try {
-          const response = await service.create(store.data, null, formData)
-
-          console.log('Passou aqui 1', response)
-
+          await service.create(store.data, null, formData)
           store.resetForm()
           store.formKey = Math.random()
 
