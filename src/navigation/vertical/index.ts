@@ -11,6 +11,8 @@ export default [
     action: 'read',
     subject: 'auth',
   },
+
+  /*
   {
     title: 'Usuários',
     icon: { icon: 'tabler-users-group' },
@@ -18,6 +20,7 @@ export default [
     action: 'list',
     subject: 'users',
   },
+  */
   {
     title: 'Funcionários',
     icon: { icon: 'fa-light fa-user-tie' },
