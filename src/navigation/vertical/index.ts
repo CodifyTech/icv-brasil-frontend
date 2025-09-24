@@ -22,7 +22,7 @@ export default [
   },
   */
   {
-    title: 'Funcionários',
+    title: 'Usuário',
     icon: { icon: 'fa-light fa-user-tie' },
     to: 'funcionario',
     action: 'list',
@@ -58,7 +58,7 @@ export default [
   }, */
   {
     title: 'Propostas',
-    icon: { icon: 'fa-light fa-percent' },
+    icon: { icon: 'fa-light fa-file' },
     to: 'proposta',
     action: 'list',
     subject: 'proposta',
