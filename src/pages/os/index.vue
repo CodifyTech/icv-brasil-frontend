@@ -34,6 +34,7 @@ const {
   nextPage,
   previousPage,
   enviarEmailCliente,
+  enviarSolicitacaoResponsavel,
 } = store
 
 // Método para aplicar filtro
@@ -57,6 +58,7 @@ const limparFiltros = async () => {
 
 // Estado para controle de loading do email
 const loadingEmailCliente = ref(false)
+const loadingEmailResponsavel = ref(false)
 
 // Função para enviar email ao cliente
 const enviarEmailParaCliente = async (os: any) => {
@@ -75,12 +77,40 @@ const enviarEmailParaCliente = async (os: any) => {
   }
 }
 
+// Função para enviar email ao responsável
+const enviarEmailParaResponsavel = async (os: any) => {
+  try {
+    loadingEmailResponsavel.value = true
+    await enviarSolicitacaoResponsavel(os.id)
+
+    // Recarregar a lista para atualizar o status
+    await store.fetchOrdensServico()
+  }
+  catch (error) {
+    console.error('Erro ao enviar e-mail para o responsável:', error)
+  }
+  finally {
+    loadingEmailResponsavel.value = false
+  }
+}
+
 // Função para verificar se o email já foi enviado hoje
 const emailJaEnviadoHoje = (os: any) => {
   if (!os.email_cliente_enviado_em)
     return false
 
   const dataEnvio = new Date(os.email_cliente_enviado_em)
+  const hoje = new Date()
+
+  return dataEnvio.toDateString() === hoje.toDateString()
+}
+
+// Função para verificar se o email para o responsável já foi enviado hoje
+const emailResponsavelJaEnviadoHoje = (os: any) => {
+  if (!os.email_responsavel_enviado_em)
+    return false
+
+  const dataEnvio = new Date(os.email_responsavel_enviado_em)
   const hoje = new Date()
 
   return dataEnvio.toDateString() === hoje.toDateString()
@@ -266,27 +296,49 @@ onMounted(async () => {
                       :text="getOSStatusLabel(os.status || null)"
                     />
 
+                    <!-- Botão para enviar email ao responsável (apenas coordenador ou admin) -->
+                    <CDFButton
+                      v-if="(hasRole('coordenador') || hasRole('admin')) && os.responsavel && !emailResponsavelJaEnviadoHoje(os)"
+                      icon="tabler-mail"
+                      size="small"
+                      color="secondary"
+                      variant="text"
+                      :loading="loadingEmailResponsavel"
+                      title="Enviar e-mail para o responsável"
+                      @click="enviarEmailParaResponsavel(os)"
+                    />
+
+                    <!-- Indicador de email já enviado para responsável (apenas coordenador ou admin) -->
+                    <VTooltip
+                      v-else-if="(hasRole('coordenador') || hasRole('admin')) && emailResponsavelJaEnviadoHoje(os)"
+                      text="E-mail já enviado hoje para o responsável"
+                      location="top"
+                    >
+                      <template #activator="{ props: tooltipProps }">
+                        <VBtn
+                          v-bind="tooltipProps"
+                          icon="tabler-mail-check"
+                          size="small"
+                          color="success"
+                          variant="text"
+                          disabled
+                        />
+                      </template>
+                    </VTooltip>
+
                     <!-- Botão para enviar email ao cliente (apenas coordenador ou admin) -->
-                    <VBtn
+                    <CDFButton
                       v-if="(hasRole('coordenador') || hasRole('admin')) && os.cliente?.email && !emailJaEnviadoHoje(os)"
                       icon="tabler-mail"
                       size="small"
                       color="info"
                       variant="text"
                       :loading="loadingEmailCliente"
+                      title="Enviar e-mail para o cliente"
                       @click="enviarEmailParaCliente(os)"
-                    >
-                      <VTooltip
-                        text="Enviar e-mail para o cliente"
-                        location="top"
-                      >
-                        <template #activator="{ props: tooltipProps }">
-                          <VIcon v-bind="tooltipProps" />
-                        </template>
-                      </VTooltip>
-                    </VBtn>
+                    />
 
-                    <!-- Indicador de email já enviado (apenas coordenador ou admin) -->
+                    <!-- Indicador de email já enviado para cliente (apenas coordenador ou admin) -->
                     <VTooltip
                       v-else-if="(hasRole('coordenador') || hasRole('admin')) && emailJaEnviadoHoje(os)"
                       text="E-mail já enviado hoje para o cliente"

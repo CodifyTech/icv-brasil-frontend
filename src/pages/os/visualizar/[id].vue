@@ -20,7 +20,7 @@ const snackbarStore = useSnackbarStore()
 const { hasRole } = useAuth()
 
 const { ordemServicoAtual, loading } = storeToRefs(store)
-const { fetchOrdemServico, resetOrdemAtual, enviarEmailCliente } = store
+const { fetchOrdemServico, resetOrdemAtual, enviarEmailCliente, enviarSolicitacaoResponsavel } = store
 
 onMounted(async () => {
   if (route.params.id && typeof route.params.id === 'string')
@@ -36,14 +36,14 @@ const loadingEmail = ref(false)
 const loadingEmailCliente = ref(false)
 
 // Função para enviar solicitação para responsável
-const enviarSolicitacaoResponsavel = async () => {
+const enviarEmailParaResponsavel = async () => {
   if (!ordemServicoAtual.value?.id)
     return
 
   try {
     loadingEmail.value = true
 
-    await store.enviarSolicitacaoResponsavel(ordemServicoAtual.value.id)
+    await enviarSolicitacaoResponsavel(ordemServicoAtual.value.id)
 
     snackbarStore.showSnackbar({
       text: 'E-mail enviado para o responsável com sucesso!',
@@ -119,8 +119,8 @@ const emailClienteJaEnviadoHoje = computed(() => {
   return dataEnvio.toDateString() === hoje.toDateString()
 })
 
-// Verificar se pode enviar email
-const podeEnviarEmail = computed(() => {
+// Verificar se pode enviar email para o responsável
+const podeEnviarEmailResponsavel = computed(() => {
   return ordemServicoAtual.value?.responsavel && !emailJaEnviadoHoje.value
 })
 
@@ -146,21 +146,21 @@ const podeEnviarEmailCliente = computed(() => {
           </div>
 
           <div class="gap-3 d-flex">
-            <!-- Botão de enviar para responsável -->
+            <!-- Botão de enviar para responsável (apenas coordenador ou admin) -->
             <VBtn
-              v-if="podeEnviarEmail"
+              v-if="(hasRole('coordenador') || hasRole('admin')) && podeEnviarEmailResponsavel"
               color="secondary"
               variant="outlined"
               prepend-icon="tabler-mail"
               :loading="loadingEmail"
-              @click="enviarSolicitacaoResponsavel"
+              @click="enviarEmailParaResponsavel"
             >
               Enviar para Responsável
             </VBtn>
 
-            <!-- Indicador de email já enviado para responsável -->
+            <!-- Indicador de email já enviado para responsável (apenas coordenador ou admin) -->
             <VTooltip
-              v-else-if="emailJaEnviadoHoje"
+              v-else-if="(hasRole('coordenador') || hasRole('admin')) && emailJaEnviadoHoje"
               text="E-mail já enviado hoje para o responsável"
               location="top"
             >
@@ -172,7 +172,7 @@ const podeEnviarEmailCliente = computed(() => {
                   prepend-icon="tabler-mail-check"
                   disabled
                 >
-                  E-mail Enviado
+                  E-mail Responsável Enviado
                 </VBtn>
               </template>
             </VTooltip>
