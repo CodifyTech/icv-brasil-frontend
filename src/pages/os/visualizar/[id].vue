@@ -177,9 +177,9 @@ const podeEnviarEmailCliente = computed(() => {
               </template>
             </VTooltip>
 
-            <!-- Botão de enviar para cliente (apenas coordenador) -->
+            <!-- Botão de enviar para cliente (apenas coordenador ou admin) -->
             <VBtn
-              v-if="hasRole('coordenador') && podeEnviarEmailCliente"
+              v-if="(hasRole('coordenador') || hasRole('admin')) && podeEnviarEmailCliente"
               color="info"
               variant="outlined"
               prepend-icon="tabler-mail"
@@ -189,9 +189,9 @@ const podeEnviarEmailCliente = computed(() => {
               Enviar para Cliente
             </VBtn>
 
-            <!-- Indicador de email já enviado para cliente (apenas coordenador) -->
+            <!-- Indicador de email já enviado para cliente (apenas coordenador ou admin) -->
             <VTooltip
-              v-else-if="hasRole('coordenador') && emailClienteJaEnviadoHoje"
+              v-else-if="(hasRole('coordenador') || hasRole('admin')) && emailClienteJaEnviadoHoje"
               text="E-mail já enviado hoje para o cliente"
               location="top"
             >

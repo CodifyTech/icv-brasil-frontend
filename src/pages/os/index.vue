@@ -266,9 +266,9 @@ onMounted(async () => {
                       :text="getOSStatusLabel(os.status || null)"
                     />
 
-                    <!-- Botão para enviar email ao cliente (apenas coordenador) -->
+                    <!-- Botão para enviar email ao cliente (apenas coordenador ou admin) -->
                     <VBtn
-                      v-if="hasRole('coordenador') && os.cliente?.email && !emailJaEnviadoHoje(os)"
+                      v-if="(hasRole('coordenador') || hasRole('admin')) && os.cliente?.email && !emailJaEnviadoHoje(os)"
                       icon="tabler-mail"
                       size="small"
                       color="info"
@@ -286,9 +286,9 @@ onMounted(async () => {
                       </VTooltip>
                     </VBtn>
 
-                    <!-- Indicador de email já enviado (apenas coordenador) -->
+                    <!-- Indicador de email já enviado (apenas coordenador ou admin) -->
                     <VTooltip
-                      v-else-if="hasRole('coordenador') && emailJaEnviadoHoje(os)"
+                      v-else-if="(hasRole('coordenador') || hasRole('admin')) && emailJaEnviadoHoje(os)"
                       text="E-mail já enviado hoje para o cliente"
                       location="top"
                     >
