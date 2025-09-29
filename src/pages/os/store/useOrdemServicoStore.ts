@@ -555,6 +555,38 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
       }
     },
 
+    async enviarEmailCliente(osId: string) {
+      this.loading.save = true
+      try {
+        const response = await InmetroService.post({}, `${osId}/enviar-email-cliente`)
+
+        // Atualizar a OS na lista local para mostrar que foi enviado
+        const index = this.ordensServico.findIndex(os => os.id === osId)
+        if (index !== -1)
+          this.ordensServico[index].email_cliente_enviado_em = new Date().toISOString()
+
+        useSnackbarStore().showSnackbar({
+          text: 'E-mail enviado para o cliente com sucesso!',
+          color: 'success',
+          timeout: 3000,
+        })
+
+        return response
+      }
+      catch (error: any) {
+        useSnackbarStore().showSnackbar({
+          text: error.response?.data?.message || 'Erro ao enviar e-mail para o cliente. Tente novamente.',
+          color: 'error',
+          timeout: 3000,
+        })
+        console.error('Erro ao enviar e-mail para o cliente:', error)
+        throw error
+      }
+      finally {
+        this.loading.save = false
+      }
+    },
+
     async verificarToken(token: string) {
       try {
         return await InmetroService.getOrDeleteRequest('GET', {}, `verificar-token/${token}`)

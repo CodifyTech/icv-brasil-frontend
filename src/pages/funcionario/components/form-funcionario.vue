@@ -219,7 +219,10 @@ watch(() => data.value, newData => {
                 </VCard>
               </VCol>
               <VDivider />
-              <VCol cols="12">
+              <VCol
+                v-if="useAuth().hasRole('admin') && useAuth().hasRole('rh')"
+                cols="12"
+              >
                 <VCard
                   title="Dados de Acesso"
                   flat

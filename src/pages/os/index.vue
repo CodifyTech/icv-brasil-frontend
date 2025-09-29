@@ -20,7 +20,7 @@ definePage({
 const store = useOrdemServicoStore()
 
 const {
-  page, total, filtros, itemsPerPage,
+  page, total, filtros,
   ordensServico, estatisticas, isDialogAprovarVisible, isDialogReprovarVisible,
 } = storeToRefs(store)
 
@@ -31,6 +31,7 @@ const {
   confirmarReprovacao,
   nextPage,
   previousPage,
+  enviarEmailCliente,
 } = store
 
 // Método para aplicar filtro
@@ -38,6 +39,7 @@ const aplicarFiltroStatus = async (status: string) => {
   page.value = 1
   total.value = 0
   filtros.value = {
+    ...filtros.value,
     status,
   }
   await store.fetchOrdensServico()
@@ -49,6 +51,37 @@ const limparFiltros = async () => {
   total.value = 0
   filtros.value = {}
   await store.fetchOrdensServico()
+}
+
+// Estado para controle de loading do email
+const loadingEmailCliente = ref(false)
+
+// Função para enviar email ao cliente
+const enviarEmailParaCliente = async (os: any) => {
+  try {
+    loadingEmailCliente.value = true
+    await enviarEmailCliente(os.id)
+
+    // Recarregar a lista para atualizar o status
+    await store.fetchOrdensServico()
+  }
+  catch (error) {
+    console.error('Erro ao enviar e-mail para o cliente:', error)
+  }
+  finally {
+    loadingEmailCliente.value = false
+  }
+}
+
+// Função para verificar se o email já foi enviado hoje
+const emailJaEnviadoHoje = (os: any) => {
+  if (!os.email_cliente_enviado_em)
+    return false
+
+  const dataEnvio = new Date(os.email_cliente_enviado_em)
+  const hoje = new Date()
+
+  return dataEnvio.toDateString() === hoje.toDateString()
 }
 
 onMounted(async () => {
@@ -205,10 +238,10 @@ onMounted(async () => {
                 <template #prepend>
                   <VAvatar
                     size="40"
-                    :color="getOSStatusColor(os.status)"
+                    :color="getOSStatusColor(os.status || null)"
                     variant="tonal"
                   >
-                    <VIcon :icon="getOSStatusIcon(os.status)" />
+                    <VIcon :icon="getOSStatusIcon(os.status || null)" />
                   </VAvatar>
                 </template>
 
@@ -225,11 +258,49 @@ onMounted(async () => {
                 <template #append>
                   <div class="d-flex align-center gap-2">
                     <VChip
-                      :color="getOSStatusColor(os.status)"
+                      :color="getOSStatusColor(os.status || null)"
                       variant="tonal"
                       size="small"
-                      :text="getOSStatusLabel(os.status)"
+                      :text="getOSStatusLabel(os.status || null)"
                     />
+
+                    <!-- Botão para enviar email ao cliente -->
+                    <VBtn
+                      v-if="os.cliente?.email && !emailJaEnviadoHoje(os)"
+                      icon="tabler-mail"
+                      size="small"
+                      color="info"
+                      variant="text"
+                      :loading="loadingEmailCliente"
+                      @click="enviarEmailParaCliente(os)"
+                    >
+                      <VTooltip
+                        text="Enviar e-mail para o cliente"
+                        location="top"
+                      >
+                        <template #activator="{ props: tooltipProps }">
+                          <VIcon v-bind="tooltipProps" />
+                        </template>
+                      </VTooltip>
+                    </VBtn>
+
+                    <!-- Indicador de email já enviado -->
+                    <VTooltip
+                      v-else-if="emailJaEnviadoHoje(os)"
+                      text="E-mail já enviado hoje para o cliente"
+                      location="top"
+                    >
+                      <template #activator="{ props: tooltipProps }">
+                        <VBtn
+                          v-bind="tooltipProps"
+                          icon="tabler-mail-check"
+                          size="small"
+                          color="success"
+                          variant="text"
+                          disabled
+                        />
+                      </template>
+                    </VTooltip>
 
                     <CDFMoreBtn
                       color="gray"
@@ -297,8 +368,8 @@ onMounted(async () => {
 
               <!-- Botão para mostrar todas -->
               <VBtn
-                :variant="!filtros?.status ? 'flat' : 'outlined'"
-                :color="!filtros?.status ? 'primary' : 'default'"
+                :variant="!(filtros as any)?.status ? 'flat' : 'outlined'"
+                :color="!(filtros as any)?.status ? 'primary' : 'default'"
                 size="small"
                 class="mb-2 me-2"
                 @click="limparFiltros"
@@ -316,8 +387,8 @@ onMounted(async () => {
             <!-- Filtros por status específico -->
             <div class="d-flex flex-column gap-2">
               <VBtn
-                :variant="filtros?.status === OsStatusEnum.EM_ANALISE ? 'flat' : 'outlined'"
-                :color="filtros?.status === OsStatusEnum.EM_ANALISE ? 'info' : 'default'"
+                :variant="(filtros as any)?.status === OsStatusEnum.EM_ANALISE ? 'flat' : 'outlined'"
+                :color="(filtros as any)?.status === OsStatusEnum.EM_ANALISE ? 'info' : 'default'"
                 size="small"
                 class="justify-start"
                 @click="aplicarFiltroStatus(OsStatusEnum.EM_ANALISE)"
@@ -332,8 +403,8 @@ onMounted(async () => {
               </VBtn>
 
               <VBtn
-                :variant="filtros?.status === OsStatusEnum.ANDAMENTO ? 'flat' : 'outlined'"
-                :color="filtros?.status === OsStatusEnum.ANDAMENTO ? 'warning' : 'default'"
+                :variant="(filtros as any)?.status === OsStatusEnum.ANDAMENTO ? 'flat' : 'outlined'"
+                :color="(filtros as any)?.status === OsStatusEnum.ANDAMENTO ? 'warning' : 'default'"
                 size="small"
                 class="justify-start"
                 @click="aplicarFiltroStatus(OsStatusEnum.ANDAMENTO)"
@@ -348,8 +419,8 @@ onMounted(async () => {
               </VBtn>
 
               <VBtn
-                :variant="filtros?.status === OsStatusEnum.CERTIFICADO_PENDENTE ? 'flat' : 'outlined'"
-                :color="filtros?.status === OsStatusEnum.CERTIFICADO_PENDENTE ? 'deep-orange' : 'default'"
+                :variant="(filtros as any)?.status === OsStatusEnum.CERTIFICADO_PENDENTE ? 'flat' : 'outlined'"
+                :color="(filtros as any)?.status === OsStatusEnum.CERTIFICADO_PENDENTE ? 'deep-orange' : 'default'"
                 size="small"
                 class="justify-start"
                 @click="aplicarFiltroStatus(OsStatusEnum.CERTIFICADO_PENDENTE)"
@@ -364,8 +435,8 @@ onMounted(async () => {
               </VBtn>
 
               <VBtn
-                :variant="filtros?.status === OsStatusEnum.FINALIZADO ? 'flat' : 'outlined'"
-                :color="filtros?.status === OsStatusEnum.FINALIZADO ? 'success' : 'default'"
+                :variant="(filtros as any)?.status === OsStatusEnum.FINALIZADO ? 'flat' : 'outlined'"
+                :color="(filtros as any)?.status === OsStatusEnum.FINALIZADO ? 'success' : 'default'"
                 size="small"
                 class="justify-start"
                 @click="aplicarFiltroStatus(OsStatusEnum.FINALIZADO)"

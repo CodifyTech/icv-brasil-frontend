@@ -18,11 +18,11 @@ const store = useOrdemServicoStore()
 const snackbarStore = useSnackbarStore()
 
 const { ordemServicoAtual, loading } = storeToRefs(store)
-const { fetchOrdemServico, resetOrdemAtual } = store
+const { fetchOrdemServico, resetOrdemAtual, enviarEmailCliente } = store
 
 onMounted(async () => {
-  if (route.params.id)
-    await fetchOrdemServico(route.params.id as string)
+  if (route.params.id && typeof route.params.id === 'string')
+    await fetchOrdemServico(route.params.id)
 })
 
 onBeforeRouteLeave(() => {
@@ -31,6 +31,7 @@ onBeforeRouteLeave(() => {
 
 // Estado para controle de loading do email
 const loadingEmail = ref(false)
+const loadingEmailCliente = ref(false)
 
 // Função para enviar solicitação para responsável
 const enviarSolicitacaoResponsavel = async () => {
@@ -48,8 +49,8 @@ const enviarSolicitacaoResponsavel = async () => {
     })
 
     // Recarregar a OS para atualizar o status
-    if (route.params.id)
-      await fetchOrdemServico(route.params.id as string)
+    if (route.params.id && typeof route.params.id === 'string')
+      await fetchOrdemServico(route.params.id)
   }
   catch (error) {
     console.error('Erro ao enviar e-mail:', error)
@@ -74,9 +75,56 @@ const emailJaEnviadoHoje = computed(() => {
   return dataEnvio.toDateString() === hoje.toDateString()
 })
 
+// Função para enviar email ao cliente
+const enviarEmailParaCliente = async () => {
+  if (!ordemServicoAtual.value?.id)
+    return
+
+  try {
+    loadingEmailCliente.value = true
+
+    await enviarEmailCliente(ordemServicoAtual.value.id)
+
+    snackbarStore.showSnackbar({
+      text: 'E-mail enviado para o cliente com sucesso!',
+      color: 'success',
+    })
+
+    // Recarregar a OS para atualizar o status
+    if (route.params.id && typeof route.params.id === 'string')
+      await fetchOrdemServico(route.params.id)
+  }
+  catch (error) {
+    console.error('Erro ao enviar e-mail para o cliente:', error)
+    snackbarStore.showSnackbar({
+      text: 'Erro ao enviar e-mail para o cliente',
+      color: 'error',
+    })
+  }
+  finally {
+    loadingEmailCliente.value = false
+  }
+}
+
+// Função para verificar se o email para o cliente já foi enviado hoje
+const emailClienteJaEnviadoHoje = computed(() => {
+  if (!ordemServicoAtual.value?.email_cliente_enviado_em)
+    return false
+
+  const dataEnvio = new Date(ordemServicoAtual.value.email_cliente_enviado_em)
+  const hoje = new Date()
+
+  return dataEnvio.toDateString() === hoje.toDateString()
+})
+
 // Verificar se pode enviar email
 const podeEnviarEmail = computed(() => {
   return ordemServicoAtual.value?.responsavel && !emailJaEnviadoHoje.value
+})
+
+// Verificar se pode enviar email para o cliente
+const podeEnviarEmailCliente = computed(() => {
+  return ordemServicoAtual.value?.cliente?.email && !emailClienteJaEnviadoHoje.value
 })
 </script>
 
@@ -108,10 +156,10 @@ const podeEnviarEmail = computed(() => {
               Enviar para Responsável
             </VBtn>
 
-            <!-- Indicador de email já enviado -->
+            <!-- Indicador de email já enviado para responsável -->
             <VTooltip
               v-else-if="emailJaEnviadoHoje"
-              text="E-mail já enviado hoje"
+              text="E-mail já enviado hoje para o responsável"
               location="top"
             >
               <template #activator="{ props: tooltipProps }">
@@ -123,6 +171,37 @@ const podeEnviarEmail = computed(() => {
                   disabled
                 >
                   E-mail Enviado
+                </VBtn>
+              </template>
+            </VTooltip>
+
+            <!-- Botão de enviar para cliente -->
+            <VBtn
+              v-if="podeEnviarEmailCliente"
+              color="info"
+              variant="outlined"
+              prepend-icon="tabler-mail"
+              :loading="loadingEmailCliente"
+              @click="enviarEmailParaCliente"
+            >
+              Enviar para Cliente
+            </VBtn>
+
+            <!-- Indicador de email já enviado para cliente -->
+            <VTooltip
+              v-else-if="emailClienteJaEnviadoHoje"
+              text="E-mail já enviado hoje para o cliente"
+              location="top"
+            >
+              <template #activator="{ props: tooltipProps }">
+                <VBtn
+                  v-bind="tooltipProps"
+                  color="success"
+                  variant="text"
+                  prepend-icon="tabler-mail-check"
+                  disabled
+                >
+                  E-mail Cliente Enviado
                 </VBtn>
               </template>
             </VTooltip>
@@ -187,7 +266,7 @@ const podeEnviarEmail = computed(() => {
               >
                 <label class="text-body-2 text-medium-emphasis">Código da Proposta</label>
                 <div class="text-body-1 font-weight-medium">
-                  {{ ordemServicoAtual?.proposta?.codigo_proposta }}
+                  {{ (ordemServicoAtual as any)?.proposta?.codigo_proposta }}
                 </div>
               </VCol>
 
@@ -221,11 +300,11 @@ const podeEnviarEmail = computed(() => {
                 <label class="text-body-2 text-medium-emphasis">Status</label>
                 <div>
                   <VChip
-                    :color="getOSStatusColor(ordemServicoAtual.status)"
+                    :color="getOSStatusColor(ordemServicoAtual.status || null)"
                     variant="tonal"
                     size="small"
                   >
-                    {{ getOSStatusLabel(ordemServicoAtual.status) }}
+                    {{ getOSStatusLabel(ordemServicoAtual.status || null) }}
                   </VChip>
                 </div>
               </VCol>
@@ -380,12 +459,12 @@ const podeEnviarEmail = computed(() => {
                   >
                     <VCard>
                       <VImg
-                        :src="foto.raw.file"
-                        :lazy-src="foto.raw.file"
+                        :src="foto.raw.file as string"
+                        :lazy-src="foto.raw.file as string"
                         height="200"
                         cover
                         class="cursor-pointer"
-                        @click="() => window.open(foto.raw.file, '_blank')"
+                        @click="() => (window as any).open(foto.raw.file, '_blank')"
                       />
                     </VCard>
                   </VCol>
@@ -394,7 +473,7 @@ const podeEnviarEmail = computed(() => {
 
               <template #footer="{ page, pageCount, prevPage, nextPage }">
                 <div
-                  v-if="ordemServicoAtual?.fotos?.length > 0"
+                  v-if="(ordemServicoAtual?.fotos?.length || 0) > 0"
                   class="justify-center d-flex align-center pa-4"
                 >
                   <VBtn
