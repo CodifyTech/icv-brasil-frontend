@@ -5,7 +5,6 @@ interface PropostaItem {
   consultor: string
   telefone: string
   email: string
-  area: string
   status: string
   cliente: {
     id: string
@@ -30,7 +29,6 @@ const mockPropostas: PropostaItem[] = [
     consultor: 'Maria Santos',
     telefone: '(11) 99999-9999',
     email: 'joao@empresa.com',
-    area: 'OIA - O&G',
     status: 'aprovada',
     cliente: {
       id: '1',
@@ -45,7 +43,6 @@ const mockPropostas: PropostaItem[] = [
     consultor: 'Pedro Oliveira',
     telefone: '(21) 88888-8888',
     email: 'ana@empresab.com',
-    area: 'Industrial',
     status: 'perdida',
     cliente: {
       id: '2',
@@ -60,7 +57,6 @@ const mockPropostas: PropostaItem[] = [
     consultor: 'Julia Fernandes',
     telefone: '(31) 77777-7777',
     email: 'carlos@empresac.com',
-    area: 'Petroquímica',
     status: 'aprovada',
     cliente: {
       id: '3',
@@ -75,7 +71,6 @@ const mockPropostas: PropostaItem[] = [
     consultor: 'Ana Paula',
     telefone: '(41) 66666-6666',
     email: 'roberto@empresad.com',
-    area: 'Química',
     status: 'perdida',
     cliente: {
       id: '4',
