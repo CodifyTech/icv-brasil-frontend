@@ -6,6 +6,7 @@ import {
   getOSStatusIcon,
   getOSStatusLabel,
 } from '../../enums/OSStatusEnum'
+import { useAuth } from '@/composables/useAuth'
 import DialogFinalizarOs from '@/pages/os/components/DialogFinalizarOS.vue'
 import DialogReprovarOs from '@/pages/os/components/DialogReprovarOS.vue'
 import { useOrdemServicoStore } from '@/pages/os/store/useOrdemServicoStore'
@@ -18,6 +19,7 @@ definePage({
 })
 
 const store = useOrdemServicoStore()
+const { hasRole } = useAuth()
 
 const {
   page, total, filtros,
@@ -264,9 +266,9 @@ onMounted(async () => {
                       :text="getOSStatusLabel(os.status || null)"
                     />
 
-                    <!-- Botão para enviar email ao cliente -->
+                    <!-- Botão para enviar email ao cliente (apenas coordenador) -->
                     <VBtn
-                      v-if="os.cliente?.email && !emailJaEnviadoHoje(os)"
+                      v-if="hasRole('coordenador') && os.cliente?.email && !emailJaEnviadoHoje(os)"
                       icon="tabler-mail"
                       size="small"
                       color="info"
@@ -284,9 +286,9 @@ onMounted(async () => {
                       </VTooltip>
                     </VBtn>
 
-                    <!-- Indicador de email já enviado -->
+                    <!-- Indicador de email já enviado (apenas coordenador) -->
                     <VTooltip
-                      v-else-if="emailJaEnviadoHoje(os)"
+                      v-else-if="hasRole('coordenador') && emailJaEnviadoHoje(os)"
                       text="E-mail já enviado hoje para o cliente"
                       location="top"
                     >

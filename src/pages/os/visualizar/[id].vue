@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import moment from 'moment'
 import { storeToRefs } from 'pinia'
+import { useAuth } from '@/composables/useAuth'
 import { getOSStatusColor, getOSStatusLabel } from '@/enums/OSStatusEnum'
 import { useOrdemServicoStore } from '@/pages/os/store/useOrdemServicoStore'
 import { useSnackbarStore } from '@/stores/useSnackbarStore'
@@ -16,6 +17,7 @@ definePage({
 const route = useRoute()
 const store = useOrdemServicoStore()
 const snackbarStore = useSnackbarStore()
+const { hasRole } = useAuth()
 
 const { ordemServicoAtual, loading } = storeToRefs(store)
 const { fetchOrdemServico, resetOrdemAtual, enviarEmailCliente } = store
@@ -175,9 +177,9 @@ const podeEnviarEmailCliente = computed(() => {
               </template>
             </VTooltip>
 
-            <!-- Botão de enviar para cliente -->
+            <!-- Botão de enviar para cliente (apenas coordenador) -->
             <VBtn
-              v-if="podeEnviarEmailCliente"
+              v-if="hasRole('coordenador') && podeEnviarEmailCliente"
               color="info"
               variant="outlined"
               prepend-icon="tabler-mail"
@@ -187,9 +189,9 @@ const podeEnviarEmailCliente = computed(() => {
               Enviar para Cliente
             </VBtn>
 
-            <!-- Indicador de email já enviado para cliente -->
+            <!-- Indicador de email já enviado para cliente (apenas coordenador) -->
             <VTooltip
-              v-else-if="emailClienteJaEnviadoHoje"
+              v-else-if="hasRole('coordenador') && emailClienteJaEnviadoHoje"
               text="E-mail já enviado hoje para o cliente"
               location="top"
             >
