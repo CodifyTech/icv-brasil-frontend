@@ -22,7 +22,7 @@ export default [
   },
   */
   {
-    title: 'Usuário',
+    title: 'Usuários',
     icon: { icon: 'fa-light fa-user-tie' },
     to: 'funcionario',
     action: 'list',
