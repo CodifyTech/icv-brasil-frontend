@@ -220,7 +220,7 @@ watch(() => data.value, newData => {
               </VCol>
               <VDivider />
               <VCol
-                v-if="useAuth().hasRole('admin') && useAuth().hasRole('rh')"
+                v-if="useAuth().hasRole('admin') || useAuth().hasRole('rh')"
                 cols="12"
               >
                 <VCard
