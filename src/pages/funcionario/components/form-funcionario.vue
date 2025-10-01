@@ -284,7 +284,7 @@ watch(() => data.value, newData => {
                   </VCardText>
                 </VCard>
               </VCol>
-              <VDivider />
+              <VDivider v-if="useAuth().hasRole('admin') || useAuth().hasRole('rh')" />
               <VCol cols="12">
                 <VCard
                   title="Endereço"
