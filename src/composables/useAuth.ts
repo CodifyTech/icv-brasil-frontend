@@ -14,7 +14,7 @@ export const useAuth = () => {
     if (typeof auth.value.role === 'string')
       return auth.value.role
 
-    return auth.value.role.value || null
+    return auth.value.role.slug || null
   }
 
   const hasRole = (role: string) => {
