@@ -296,9 +296,9 @@ onMounted(async () => {
                       :text="getOSStatusLabel(os.status || null)"
                     />
 
-                    <!-- Botão para enviar email ao responsável (apenas coordenador ou admin) -->
+                    <!-- Botão para enviar email ao responsável (apenas pleno ou admin) -->
                     <CDFButton
-                      v-if="(hasRole('coordenador') || hasRole('admin')) && os.responsavel && !emailResponsavelJaEnviadoHoje(os)"
+                      v-if="(hasRole('pleno') || hasRole('admin')) && os.responsavel && !emailResponsavelJaEnviadoHoje(os)"
                       icon="tabler-mail"
                       size="small"
                       color="secondary"
@@ -308,9 +308,9 @@ onMounted(async () => {
                       @click="enviarEmailParaResponsavel(os)"
                     />
 
-                    <!-- Indicador de email já enviado para responsável (apenas coordenador ou admin) -->
+                    <!-- Indicador de email já enviado para responsável (apenas pleno ou admin) -->
                     <VTooltip
-                      v-else-if="(hasRole('coordenador') || hasRole('admin')) && emailResponsavelJaEnviadoHoje(os)"
+                      v-else-if="(hasRole('pleno') || hasRole('admin')) && emailResponsavelJaEnviadoHoje(os)"
                       text="E-mail já enviado hoje para o responsável"
                       location="top"
                     >
@@ -326,9 +326,9 @@ onMounted(async () => {
                       </template>
                     </VTooltip>
 
-                    <!-- Botão para enviar email ao cliente (apenas coordenador ou admin) -->
+                    <!-- Botão para enviar email ao cliente (apenas pleno ou admin) -->
                     <CDFButton
-                      v-if="(hasRole('coordenador') || hasRole('admin')) && os.cliente?.email && !emailJaEnviadoHoje(os)"
+                      v-if="(hasRole('pleno') || hasRole('admin')) && os.cliente?.email && !emailJaEnviadoHoje(os)"
                       icon="tabler-mail"
                       size="small"
                       color="info"
@@ -338,9 +338,9 @@ onMounted(async () => {
                       @click="enviarEmailParaCliente(os)"
                     />
 
-                    <!-- Indicador de email já enviado para cliente (apenas coordenador ou admin) -->
+                    <!-- Indicador de email já enviado para cliente (apenas pleno ou admin) -->
                     <VTooltip
-                      v-else-if="(hasRole('coordenador') || hasRole('admin')) && emailJaEnviadoHoje(os)"
+                      v-else-if="(hasRole('pleno') || hasRole('admin')) && emailJaEnviadoHoje(os)"
                       text="E-mail já enviado hoje para o cliente"
                       location="top"
                     >

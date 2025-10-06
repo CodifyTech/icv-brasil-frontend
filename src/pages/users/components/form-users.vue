@@ -110,7 +110,7 @@ onBeforeRouteLeave(() => {
       </VCol>
 
       <VCol
-        v-if="useAuth().hasRole('admin') || useAuth().hasRole('diretor') || useAuth().hasRole('gerente') || useAuth().hasRole('rh')"
+        v-if="useAuth().hasRole('admin') || useAuth().hasRole('senior') || useAuth().hasRole('rh')"
         cols="12"
         md="6"
       >
@@ -150,7 +150,7 @@ onBeforeRouteLeave(() => {
       </VCol>
 
       <VCol
-        v-if="data.role?.slug !== 'diretor' && !isProfile"
+        v-if="data.role?.slug !== 'senior' && !isProfile"
         cols="12"
         md="6"
       >

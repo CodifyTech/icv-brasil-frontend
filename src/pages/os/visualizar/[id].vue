@@ -146,9 +146,9 @@ const podeEnviarEmailCliente = computed(() => {
           </div>
 
           <div class="gap-3 d-flex">
-            <!-- Botão de enviar para responsável (apenas coordenador ou admin) -->
+            <!-- Botão de enviar para responsável (apenas pleno ou admin) -->
             <VBtn
-              v-if="(hasRole('coordenador') || hasRole('admin')) && podeEnviarEmailResponsavel"
+              v-if="(hasRole('pleno') || hasRole('admin')) && podeEnviarEmailResponsavel"
               color="secondary"
               variant="outlined"
               prepend-icon="tabler-mail"
@@ -158,9 +158,9 @@ const podeEnviarEmailCliente = computed(() => {
               Enviar para Responsável
             </VBtn>
 
-            <!-- Indicador de email já enviado para responsável (apenas coordenador ou admin) -->
+            <!-- Indicador de email já enviado para responsável (apenas pleno ou admin) -->
             <VTooltip
-              v-else-if="(hasRole('coordenador') || hasRole('admin')) && emailJaEnviadoHoje"
+              v-else-if="(hasRole('pleno') || hasRole('admin')) && emailJaEnviadoHoje"
               text="E-mail já enviado hoje para o responsável"
               location="top"
             >
@@ -177,9 +177,9 @@ const podeEnviarEmailCliente = computed(() => {
               </template>
             </VTooltip>
 
-            <!-- Botão de enviar para cliente (apenas coordenador ou admin) -->
+            <!-- Botão de enviar para cliente (apenas pleno ou admin) -->
             <VBtn
-              v-if="(hasRole('coordenador') || hasRole('admin')) && podeEnviarEmailCliente"
+              v-if="(hasRole('pleno') || hasRole('admin')) && podeEnviarEmailCliente"
               color="info"
               variant="outlined"
               prepend-icon="tabler-mail"
@@ -189,9 +189,9 @@ const podeEnviarEmailCliente = computed(() => {
               Enviar para Cliente
             </VBtn>
 
-            <!-- Indicador de email já enviado para cliente (apenas coordenador ou admin) -->
+            <!-- Indicador de email já enviado para cliente (apenas pleno ou admin) -->
             <VTooltip
-              v-else-if="(hasRole('coordenador') || hasRole('admin')) && emailClienteJaEnviadoHoje"
+              v-else-if="(hasRole('pleno') || hasRole('admin')) && emailClienteJaEnviadoHoje"
               text="E-mail já enviado hoje para o cliente"
               location="top"
             >

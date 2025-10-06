@@ -3,6 +3,12 @@ interface IRole {
   value: string
 }
 
+interface IFuncionario {
+  id?: string
+  nome?: string
+  departamento_id?: string | number
+}
+
 export interface IUser {
   id?: string
   name: string
@@ -14,6 +20,8 @@ export interface IUser {
   role: null | string | IRole
   termos?: number
   ativo?: number
+  departamento_id?: string | number
+  funcionario?: IFuncionario
 }
 
 export interface IItemsResponse {
