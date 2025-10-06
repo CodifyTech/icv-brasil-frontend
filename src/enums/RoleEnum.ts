@@ -18,7 +18,6 @@ export enum RoleEnum {
   Financeiro = 'financeiro',
   Junior = 'junior',
   InmetroQualidade = 'inmetro-qualidade',
-  Inmetro = 'inmetro',
   Funcionario = 'funcionario',
 }
 
@@ -28,14 +27,13 @@ export enum RoleEnum {
 export const RoleNames: Record<RoleEnum, string> = {
   [RoleEnum.Admin]: 'Administrator',
   [RoleEnum.AdminSystem]: 'Admin System',
-  [RoleEnum.Senior]: 'SENIOR',
-  [RoleEnum.Pleno]: 'PLENO',
-  [RoleEnum.Comercial]: 'COMERCIAL',
+  [RoleEnum.Senior]: 'Senior',
+  [RoleEnum.Pleno]: 'Pleno',
+  [RoleEnum.Comercial]: 'Comercial',
   [RoleEnum.RH]: 'RH',
-  [RoleEnum.Financeiro]: 'FINANCEIRO',
-  [RoleEnum.Junior]: 'JUNIOR',
-  [RoleEnum.InmetroQualidade]: 'INMETRO/QUALIDADE',
-  [RoleEnum.Inmetro]: 'Inmetro',
+  [RoleEnum.Financeiro]: 'Financeiro',
+  [RoleEnum.Junior]: 'Junior',
+  [RoleEnum.InmetroQualidade]: 'Inmetro/Qualidade',
   [RoleEnum.Funcionario]: 'Funcionário',
 }
 

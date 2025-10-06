@@ -13,6 +13,7 @@ import { useInmetroStore } from './store/useInmetroStore'
 import type { IOrdemServico } from './types/index'
 import AppAutocomplete from '@/@core/components/app-form-elements/AppAutocomplete.vue'
 import CDFMoreBtn from '@/components/CDF/CDFMoreBtn.vue'
+import { RoleEnum } from '@/enums/RoleEnum'
 import DialogDocumentosAnexos from '@/pages/os/components/DialogDocumentosAnexos.vue'
 import DialogFinalizarOs from '@/pages/os/components/DialogFinalizarOS.vue'
 import DialogMaterialEquipamento from '@/pages/os/components/DialogMaterialEquipamento.vue'
@@ -230,7 +231,7 @@ const getItemValue = (item: any, key: string) => {
 }
 
 const headers = computed(() => {
-  if (auth.hasRole('inmetro')) {
+  if (auth.hasRole(RoleEnum.InmetroQualidade)) {
     return [
       { title: 'Nº OS', key: 'codigo', minWidth: '150px' },
       { title: 'Nº Pedido', key: 'num_pedido_compra', minWidth: '150px' },

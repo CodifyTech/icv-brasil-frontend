@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { PerfectScrollbar } from 'vue3-perfect-scrollbar'
 import CDFAvatar from '@/components/CDF/CDFAvatar.vue'
+import { RoleEnum } from '@/enums/RoleEnum'
 import { useAuthStore } from '@/pages/auth/login/store/useAuthStore'
 import type { IUser } from '@/pages/users/types'
 import { can } from '@layouts/plugins/casl'
@@ -97,7 +98,7 @@ const userProfileList = [
           <PerfectScrollbar :options="{ wheelPropagation: false }">
             <template
               v-for="item in userProfileList"
-              v-if="!auth.hasRole('inmetro')"
+              v-if="!auth.hasRole(RoleEnum.InmetroQualidade)"
               :key="item.title"
             >
               <VListItem
