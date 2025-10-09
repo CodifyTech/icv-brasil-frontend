@@ -652,6 +652,23 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
           },
         ]
       }
+      else if (os.status === OsStatusEnum.FINALIZADO) {
+        menu = [
+          ...menu,
+          {
+            title: 'Aprovar',
+            icon: 'tabler-check',
+            color: 'success',
+            click: (() => this.abrirDialogAprovar(this.ordemServicoAtual)) as any,
+          },
+          {
+            title: 'Reprovar',
+            color: 'error',
+            icon: 'tabler-x',
+            click: (() => this.abrirDialogReprovar(this.ordemServicoAtual)) as any,
+          },
+        ]
+      }
 
       return menu
     },
