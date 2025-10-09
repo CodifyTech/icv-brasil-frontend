@@ -10,10 +10,15 @@ definePage({
   },
 })
 
-const { resetForm } = useOrdemServicoStore()
+const store = useOrdemServicoStore()
+
+const {
+  data,
+} = storeToRefs(store)
 
 onBeforeRouteLeave(() => {
-  resetForm()
+  store.resetForm()
+  data.value = {}
 })
 </script>
 

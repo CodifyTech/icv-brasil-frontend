@@ -127,10 +127,6 @@ watch(() => formData.value.proposta_id, () => {
   formData.value.tipo_servico_id = null
   inmetroStore.fetchTipoServico(formData.value.proposta_id)
 })
-
-onBeforeRouteLeave(() => {
-  resetForm()
-})
 </script>
 
 <template>
