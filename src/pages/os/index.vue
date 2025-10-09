@@ -288,7 +288,7 @@ onMounted(async () => {
                 </RouterLink>
 
                 <template #append>
-                  <div class="d-flex align-center gap-2">
+                  <div class="gap-2 d-flex align-center">
                     <VChip
                       :color="getOSStatusColor(os.status || null)"
                       variant="tonal"
@@ -309,22 +309,15 @@ onMounted(async () => {
                     />
 
                     <!-- Indicador de email já enviado para responsável (apenas pleno ou admin) -->
-                    <VTooltip
+                    <CDFButton
                       v-else-if="(hasRole('pleno') || hasRole('admin')) && emailResponsavelJaEnviadoHoje(os)"
-                      text="E-mail já enviado hoje para o responsável"
-                      location="top"
-                    >
-                      <template #activator="{ props: tooltipProps }">
-                        <VBtn
-                          v-bind="tooltipProps"
-                          icon="tabler-mail-check"
-                          size="small"
-                          color="success"
-                          variant="text"
-                          disabled
-                        />
-                      </template>
-                    </VTooltip>
+                      tooltip-text="E-mail já enviado hoje para o responsável"
+                      icon="tabler-mail-check"
+                      size="small"
+                      color="success"
+                      variant="text"
+                      disabled
+                    />
 
                     <!-- Botão para enviar email ao cliente (apenas pleno ou admin) -->
                     <CDFButton
@@ -339,22 +332,16 @@ onMounted(async () => {
                     />
 
                     <!-- Indicador de email já enviado para cliente (apenas pleno ou admin) -->
-                    <VTooltip
+
+                    <CDFButton
                       v-else-if="(hasRole('pleno') || hasRole('admin')) && emailJaEnviadoHoje(os)"
-                      text="E-mail já enviado hoje para o cliente"
-                      location="top"
-                    >
-                      <template #activator="{ props: tooltipProps }">
-                        <VBtn
-                          v-bind="tooltipProps"
-                          icon="tabler-mail-check"
-                          size="small"
-                          color="success"
-                          variant="text"
-                          disabled
-                        />
-                      </template>
-                    </VTooltip>
+                      tooltip-text="E-mail já enviado hoje para o cliente"
+                      icon="tabler-mail-check"
+                      size="small"
+                      color="success"
+                      variant="text"
+                      disabled
+                    />
 
                     <CDFMoreBtn
                       color="gray"
@@ -367,7 +354,7 @@ onMounted(async () => {
 
             <VDivider class="py-2" />
 
-            <div class="d-flex gap-2 pt-0 pa-6">
+            <div class="gap-2 pt-0 d-flex pa-6">
               <CDFButton
                 icon="tabler-arrow-left"
                 icon-direction="left"
@@ -416,7 +403,7 @@ onMounted(async () => {
             <VDivider class="mb-4" />
 
             <div class="mb-3">
-              <h6 class="text-subtitle-2 font-weight-medium mb-2">
+              <h6 class="mb-2 text-subtitle-2 font-weight-medium">
                 Filtrar por Status
               </h6>
 
@@ -439,7 +426,7 @@ onMounted(async () => {
             </div>
 
             <!-- Filtros por status específico -->
-            <div class="d-flex flex-column gap-2">
+            <div class="gap-2 d-flex flex-column">
               <VBtn
                 :variant="(filtros as any)?.status === OsStatusEnum.EM_ANALISE ? 'flat' : 'outlined'"
                 :color="(filtros as any)?.status === OsStatusEnum.EM_ANALISE ? 'info' : 'default'"
