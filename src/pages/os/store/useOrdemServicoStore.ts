@@ -652,7 +652,7 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
           },
         ]
       }
-      else if (os.status === OsStatusEnum.FINALIZADO) {
+      else if (os.status === OsStatusEnum.CERTIFICADO_PENDENTE) {
         menu = [
           ...menu,
           {
