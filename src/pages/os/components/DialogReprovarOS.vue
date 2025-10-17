@@ -34,12 +34,14 @@ const rules = {
 
 // Watch para resetar os campos quando a OS mudar
 watch(() => props.os, (newOs: IOrdemServico | null) => {
+  console.log('🟠 DialogReprovarOS - Watch disparado. OS recebida:', newOs)
   if (newOs) {
     dadosReprovacao.value = {
       motivo_reprovacao: '',
       observacoes: '',
       data_reprovacao: new Date().toISOString().split('T')[0],
     }
+    console.log('🟠 Dados de reprovação resetados:', dadosReprovacao.value)
   }
 }, { immediate: true })
 

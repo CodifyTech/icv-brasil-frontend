@@ -377,13 +377,23 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
 
     // Abrir dialogs
     abrirDialogAprovar(item: IOrdemServico) {
+      console.log('🔵 abrirDialogAprovar - Item recebido:', item)
       this.ordemServicoAtual = item
       this.isDialogAprovarVisible = true
+      console.log('🔵 Estado após abrir:', {
+        ordemServicoAtual: this.ordemServicoAtual,
+        isDialogAprovarVisible: this.isDialogAprovarVisible,
+      })
     },
 
     abrirDialogReprovar(item: IOrdemServico) {
+      console.log('🔴 abrirDialogReprovar - Item recebido:', item)
       this.ordemServicoAtual = item
       this.isDialogReprovarVisible = true
+      console.log('🔴 Estado após abrir:', {
+        ordemServicoAtual: this.ordemServicoAtual,
+        isDialogReprovarVisible: this.isDialogReprovarVisible,
+      })
     },
 
     // Buscar clientes

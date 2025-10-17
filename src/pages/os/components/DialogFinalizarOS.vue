@@ -35,6 +35,7 @@ const rules = {
 
 // Watch para preencher os campos quando a OS mudar
 watch(() => props.os, (newOs: IOrdemServico | null) => {
+  console.log('🟢 DialogFinalizarOS - Watch disparado. OS recebida:', newOs)
   if (newOs) {
     dadosFinalizacao.value = {
       num_relatorio: newOs.num_relatorio || '',
@@ -42,6 +43,7 @@ watch(() => props.os, (newOs: IOrdemServico | null) => {
       certificado_associado: newOs.certificado_associado || '',
       resultado: newOs.resultado || '',
     }
+    console.log('🟢 Dados de finalização preenchidos:', dadosFinalizacao.value)
   }
 }, { immediate: true })
 
