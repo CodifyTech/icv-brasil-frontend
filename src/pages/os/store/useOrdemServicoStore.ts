@@ -611,6 +611,7 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
 
     menuList(os: IOrdemServico) {
       this.ordemServicoAtual = os
+
       let menu = [
         {
           title: 'Duplicar',
@@ -659,13 +660,13 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
             title: 'Aprovar',
             icon: 'tabler-check',
             color: 'success',
-            click: (() => this.abrirDialogAprovar(this.ordemServicoAtual)) as any,
+            click: (() => this.abrirDialogAprovar(os)) as any,
           },
           {
             title: 'Reprovar',
             color: 'error',
             icon: 'tabler-x',
-            click: (() => this.abrirDialogReprovar(this.ordemServicoAtual)) as any,
+            click: (() => this.abrirDialogReprovar(os)) as any,
           },
         ]
       }
