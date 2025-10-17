@@ -498,13 +498,13 @@ onMounted(async () => {
 
     <DialogFinalizarOs
       v-model:is-dialog-visible="isDialogAprovarVisible"
-      :os="ordemServicoAtual"
+      v-model:os="ordemServicoAtual"
       @confirm="confirmarFinalizacao"
     />
 
     <DialogReprovarOs
       v-model:is-dialog-visible="isDialogReprovarVisible"
-      :os="ordemServicoAtual"
+      v-model:os="ordemServicoAtual"
       @confirm="confirmarReprovacao"
     />
   </div>
