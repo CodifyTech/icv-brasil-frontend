@@ -24,11 +24,11 @@ const { hasRole } = useAuth()
 const {
   page, total, filtros,
   ordensServico, estatisticas, isDialogAprovarVisible, isDialogReprovarVisible,
+  ordemServicoAtual,
 } = storeToRefs(store)
 
 const {
   menuList,
-  ordemServicoAtual,
   confirmarFinalizacao,
   confirmarReprovacao,
   nextPage,
