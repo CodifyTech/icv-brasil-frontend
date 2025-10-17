@@ -628,7 +628,9 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
             title: 'Aprovar',
             icon: 'tabler-check',
             color: 'success',
-            click: (() => this.abrirDialogAprovar(os)) as any,
+            click: () => {
+              this.abrirDialogAprovar(os)
+            },
           },
           {
             title: 'Certificado Pendente',
@@ -647,7 +649,9 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
             title: 'Reprovar',
             color: 'error',
             icon: 'tabler-x',
-            click: (() => this.abrirDialogReprovar(os)) as any,
+            click: () => {
+              this.abrirDialogReprovar(os)
+            },
           },
         ]
       }
@@ -658,13 +662,17 @@ export const useOrdemServicoStore = defineStore('ordem-servico', {
             title: 'Aprovar',
             icon: 'tabler-check',
             color: 'success',
-            click: (() => this.abrirDialogAprovar(os)) as any,
+            click: () => {
+              this.abrirDialogAprovar(os)
+            },
           },
           {
             title: 'Reprovar',
             color: 'error',
             icon: 'tabler-x',
-            click: (() => this.abrirDialogReprovar(os)) as any,
+            click: () => {
+              this.abrirDialogReprovar(os)
+            },
           },
         ]
       }

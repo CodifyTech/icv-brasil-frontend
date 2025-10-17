@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { IOrdemServico } from '@/pages/inmetro/types/index'
 import { getOSStatusColor, getOSStatusLabel } from '@/enums/OSStatusEnum'
+import type { IOrdemServico } from '@/pages/inmetro/types/index'
 
 const props = defineProps<{
   isDialogVisible: boolean
@@ -9,6 +9,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: 'update:isDialogVisible', value: boolean): void
+  (e: 'update:os', value: IOrdemServico | null): void
   (e: 'confirm', dados: { os: IOrdemServico | null; dadosReprovacao: any }): void
 }>()
 
