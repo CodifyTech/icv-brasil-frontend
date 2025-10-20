@@ -24,6 +24,7 @@ onMounted(async () => {
   if (route.query.duplicar) {
     await fetchOrdemServico(route.query.duplicar as string)
 
+    formData.value.id = null
     formData.value.anexos = []
     formData.value.fotos = []
   }
