@@ -29,6 +29,10 @@ onMounted(async () => {
     formData.value.num_pedido_compra = ''
     formData.value.anexos = []
     formData.value.fotos = []
+
+    formData.value.material_equipamentos?.forEach(item => {
+      item.id = null
+    })
   }
 })
 
