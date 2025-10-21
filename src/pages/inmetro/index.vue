@@ -449,8 +449,8 @@ const headers = computed(() => {
           </VBtn>
         </template>
 
-        <template #[`item.data_inspecao`]="{ item }">
-          {{ moment(getItemValue(item, 'data_inspecao')).format('DD/MM/YYYY') }}
+        <template #[`item.data`]="{ item }">
+          {{ moment(getItemValue(item, 'data_execucao')).format('DD/MM/YYYY') }}
         </template>
 
         <template #[`item.resultado`]="{ item }">
