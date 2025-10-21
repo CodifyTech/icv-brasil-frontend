@@ -245,7 +245,6 @@ const headers = computed(() => {
       { title: 'Data', key: 'data_execucao', minWidth: '150px' },
       { title: 'Resultado', key: 'resultado' },
       { title: 'Documentos', key: 'documentos', sortable: false },
-      { title: 'Status', key: 'status' },
     ]
   }
 
